@@ -24,8 +24,8 @@ sudo ifconfig bat0 up
 " | tee -a /home/pi/start-batman-adv.sh
 
 
-rm /etc/dnsmasq.conf
-touch /etc/dnsmasq.conf
+sudo rm /etc/dnsmasq.conf
+sudo touch /etc/dnsmasq.conf
 echo "
 # DHCP-Server active for the batman mesh network interface
 interface=bat0
