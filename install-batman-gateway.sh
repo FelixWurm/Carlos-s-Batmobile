@@ -19,3 +19,8 @@ sudo iptables -A FORWARD -i bat0 -o eth0 -j ACCEPT
 sudo ifconfig wlan0 up
 sudo ifconfig bat0 up
 " | tee -a /home/pi/start-batman-adv.sh
+
+
+echo Installation done. Rebooting...
+sleep 5
+reboot
