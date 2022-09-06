@@ -1,4 +1,4 @@
-sudo apt install iptables
+sudo apt install iptables dnsmasq
 
 
 rm /home/pi/start-batman-adv.sh
