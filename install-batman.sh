@@ -2,7 +2,7 @@ sudo rfkill unblock all
 sudo apt update
 sudo apt upgrade -y
 
-sudo apt install -y libnl-3-dev libnl-genl-3-dev batctl alfred nmap
+sudo apt install -y libnl-3-dev libnl-genl-3-dev batctl alfred nmap git
 
 # Have batman-adv startup automatically on boot
 echo "batman-adv" | sudo tee --append /etc/modules
