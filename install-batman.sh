@@ -48,7 +48,7 @@ sudo ifconfig bat0 up" | tee -a $(pwd)/start-batman-adv.sh
 rm -f ~/watchBat.sh
 touch ~/watchBat.sh
 chmod +x ~/watchBat.sh
-echo "watch -n .1 'sudo batctl o;echo;echo;echo;echo;echo;sudo batctl n'" | tee -a ~/watchBat.sh
+echo "watch -n .1 'sudo batctl n;echo;echo;echo;echo;echo;sudo batctl o'" | tee -a ~/watchBat.sh
 
 
 # Enable interfaces on boot
