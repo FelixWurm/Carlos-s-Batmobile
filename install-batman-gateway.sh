@@ -1,15 +1,26 @@
-if [ $# -eq 0 ]
+
+BATINTERFACE="wlan0"
+GATEINTERFACE="eth0"
+NETIP=""
+
+while getopts b:g:n: flag
+do
+    case "${flag}" in
+        b) BATINTERFACE=${OPTARG};;
+        g) GATEINTERFACE=${OPTARG};;
+        n) NETIP=${OPTARG};;
+    esac
+done
+
+if [ $NETIP -eq "" ]
 then
-    BATINTERFACE="wlan0"
-    GATEINTERFACE="eth0"
-    NETIP="131.173.0.0"
-else
-    BATINTERFACE=$1
-    GATEINTERFACE=$2
-    NETIP=$3
+    echo "
+        -b BATINTERFACE     optional
+        -g GATEINTERFACE    optional
+        -n NETIP            required
+        "
+    return 0
 fi
-
-
 
 sudo apt install iptables dnsmasq
 
