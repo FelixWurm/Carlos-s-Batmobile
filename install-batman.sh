@@ -42,6 +42,7 @@ touch $(pwd)/start-batman-adv.sh
 chmod +x $(pwd)/start-batman-adv.sh
 echo "
 sudo batctl if add $BATINTERFACE
+sudo batctl gw_mode client
 sudo ifconfig $BATINTERFACE up
 sudo ifconfig bat0 up" | tee -a $(pwd)/start-batman-adv.sh
 
