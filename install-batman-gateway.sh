@@ -16,11 +16,10 @@ chmod +x $(pwd)/start-batman-adv.sh
 echo "
 sudo batctl if add $BATINTERFACE
 
-# Tell batman-adv this is an internet gateway
 sudo batctl gw_mode server
 
 # Set Gateway IP
-ip addr add 1.0.0.1/24 broadcast 1.0.0.255 dev bat0
+#ip addr add 1.0.0.1/24 broadcast 1.0.0.255 dev bat0
 
 sudo sysctl -w net.ipv4.ip_forward=1
 sudo iptables -t nat -A POSTROUTING -o $GATEINTERFACE -j MASQUERADE
@@ -30,26 +29,15 @@ sudo iptables -A FORWARD -i bat0 -o $GATEINTERFACE -j ACCEPT
 # Activate interfaces
 sudo ifconfig $BATINTERFACE up
 sudo ifconfig bat0 up
+sudo ifconfig bat0 169.254.1.1/16
 " | tee -a $(pwd)/start-batman-adv.sh
 
 
 sudo rm /etc/dnsmasq.conf
 sudo touch /etc/dnsmasq.conf
 echo "
-# DHCP-Server active for the batman mesh network interface
 interface=bat0
-
-# DHCP-Server not active for internet network
-no-dhcp-interface=$GATEINTERFACE
-
-# IPv4-address range and lease-time
-dhcp-range=1.0.0.50,1.0.0.150,24h
-
-# DNS
-dhcp-option=option:dns-server,8.8.8.8
-
-# Gateway: needs to be the same as the ip of the bat0 interface in the startup script
-dhcp-option=3,1.0.0.1
+dhcp-range=131.173.38.2,131.173.248.255,255.255.248.0,12h
 " | sudo tee -a  /etc/dnsmasq.conf
 
 echo Installation done. Rebooting...
