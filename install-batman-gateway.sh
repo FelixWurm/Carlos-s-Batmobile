@@ -1,3 +1,12 @@
+if [ $# -eq 0 ]
+then
+    BATINTERFACE="wlan0"
+    GATEINTERFACE="eth0"
+else
+    BATINTERFACE=$1
+    GATEINTERFACE=$2
+fi
+
 sudo apt install iptables dnsmasq
 
 
@@ -5,7 +14,7 @@ rm ~/start-batman-adv.sh
 touch ~/start-batman-adv.sh
 chmod +x ~/start-batman-adv.sh
 echo "
-sudo batctl if add wlan0
+sudo batctl if add $BATINTERFACE
 
 # Tell batman-adv this is an internet gateway
 sudo batctl gw_mode server
@@ -14,12 +23,12 @@ sudo batctl gw_mode server
 ip addr add 1.0.0.1/24 broadcast 1.0.0.255 dev bat0
 
 sudo sysctl -w net.ipv4.ip_forward=1
-sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-sudo iptables -A FORWARD -i eth0 -o bat0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-sudo iptables -A FORWARD -i bat0 -o eth0 -j ACCEPT
+sudo iptables -t nat -A POSTROUTING -o $GATEINTERFACE -j MASQUERADE
+sudo iptables -A FORWARD -i $GATEINTERFACE -o bat0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+sudo iptables -A FORWARD -i bat0 -o $GATEINTERFACE -j ACCEPT
 
 # Activate interfaces
-sudo ifconfig wlan0 up
+sudo ifconfig $BATINTERFACE up
 sudo ifconfig bat0 up
 " | tee -a ~/start-batman-adv.sh
 
@@ -31,7 +40,7 @@ echo "
 interface=bat0
 
 # DHCP-Server not active for internet network
-no-dhcp-interface=eth0
+no-dhcp-interface=$GATEINTERFACE
 
 # IPv4-address range and lease-time
 dhcp-range=1.0.0.50,1.0.0.150,24h
