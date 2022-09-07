@@ -2,10 +2,14 @@ if [ $# -eq 0 ]
 then
     BATINTERFACE="wlan0"
     GATEINTERFACE="eth0"
+    NETIP="131.173.0.0"
 else
     BATINTERFACE=$1
     GATEINTERFACE=$2
+    NETIP=$3
 fi
+
+
 
 sudo apt install iptables dnsmasq
 
@@ -15,16 +19,24 @@ touch $(pwd)/start-batman-adv.sh
 chmod +x $(pwd)/start-batman-adv.sh
 echo "
 sudo batctl if add $BATINTERFACE
-
 sudo batctl gw_mode server
 
-# Set Gateway IP
-#ip addr add 1.0.0.1/24 broadcast 1.0.0.255 dev bat0
+
+# routing / internet access
+ip route add 169.254.0.0/16 dev $BATINTERFACE
+# route add -net 169.254.0.0/16 dev $BATINTERFACE
 
 sudo sysctl -w net.ipv4.ip_forward=1
-sudo iptables -t nat -A POSTROUTING -o $GATEINTERFACE -j MASQUERADE
-sudo iptables -A FORWARD -i $GATEINTERFACE -o bat0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-sudo iptables -A FORWARD -i bat0 -o $GATEINTERFACE -j ACCEPT
+
+iptables -t nat -A POSTROUTING ! -d 169.254.0.0/16 -o $GATEINTERFACE -j SNAT --to-source $NETIP
+#iptables -t nat -A POSTROUTING ! -d 169.254.0.0/16 -o $GATEINTERFACE -j MASQUERADE
+iptables -F
+iptables -t nat -F
+
+#sudo iptables -t nat -A POSTROUTING -o $GATEINTERFACE -j MASQUERADE
+#sudo iptables -A FORWARD -i $GATEINTERFACE -o bat0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+#sudo iptables -A FORWARD -i bat0 -o $GATEINTERFACE -j ACCEPT
+
 
 # Activate interfaces
 sudo ifconfig $BATINTERFACE up
