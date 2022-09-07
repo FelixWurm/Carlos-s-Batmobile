@@ -31,5 +31,12 @@ version 4 h264:
 
 `sudo apt install libgstrtspserver-1.0-0 libgstrtspserver-1.0-dev`
 
+# Install omx
 
+`git clone -b 1.18 git://anongit.freedesktop.org/gstreamer/gst-omx`
 
+`meson build -D target=rpi -D header_path=/opt/vc/include/IL/`
+
+`cd build`
+
+`meson install`
