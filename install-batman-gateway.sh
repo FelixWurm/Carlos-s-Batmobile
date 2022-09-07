@@ -1,9 +1,9 @@
 sudo apt install iptables dnsmasq
 
 
-rm /home/pi/start-batman-adv.sh
-touch /home/pi/start-batman-adv.sh
-chmod +x /home/pi/start-batman-adv.sh
+rm ~/start-batman-adv.sh
+touch ~/start-batman-adv.sh
+chmod +x ~/start-batman-adv.sh
 echo "
 sudo batctl if add wlan0
 
@@ -21,7 +21,7 @@ sudo iptables -A FORWARD -i bat0 -o eth0 -j ACCEPT
 # Activate interfaces
 sudo ifconfig wlan0 up
 sudo ifconfig bat0 up
-" | tee -a /home/pi/start-batman-adv.sh
+" | tee -a ~/start-batman-adv.sh
 
 
 sudo rm /etc/dnsmasq.conf

@@ -26,20 +26,20 @@ iface wlan0 inet manual
     wireless-ap 02:12:34:56:78:9A" | sudo tee -a /etc/network/interfaces.d/wlan0
     
 
-touch /home/pi/start-batman-adv.sh
-chmod +x /home/pi/start-batman-adv.sh
+touch ~/start-batman-adv.sh
+chmod +x ~/start-batman-adv.sh
 echo "
 sudo batctl if add wlan0
 sudo ifconfig wlan0 up
-sudo ifconfig bat0 up" | tee -a /home/pi/start-batman-adv.sh
+sudo ifconfig bat0 up" | tee -a ~/start-batman-adv.sh
 
-touch /home/pi/watchBat.sh
-chmod +x /home/pi/watchBat.sh
-echo "watch -n .1 'sudo batctl o;echo;echo;echo;echo;echo;sudo batctl n'" | tee -a /home/pi/watchBat.sh
+touch ~/watchBat.sh
+chmod +x ~/watchBat.sh
+echo "watch -n .1 'sudo batctl o;echo;echo;echo;echo;echo;sudo batctl n'" | tee -a ~/watchBat.sh
 
 
 # Enable interfaces on boot
-echo "/home/pi/start-batman-adv.sh" >> ~/.bashrc
+echo "~/start-batman-adv.sh" >> ~/.bashrc
 
 echo Installation done. Rebooting...
 sleep 5
