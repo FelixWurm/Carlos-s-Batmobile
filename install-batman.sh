@@ -44,7 +44,11 @@ echo "
 sudo batctl if add $BATINTERFACE
 sudo batctl gw_mode client
 sudo ifconfig $BATINTERFACE up
-sudo ifconfig bat0 up" | tee -a $(pwd)/start-batman-adv.sh
+sudo ifconfig bat0 up
+
+sudo ip route delete default
+sudo ip route add default via 169.254.1.1 dev bat0
+" | tee -a $(pwd)/start-batman-adv.sh
 
 rm -f ~/watchBat.sh
 touch ~/watchBat.sh

@@ -34,8 +34,8 @@ sudo batctl gw_mode server
 
 
 # routing / internet access
-sudo ip route add 169.254.0.0/16 dev $BATINTERFACE
-# sudo route add -net 169.254.0.0/16 dev $BATINTERFACE
+sudo ip route add 169.254.0.0/16 dev bat0
+# sudo route add -net 169.254.0.0/16 dev bat0
 
 sudo sysctl -w net.ipv4.ip_forward=1
 
@@ -60,7 +60,7 @@ sudo rm /etc/dnsmasq.conf
 sudo touch /etc/dnsmasq.conf
 echo "
 interface=bat0
-dhcp-range=131.173.38.2,131.173.248.255,255.255.248.0,12h
+dhcp-range=169.254.1.5,169.254.255.255,255.255.0.0,12h
 " | sudo tee -a  /etc/dnsmasq.conf
 
 echo Installation done. Rebooting...
