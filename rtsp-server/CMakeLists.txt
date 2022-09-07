@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.18)
 project(rtsp_server)
 find_package(PkgConfig REQUIRED)
 find_package(PkgConfig REQUIRED)
