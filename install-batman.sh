@@ -18,12 +18,13 @@ echo "batman-adv" | sudo tee --append /etc/modules
 # Prevent DHCPCD from automatically configuring $BATINTERFACE
 echo 'denyinterfaces $BATINTERFACE' | sudo tee --append /etc/dhcpcd.conf
 
-
+sudo rm -f /etc/network/interfaces.d/bat0
 sudo touch /etc/network/interfaces.d/bat0
 echo "auto bat0
 iface bat0 inet auto
     pre-up /usr/sbin/batctl if add $BATINTERFACE" | sudo tee -a /etc/network/interfaces.d/bat0
 
+sudo rm -f /etc/network/interfaces.d/$BATINTERFACE
 sudo touch /etc/network/interfaces.d/$BATINTERFACE
 echo "auto $BATINTERFACE
 iface $BATINTERFACE inet manual
@@ -34,6 +35,7 @@ iface $BATINTERFACE inet manual
     wireless-ap 02:12:34:56:78:9A" | sudo tee -a /etc/network/interfaces.d/$BATINTERFACE
     
 
+rm -f $(pwd)/start-batman-adv.sh
 touch $(pwd)/start-batman-adv.sh
 chmod +x $(pwd)/start-batman-adv.sh
 echo "
@@ -41,6 +43,7 @@ sudo batctl if add $BATINTERFACE
 sudo ifconfig $BATINTERFACE up
 sudo ifconfig bat0 up" | tee -a $(pwd)/start-batman-adv.sh
 
+rm -f ~/watchBat.sh
 touch ~/watchBat.sh
 chmod +x ~/watchBat.sh
 echo "watch -n .1 'sudo batctl o;echo;echo;echo;echo;echo;sudo batctl n'" | tee -a ~/watchBat.sh
