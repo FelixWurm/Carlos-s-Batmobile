@@ -12,7 +12,7 @@ do
     esac
 done
 
-if [ $NETIP -eq "" ]
+if [ -z $NETIP ]
 then
     echo "
         -b BATINTERFACE     optional
