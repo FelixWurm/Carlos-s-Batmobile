@@ -34,12 +34,12 @@ iface $BATINTERFACE inet manual
     wireless-ap 02:12:34:56:78:9A" | sudo tee -a /etc/network/interfaces.d/$BATINTERFACE
     
 
-touch ~/start-batman-adv.sh
-chmod +x ~/start-batman-adv.sh
+touch $(pwd)/start-batman-adv.sh
+chmod +x $(pwd)/start-batman-adv.sh
 echo "
 sudo batctl if add $BATINTERFACE
 sudo ifconfig $BATINTERFACE up
-sudo ifconfig bat0 up" | tee -a ~/start-batman-adv.sh
+sudo ifconfig bat0 up" | tee -a $(pwd)/start-batman-adv.sh
 
 touch ~/watchBat.sh
 chmod +x ~/watchBat.sh
@@ -47,7 +47,7 @@ echo "watch -n .1 'sudo batctl o;echo;echo;echo;echo;echo;sudo batctl n'" | tee 
 
 
 # Enable interfaces on boot
-echo "~/start-batman-adv.sh" >> ~/.bashrc
+echo "$(pwd)/start-batman-adv.sh" >> ~/.bashrc
 
 echo Installation done. Rebooting...
 sleep 5

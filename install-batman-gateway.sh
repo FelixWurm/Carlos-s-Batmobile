@@ -10,9 +10,9 @@ fi
 sudo apt install iptables dnsmasq
 
 
-rm ~/start-batman-adv.sh
-touch ~/start-batman-adv.sh
-chmod +x ~/start-batman-adv.sh
+rm $(pwd)/start-batman-adv.sh
+touch $(pwd)/start-batman-adv.sh
+chmod +x $(pwd)/start-batman-adv.sh
 echo "
 sudo batctl if add $BATINTERFACE
 
@@ -30,7 +30,7 @@ sudo iptables -A FORWARD -i bat0 -o $GATEINTERFACE -j ACCEPT
 # Activate interfaces
 sudo ifconfig $BATINTERFACE up
 sudo ifconfig bat0 up
-" | tee -a ~/start-batman-adv.sh
+" | tee -a $(pwd)/start-batman-adv.sh
 
 
 sudo rm /etc/dnsmasq.conf
