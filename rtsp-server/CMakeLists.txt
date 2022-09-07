@@ -5,11 +5,8 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(GST REQUIRED
         gobject-2.0
         glib-2.0
-        gstreamer-webrtc-1.0
         gstreamer-sdp-1.0
         gstreamer-pbutils-1.0
-        libsoup-2.4
-        json-glib-1.0
         gstreamer-rtsp-server-1.0
         gstreamer-check-1.0)
 
