@@ -34,15 +34,15 @@ sudo batctl gw_mode server
 
 
 # routing / internet access
-ip route add 169.254.0.0/16 dev $BATINTERFACE
-# route add -net 169.254.0.0/16 dev $BATINTERFACE
+sudo ip route add 169.254.0.0/16 dev $BATINTERFACE
+# sudo route add -net 169.254.0.0/16 dev $BATINTERFACE
 
 sudo sysctl -w net.ipv4.ip_forward=1
 
-iptables -t nat -A POSTROUTING ! -d 169.254.0.0/16 -o $GATEINTERFACE -j SNAT --to-source $NETIP
-#iptables -t nat -A POSTROUTING ! -d 169.254.0.0/16 -o $GATEINTERFACE -j MASQUERADE
-iptables -F
-iptables -t nat -F
+sudo iptables -t nat -A POSTROUTING ! -d 169.254.0.0/16 -o $GATEINTERFACE -j SNAT --to-source $NETIP
+# sudo iptables -t nat -A POSTROUTING ! -d 169.254.0.0/16 -o $GATEINTERFACE -j MASQUERADE
+sudo iptables -F
+sudo iptables -t nat -F
 
 #sudo iptables -t nat -A POSTROUTING -o $GATEINTERFACE -j MASQUERADE
 #sudo iptables -A FORWARD -i $GATEINTERFACE -o bat0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
