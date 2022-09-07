@@ -18,7 +18,7 @@ git clone https://github.com/FelixWurm/Carlos-s-Batmobile.git
 echo "batman-adv" | sudo tee --append /etc/modules
 
 # Prevent DHCPCD from automatically configuring $BATINTERFACE
-echo 'denyinterfaces $BATINTERFACE' | sudo tee --append /etc/dhcpcd.conf
+echo "denyinterfaces $BATINTERFACE" | sudo tee --append /etc/dhcpcd.conf
 
 sudo rm -f /etc/network/interfaces.d/bat0
 sudo touch /etc/network/interfaces.d/bat0
