@@ -23,4 +23,7 @@ version 3 udp:
 # To install for gstreamer
 `sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-ugly gstreamer1.0-tools gstreamer1.0-gl gstreamer1.0-gtk3`
 
+`sudo apt install libgstrtspserver-1.0-0 libgstrtspserver-1.0-dev`
+
+
 
