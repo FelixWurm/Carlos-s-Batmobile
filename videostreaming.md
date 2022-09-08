@@ -1,7 +1,9 @@
 # Videostreaming
 ## Vorbereitung
 `sudo raspi-config` -> activate glamor and gl 2
+
 `sudo iw wlan0 set power_save off` (`sudo iwconfig` -> power management should be off)
+
 Preferences -> Raspberry Pi Configuration -> GPU Memory: 256
 
 ### To install for gstreamer
@@ -30,7 +32,7 @@ version 3 udp:
 
 `gst-launch-1.0 libcamerasrc ! 'video/x-raw,width=256,height=144,framerate=15/1' ! videoflip method=rotate-180 ! videoconvert ! jpegenc quality=70 ! rtpjpegpay ! udpsink host=0.0.0.0 port=4000`
 
-`gst-lanuch-1.0 -v udpsrc port=4000 ! application/x-rtp, media=video, clock-rate=90000, payload=96 ! rtpjpegdepay ! jpegdec ! videoconvert ! autovideosink`
+`gst-launch-1.0 -v udpsrc port=4000 ! application/x-rtp, media=video, clock-rate=90000, payload=96 ! rtpjpegdepay ! jpegdec ! videoconvert ! autovideosink`
 
 version 4 h264:
 
@@ -53,4 +55,5 @@ version 7 bitrate:
 `gst-launch-1.0 libcamerasrc ! 'video/x-raw,width=256,height=144,framerate=15/1,format=(string)UYVY' ! videoflip method=rotate-180 ! v4l2convert ! v4l2h264enc extra-controls='controls,video_bitrate=200000' ! 'video/x-h264,level=(string)3' ! rtph264pay ! udpsink host=0.0.0.0 port=4000`
 
 version 8 i-frames:
+
 `gst-launch-1.0 libcamerasrc ! 'video/x-raw,width=256,height=144,framerate=15/1,format=(string)UYVY' ! v4l2convert ! v4l2h264enc extra-controls='controls,video_bitrate=200000,h264_i_frame_period=15' ! 'video/x-h264,level=(string)3' ! rtph264pay ! udpsink host=0.0.0.0 port=4000`
