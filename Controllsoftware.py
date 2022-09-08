@@ -31,8 +31,7 @@ def serial_read(current_device, devices,ser):
         end = len(cash)-1
         if cash[0] == 'Y':
             
-            serial_y = decode_number(cash)
-            print(serial_y)
+        serial_y = decode_number(cash)
         
         if cash[0] == 'X':
             serial_x = decode_number(cash)
@@ -42,28 +41,16 @@ def serial_read(current_device, devices,ser):
             
     
 def decode_number(number: str):
-    print("+", number[1:])
     mynum = int(number[1:])
-    print(type(mynum), mynum)
-    
-    
-    if number[1] == "-":
-        if number[3] != "\r":
-            return (int(number[2])*10)+int(number[3])
-        else:
-            return number[2]
-    
-    else:
-        if number[2] != "\r":
-            return (int(number[1])*10)+ int(number[2])
-        else:
-            return number[1]
+    return mynum
+
 
 
 msg_dict = {
     "STAY_ALLIVE" : int(0),
     "DV_STRATE" : int(1),
-    "DV_ROTAT" : int(2)
+    "DV_ROTAT" : int(2),
+    "DV_RAW_MODE" : int(3)
 }
 
 

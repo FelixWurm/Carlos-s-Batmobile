@@ -8,7 +8,7 @@ apt-get upgrade
 
 
 #install python pip
-apt-get install pip
+sudo apt-get install pip
 
 
 #install the importat python liberys

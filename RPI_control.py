@@ -26,6 +26,17 @@ msg_udp_dict = {
     "ERROR" : int(128)
 }
 
+
+#TCP controll
+msg_dict = {
+    "STAY_ALLIVE" : int(0),
+    "DV_STRATE" : int(1),
+    "DV_ROTAT" : int(2),
+    "DV_RAW_MODE" : int(3)
+}
+
+
+
 udp_port = 25565
 udp_addr = "169.254.2.1"
 
@@ -166,7 +177,7 @@ async def main():
     async with websockets.serve(echo,"localhost",8765):
         await asyncio.Future()
         
-asyncio.run(main())
+#asyncio.run(main())
 
 
 
@@ -181,10 +192,10 @@ def main():
     
     
     print("IP:", get_local_ip())
-
+    
+    #last_raw_update = sl.clock_gettime_ns(0)
+    
     while(True):
-        
-        
         conn, addr = soc.accept()       
         
         print("Connectet to ", addr)
@@ -200,12 +211,15 @@ def main():
                     drive_dst(data[1], data[2])
                 if ID == int(0):
                     conn.sendall(0xFF)
+                if ID == msg_dict["DV_RAW_MODE"]:
+                    data = struct.unpack("Bff",data)
+                    set_motor_speed(data[1], data[2])
 
             except Exception as e:
                 print(e)
                 break
             finally:
-                conn.disconnect()
+                #conn.disconnect()
             
             
             
