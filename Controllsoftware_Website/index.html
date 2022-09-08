@@ -1,0 +1,49 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><script type="text/javascript">
+ function dynInput(cbox) {
+  if (cbox.checked) {
+    var div = document.createElement("IFRAME");
+    div.src = cbox.value;
+    div.name = "f"+cbox.name;
+    document.getElementById("insertinputs").appendChild(div);
+  } else {
+    var parent = document.getElementById("insertinputs");
+    parent.removeChild(document.getElementsByName("f"+cbox.name));
+  }
+}
+</script>
+
+ 
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Carlos' batmobile</title>
+    <meta charset="UTF-8">
+    <link href="index-Dateien/sticky-footer.css" rel="stylesheet">
+</head>
+
+<body>
+
+<h1>Carlos' batmobile</h1>
+
+<div id="seite">
+    <div id="inhalt">
+        <input type="checkbox" id="vid" name="vid" value="https://ds0carlos0batman.w3spaces.com/fusszeile.html" onclick="dynInput(this);">
+        <label for="vid"> Videostream</label><br>
+        <input type="checkbox" id="card" name="card" value="https://ds0carlos0batman.w3spaces.com/fusszeile.html" onclick="dynInput(this);">
+        <label for="card"> Karte</label><br>
+        <input type="checkbox" id="gyro" name="gyro" value="https://ds0carlos0batman.w3spaces.com/fusszeile.html" onclick="dynInput(this);">
+        <label for="gyro"> Ausrichtung/Kompass</label><br> 
+        <input type="checkbox" id="raw" name="raw" value="https://ds0carlos0batman.w3spaces.com/controller.html" onclick="dynInput(this);">
+        <label for="raw"> RawCoding</label><br> 
+    </div>
+
+<p id="insertinputs"></p>
+
+    <div id="fussbereich" style="font-size: 10px;">
+    Carlos' batmobile - Copyright © 2022 Distributed Systems Group, Osnabrück University, Germany
+    </div>
+</div>
+
+
+</body></html>
