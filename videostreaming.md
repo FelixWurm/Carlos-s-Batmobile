@@ -32,6 +32,10 @@ version 5 h264 hardware:
 
 `gst-lanuch-1.0 -v udpsrc port=4000 ! application/x-rtp, media=video, clock-rate=90000, payload=96 ! rtph264depay ! avdec_h264 ! autovideosink`
 
+version 6 fix color:
+
+`gst-launch-1.0 libcamerasrc ! 'video/x-raw,width=256,height=144,framerate=15/1,format=(string)UYVY' ! videoflip method=rotate-180 ! v4l2convert ! v4l2h264enc ! 'video/x-h264,level=(string)3' ! rtph264pay ! udpsink host=192.168.137.87 port=4000`
+
 # To install for gstreamer
 `sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-ugly gstreamer1.0-tools gstreamer1.0-gl gstreamer1.0-gtk3`
 
