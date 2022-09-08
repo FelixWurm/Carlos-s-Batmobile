@@ -45,7 +45,7 @@ sudo batctl if add $BATINTERFACE
 sudo batctl gw_mode client
 sudo ifconfig $BATINTERFACE up
 sudo ifconfig bat0 up
-sudo iw wlan0 set power_save off
+sudo iw $BATINTERFACE set power_save off
 " | tee -a $(pwd)/start-batman-adv.sh
 
 rm -f ~/connect-to-gateway.sh
