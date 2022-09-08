@@ -169,21 +169,6 @@ def tcp_setup():
 
 
 
-async def echo(websockets):
-    async for mesage in websockets:
-        await Websocket.send(message)
-
-async def main():
-    async with websockets.serve(echo,"localhost",8765):
-        await asyncio.Future()
-        
-#asyncio.run(main())
-
-
-
-asyncio.run(http_interface(50001))
-
-
 def main():
     soc = tcp_setup()
     #send discovery signal once, should by send every minuit, nonblocking server requiert. 
@@ -219,12 +204,12 @@ def main():
                 print(e)
                 break
             finally:
+                pass
                 #conn.disconnect()
             
             
             
-if __name__ == "__name__":
-    main()
+main()
 
 
 
