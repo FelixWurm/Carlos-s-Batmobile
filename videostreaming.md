@@ -1,7 +1,7 @@
 # Videostreaming
 ## Vorbereitung
 `sudo raspi-config` -> activate glamor and gl 2
-`sudo iw wlan0 set power_save off`
+`sudo iw wlan0 set power_save off` (`sudo iwconfig` -> power management should be off)
 Preferences -> Raspberry Pi Configuration -> GPU Memory: 256
 
 ### To install for gstreamer
@@ -42,7 +42,7 @@ version 5 h264 hardware:
 
 `gst-launch-1.0 libcamerasrc ! 'video/x-raw,width=256,height=144,framerate=15/1' ! videoflip method=rotate-180 ! v4l2convert ! v4l2h264enc ! 'video/x-h264,level=(string)3' ! rtph264pay ! udpsink host=0.0.0.0 port=4000`
 
-`gst-lanuch-1.0 -v udpsrc port=4000 ! application/x-rtp, media=video, clock-rate=90000, payload=96 ! rtph264depay ! avdec_h264 ! autovideosink`
+`gst-launch-1.0 -v udpsrc port=4000 ! application/x-rtp, media=video, clock-rate=90000, payload=96 ! rtph264depay ! avdec_h264 ! autovideosink`
 
 version 6 fix color:
 
