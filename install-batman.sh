@@ -50,6 +50,12 @@ sudo ifconfig bat0 up
 rm -f ~/connect-to-gateway.sh
 touch ~/connect-to-gateway.sh
 echo "
+rm -f /etc/resolv.conf
+touch /etc/resolv.conf
+echo '
+nameserver 1.1.1.1
+nameserver 8.8.8.8
+' | sudo tee -a /etc/resolv.conf
 sudo ip route delete default
 sudo ip route add default via 169.254.1.1 dev bat0
 " | tee -a ~/connect-to-gateway.sh
