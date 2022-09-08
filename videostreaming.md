@@ -57,3 +57,10 @@ version 7 bitrate:
 version 8 i-frames:
 
 `gst-launch-1.0 libcamerasrc ! 'video/x-raw,width=256,height=144,framerate=15/1,format=(string)UYVY' ! v4l2convert ! v4l2h264enc extra-controls='controls,video_bitrate=200000,h264_i_frame_period=15' ! 'video/x-h264,level=(string)3' ! rtph264pay ! udpsink host=0.0.0.0 port=4000`
+
+## Rtps server
+`sudo apt install cmake`
+
+`mkdir build` -> `cd build` -> `cmake ..` -> `make`
+
+`cd build` -> `./rtsp_server ../pipeline.conf`
