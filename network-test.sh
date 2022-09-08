@@ -1,9 +1,9 @@
-PAUSETIME = 5
+PAUSETIME=5
 while getopts i:t: flag
 do
     case "${flag}" in
         i) sudo apt install speedtest-cli;;
-        t) PAUSETIME = ${OPTARG};;
+        t) PAUSETIME=${OPTARG};;
     esac
 done
 
