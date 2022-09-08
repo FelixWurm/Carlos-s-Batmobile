@@ -53,7 +53,7 @@ sudo ip route add default via 169.254.1.1 dev bat0
 rm -f ~/watchBat.sh
 touch ~/watchBat.sh
 chmod +x ~/watchBat.sh
-echo "watch -n .1 'sudo batctl n;echo;echo;echo;echo;echo;sudo batctl o'" | tee -a ~/watchBat.sh
+echo "watch -n .1 'sudo batctl gwl;echo;echo;sudo batctl n;echo;echo;sudo batctl o'" | tee -a ~/watchBat.sh
 
 
 # Enable interfaces on boot
