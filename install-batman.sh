@@ -50,8 +50,8 @@ sudo ifconfig bat0 up
 rm -f ~/connect-to-gateway.sh
 touch ~/connect-to-gateway.sh
 echo "
-rm -f /etc/resolv.conf
-touch /etc/resolv.conf
+sudo rm -f /etc/resolv.conf
+sudo touch /etc/resolv.conf
 echo '
 nameserver 1.1.1.1
 nameserver 8.8.8.8
