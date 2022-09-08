@@ -14,3 +14,6 @@ apt-get install pip
 #install the importat python liberys
 pip install smbus
 pip install websockets
+
+
+echo "python3 /home/pi/Carlos-s-Batmobile/RPI_control.py" | sudo tee -a /home/pi/.bashsh

@@ -1,3 +1,6 @@
+# Scribt that runs on the RPi in order to controll the Movment and the Sensor data
+
+
 import select, sys, struct
 import RPi.GPIO as GPIO
 from time import sleep as sl
@@ -60,19 +63,7 @@ def drive (speed_l, speed_r, time):
     if((0 < speed_r < 40)or (-40 < speed_r < 0)):
         raise Exception("incorrect Input speed_r, must be between -100 to -40 or 40 to 100" )
 
-
-
-    if(speed_l > 0):
-        pi_pwm_l.ChangeDutyCycle(speed_l)
-    else:
-        pi_pwm_l_bwd.ChangeDutyCycle(speed_l*(-1))
-
-
-    if(speed_r > 0):
-        pi_pwm_r.ChangeDutyCycle(speed_r)
-    else:
-        pi_pwm_r_bwd.ChangeDutyCycle(speed_r*(-1))
-
+    set_motor_speed(speed_l, speed_r)
 
 
     #wait for the specified Time
@@ -84,7 +75,17 @@ def drive (speed_l, speed_r, time):
     pi_pwm_l_bwd.ChangeDutyCycle(0)
     pi_pwm_r_bwd.ChangeDutyCycle(0)
 
+def set_motor_speed(speed_l : int, speed_r :int):
+    if(speed_l > 0):
+        pi_pwm_l.ChangeDutyCycle(speed_l)
+    else:
+        pi_pwm_l_bwd.ChangeDutyCycle(speed_l*(-1))
 
+
+    if(speed_r > 0):
+        pi_pwm_r.ChangeDutyCycle(speed_r)
+    else:
+        pi_pwm_r_bwd.ChangeDutyCycle(speed_r*(-1))    
 
 
 def drive_ (speed, time):
@@ -157,11 +158,17 @@ def tcp_setup():
 
 
 
-async def http_interface(http_port):
-    
-    async with websockets.connect("ws:localhost:"+ string(http_port)) as websocket:
-        await websocket.send("WIR SIND DIE ROBOTER")
-        await websocket.reciv()
+async def echo(websockets):
+    async for mesage in websockets:
+        await Websocket.send(message)
+
+async def main():
+    async with websockets.serve(echo,"localhost",8765):
+        await asyncio.Future()
+        
+asyncio.run(main())
+
+
 
 asyncio.run(http_interface(50001))
 
@@ -178,10 +185,7 @@ def main():
     while(True):
         
         
-        conn, addr = soc.accept()
-        
-        
-        
+        conn, addr = soc.accept()       
         
         print("Connectet to ", addr)
     
@@ -203,8 +207,10 @@ def main():
             finally:
                 conn.disconnect()
             
-    
-main()
+            
+            
+if __name__ == "__name__":
+    main()
 
 
 

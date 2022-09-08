@@ -1,3 +1,6 @@
+#Controllsoftware to controll one ore mor Calros Roboters
+
+
 from logging import exception
 import socket
 from time import sleep as sl
@@ -6,6 +9,55 @@ from unittest import skip
 import struct
 import sys
 import select
+import serial
+    
+    
+def serial_connect(device_name):
+    ser = serial.Serial(device_name,115200,timeout = 0.1)
+    return ser
+
+
+
+serial_x = 0
+serial_y = 0
+serial_select_rover = 0;
+
+serial_port = 0
+
+def serial_read(current_device, devices,ser):
+    cash = ser.readline()
+    if cash:
+        cash = cash.decode()
+        end = len(cash)-1
+        if cash[0] == 'Y':
+            
+            serial_y = decode_number(cash)
+            print(serial_y)
+        
+        if cash[0] == 'X':
+            serial_x = decode_number(cash)
+            
+        if cash[0] == 'T':
+            next_device(current_device, devices)
+            
+    
+def decode_number(number: str):
+    print("+", number[1:])
+    mynum = int(number[1:])
+    print(type(mynum), mynum)
+    
+    
+    if number[1] == "-":
+        if number[3] != "\r":
+            return (int(number[2])*10)+int(number[3])
+        else:
+            return number[2]
+    
+    else:
+        if number[2] != "\r":
+            return (int(number[1])*10)+ int(number[2])
+        else:
+            return number[1]
 
 
 msg_dict = {
@@ -156,12 +208,17 @@ def auto_discovery(udp_soc):
         
     return False
         
-
+def next_device(cuurent_device, devices):
+    if devices[cuurent_device +1]:
+        return cuurent_device +1
+    else:
+        return 0
 
 devices = []
 
 
 def main():
+    
     print("Welcome to the ideal Roboter controll Center")
 
     print(get_local_ip(), "<< Local IP")
@@ -171,13 +228,18 @@ def main():
     #save the last found ip to make connection easy
     last_ip = "0.0.0.0"
     
-    
+    #Serial suff
+    serial_enable = False
+    current_serial_device = 0
     #Main Loop
     while(True):
+        #Serial controller stuff
+        if serial_enable:
+            serial_read(current_serial_device, devices,serial_port)
+        
         
         #auto discovery
         cash =  auto_discovery(udp_soc)
-        
         
         if cash:
             print("Found new Device!  IP:", cash)
@@ -200,8 +262,11 @@ def main():
             if cash:
                 if(cash[0] == "D"):
                     position = 1
-                    speed = finde_number(cash, position)
-                    distance = finde_number(cash, position)
+                    try:
+                        speed = finde_number(cash, position)
+                        distance = finde_number(cash, position)
+                    except:
+                        print("Invalid Input")
                     cash = struct.pack("!Bff", int(1), speed, distance)
                     soc.sendall(cash)
                     
@@ -216,6 +281,23 @@ def main():
                 if(cash[0] == "C"):
                     connect_new_clinet(last_ip)
                     last_ip = ".0.0.0.0"
+                
+                if(cash[0] == "Y"):
+                    print("connect a new Joystick to the USB port! Then enter the location of the port")
+                    print("input s for standart port")
+                    while True:
+                        port = input()
+                        if port:
+                            break
+                    if port == "s":
+                        serial_enable = True
+                        serial_port = serial_connect("/dev/ttyACM0")
+                    else:
+                        serial_enable = True
+                        serial_port = serial_connect(port)
+                        
+                    print("connected!")
+                    
                     
 
 
