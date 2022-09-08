@@ -24,7 +24,7 @@ version 4 h264:
 
 `gst-launch-1.0 libcamerasrc ! 'video/x-raw,width=256,height=144,framerate=15/1' ! videoflip method=rotate-180 ! x264enc tune=zerolatency ! rtph264pay ! udpsink host=192.168.137.87 port=4000`
 
-`gst-lanuch-1.0 -v udpsrc port=4000 ! application/x-rtp, media=video, clock-rate=90000, payload=96 ! rtph264depay ! avdec_h264 ! autovideosink`
+`gst-launch-1.0 -v udpsrc port=4000 ! application/x-rtp, media=video, clock-rate=90000, payload=96 ! rtph264depay ! avdec_h264 ! autovideosink`
 
 version 5 h264 hardware:
 
@@ -44,13 +44,3 @@ version 7 bitrate:
 `sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-ugly gstreamer1.0-tools gstreamer1.0-gl gstreamer1.0-gtk3`
 
 `sudo apt install libgstrtspserver-1.0-0 libgstrtspserver-1.0-dev`
-
-# Install omx
-
-`git clone -b 1.18 git://anongit.freedesktop.org/gstreamer/gst-omx`
-
-`meson build -D target=rpi -D header_path=/opt/vc/include/IL/`
-
-`cd build`
-
-`meson install`
