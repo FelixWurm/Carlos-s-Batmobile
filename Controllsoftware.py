@@ -22,7 +22,7 @@ def serial_connect(device_name):
 
 serial_x = 0
 serial_y = 0
-
+new_set = (False, False)
 
 serial_select_rover = 0;
 
@@ -38,11 +38,12 @@ def serial_read(current_device, devices,ser):
         #speed
         if cash[0] == 'Y':
             serial_y = decode_number(cash)
+            new_set[0] = True
         return serial_y
         #direction
         if cash[0] == 'X':
             serial_x = decode_number(cash)
-            
+            new_set[1] = True
         if cash[0] == 'T':
             return True
     
@@ -226,14 +227,12 @@ def main():
     global serial_x
     global serial_y
     global new_set
-    time_last_update
     
-    
+    time_last_update = 0
     serial_selectet_device = 0
     
-    
+    #Programm Start, print some info
     print("Welcome to the ideal Roboter controll Center")
-
     print(get_local_ip(), "<< Local IP")
     
     udp_soc = setup_auto_discovery(25565)
@@ -254,7 +253,8 @@ def main():
             
         
         #if there is new data from the Joystick
-        if(new_set[0] && new_set[1]):
+        if(new_set[0] and new_set[1]):
+            new.set = (False, False)
             msg = struct.pack("Bff", msg_dict["DV_RAW_MODE"],serial_y,serial_y)
 
              
