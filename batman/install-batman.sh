@@ -4,6 +4,7 @@ then
 else
     BATINTERFACE=$1
 fi
+cd ~/
 
 
 sudo rfkill unblock all
@@ -48,6 +49,7 @@ sudo ifconfig bat0 up
 sudo iw $BATINTERFACE set power_save off
 " | tee -a $(pwd)/start-batman-adv.sh
 
+
 rm -f ~/connect-to-gateway.sh
 touch ~/connect-to-gateway.sh
 echo "
@@ -58,13 +60,9 @@ nameserver 1.1.1.1
 nameserver 8.8.8.8
 ' | sudo tee -a /etc/resolv.conf
 sudo ip route delete default
-sudo ip route add default via 169.254.1.1 dev bat0
+sudo ip route add default via 169.254.0.0 dev bat0
+sudo dhcpcd -g
 " | tee -a ~/connect-to-gateway.sh
-
-rm -f ~/watchBat.sh
-touch ~/watchBat.sh
-chmod +x ~/watchBat.sh
-echo "watch -n .1 'sudo batctl gwl;echo;echo;echo;sudo batctl o | grep -ie BATMAN -ie last-seen -ie \*'" | tee -a ~/watchBat.sh
 
 
 # Enable interfaces on boot
