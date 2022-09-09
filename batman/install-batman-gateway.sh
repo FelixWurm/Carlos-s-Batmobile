@@ -22,7 +22,7 @@ then
     return 0
 fi
 
-sudo apt install iptables dnsmasq
+sudo apt install iptables dnsmasq -y
 
 
 rm $(pwd)/start-batman-adv.sh
@@ -52,7 +52,7 @@ sudo iptables -t nat -F
 # Activate interfaces
 sudo ifconfig $BATINTERFACE up
 sudo ifconfig bat0 up
-sudo ifconfig bat0 169.254.1.1/16
+sudo ifconfig bat0 $NETIP/16
 " | tee -a $(pwd)/start-batman-adv.sh
 
 
