@@ -25,19 +25,24 @@ serial_select_rover = 0;
 serial_port = 0
 
 def serial_read(current_device, devices,ser):
+    global serial_x
+    global serial_y
     cash = ser.readline()
     if cash:
         cash = cash.decode()
         end = len(cash)-1
+        #speed
         if cash[0] == 'Y':
-            
-        serial_y = decode_number(cash)
-        
+            serial_y = decode_number(cash)
+        return serial_y
+        #direction
         if cash[0] == 'X':
             serial_x = decode_number(cash)
             
         if cash[0] == 'T':
-            next_device(current_device, devices)
+            return True
+    
+    return False
             
     
 def decode_number(number: str):
@@ -156,14 +161,14 @@ def decode(msg,soc):
 
 
 def connect_new_clinet(last_ip):
-    if(last_ip != "0.0.0.0"):
+    if(last_ip == "0.0.0.0"):
         print("Please enter a IP adress you wish to connect to:")
         ip_addr = input()
         print("please enter a port:")
         ip_port = input()
         
     else:
-        ip_addr = last_ip
+        ip_addr = last_ip[0]
         ip_port = 50000
 
     try:
@@ -174,6 +179,7 @@ def connect_new_clinet(last_ip):
     
     try:
         soc = connect(ip_addr, ip_port)
+        return soc
     except:
         print
 
@@ -205,7 +211,8 @@ devices = []
 
 
 def main():
-    
+    global serial_x
+    global serial_y
     print("Welcome to the ideal Roboter controll Center")
 
     print(get_local_ip(), "<< Local IP")
@@ -222,7 +229,11 @@ def main():
     while(True):
         #Serial controller stuff
         if serial_enable:
-            serial_read(current_serial_device, devices,serial_port)
+            if serial_read(current_serial_device, devices,serial_port):
+                #next_device(0,devices)
+                pass
+            
+        msg = struct.pack("Bff", msg_dict["DV_RAW_MODE"],serial_y,serial_y) 
         
         
         #auto discovery
@@ -266,7 +277,7 @@ def main():
                     help("gerneal")
                 
                 if(cash[0] == "C"):
-                    connect_new_clinet(last_ip)
+                    devices.append(connect_new_clinet(last_ip))
                     last_ip = ".0.0.0.0"
                 
                 if(cash[0] == "Y"):
