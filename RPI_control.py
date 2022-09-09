@@ -4,6 +4,7 @@
 import select, sys, struct
 import RPi.GPIO as GPIO
 from time import sleep as sl
+import time
 import socket
 import asyncio
 import websockets
@@ -170,22 +171,37 @@ def tcp_setup():
 
 
 def main():
+    #setup the TCP server
     soc = tcp_setup()
-    #send discovery signal once, should by send every minuit, nonblocking server requiert. 
+    
+    
+    #send discovery signal once, should by send every minuit, nonblocking server requiert.
     udp_soc = udp_discovery_setup()
     udp_discovery(udp_port, udp_addr, udp_soc,msg_udp_dict["REDY_CON"])
     
     
     print("IP:", get_local_ip())
     
-    #last_raw_update = sl.clock_gettime_ns(0)
+    
+    #some RAW_Mode suff
+    raw_mode = False
+    last_update = 0
+    
+    
     
     while(True):
-        conn, addr = soc.accept()       
         
+        #connect to an avalible Host, print out the host adress
+        conn, addr = soc.accept()       
         print("Connectet to ", addr)
     
         while(True):
+            #RAW mode Watchdog
+            #1ns = 1E-9s
+            if time.clock_gettime_ns() - (time_last_update + 500000000):
+                set_motor_speed(0,0)
+                
+            
             try:
                 data = conn.recv(1024)
                 print(data)
@@ -199,6 +215,8 @@ def main():
                 if ID == msg_dict["DV_RAW_MODE"]:
                     data = struct.unpack("Bff",data)
                     set_motor_speed(data[1], data[2])
+                    raw_mode = True
+                    last_update = time.clock_gettime_ns(0)
 
             except Exception as e:
                 print(e)

@@ -4,6 +4,8 @@
 from logging import exception
 import socket
 from time import sleep as sl
+import time
+
 from typing import Counter
 from unittest import skip
 import struct
@@ -20,6 +22,8 @@ def serial_connect(device_name):
 
 serial_x = 0
 serial_y = 0
+
+
 serial_select_rover = 0;
 
 serial_port = 0
@@ -201,18 +205,33 @@ def auto_discovery(udp_soc):
         
     return False
         
-def next_device(cuurent_device, devices):
-    if devices[cuurent_device +1]:
-        return cuurent_device +1
-    else:
+def next_device(current_device, devices):
+    try:
+        if devices[current_device +1]:
+            return current_device +1
+        print("Device changed to:", current_device)
+    
+    except:
+        current_device = 0
+        print("Device changed to:", 0)
         return 0
 
+#list off sochets to all the connectet devices
 devices = []
 
 
 def main():
+    
+    #Values for seriell Stuff
     global serial_x
     global serial_y
+    global new_set
+    time_last_update
+    
+    
+    serial_selectet_device = 0
+    
+    
     print("Welcome to the ideal Roboter controll Center")
 
     print(get_local_ip(), "<< Local IP")
@@ -230,10 +249,15 @@ def main():
         #Serial controller stuff
         if serial_enable:
             if serial_read(current_serial_device, devices,serial_port):
-                #next_device(0,devices)
+                next_device(serial_selectet_device,devices)
                 pass
             
-        msg = struct.pack("Bff", msg_dict["DV_RAW_MODE"],serial_y,serial_y) 
+        
+        #if there is new data from the Joystick
+        if(new_set[0] && new_set[1]):
+            msg = struct.pack("Bff", msg_dict["DV_RAW_MODE"],serial_y,serial_y)
+
+             
         
         
         #auto discovery
