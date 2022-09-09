@@ -25,7 +25,7 @@ main (int argc, char *argv[])
     GOptionContext *optctx;
     GError *error = nullptr;
 
-    optctx = g_option_context_new ("<launch line> - Test RTSP Server, Launch\n\n"
+    optctx = g_option_context_new ("<launch line> - Cam RTSP Server, Launch\n\n"
                                    "Example: \" pipeline.conf\"");
     g_option_context_add_main_entries (optctx, entries, nullptr);
     g_option_context_add_group (optctx, gst_init_get_option_group ());
@@ -62,7 +62,7 @@ main (int argc, char *argv[])
     gst_rtsp_media_factory_set_shared (factory, TRUE);
 
     /* attach the test factory to the /test url */
-    gst_rtsp_mount_points_add_factory (mounts, "/test", factory);
+    gst_rtsp_mount_points_add_factory (mounts, "/cam", factory);
 
     /* don't need the ref to the mapper anymore */
     g_object_unref (mounts);
@@ -71,7 +71,7 @@ main (int argc, char *argv[])
     gst_rtsp_server_attach (server, nullptr);
 
     /* start serving */
-    g_print ("stream ready at rtsp://127.0.0.1:%s/test\n", port);
+    g_print ("stream ready at rtsp://127.0.0.1:%s/cam\n", port);
     g_main_loop_run (loop);
 
     return 0;
