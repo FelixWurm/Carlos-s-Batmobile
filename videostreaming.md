@@ -63,4 +63,8 @@ version 8 i-frames:
 
 `mkdir build` -> `cd build` -> `cmake ..` -> `make`
 
+### Sender: rtsp server
 `cd build` -> `./rtsp_server ../pipeline.conf`
+
+### Receiver: rtsp server
+`ffplay -fflags nobuffer -flags low_delay -framedrop rtsp://127.0.0.1:8554/cam`
