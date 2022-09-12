@@ -36,6 +36,7 @@ sudo rm -f /etc/rc.local
 sudo touch /etc/rc.local
 sudo chmod +x /etc/rc.local
 echo "
+#!/bin/sh -e
 $(pwd)/start-batman-adv.sh
 exit 0
 " | sudo tee -a /etc/rc.local
