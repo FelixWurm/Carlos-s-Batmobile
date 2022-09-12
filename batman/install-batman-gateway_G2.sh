@@ -48,7 +48,7 @@ sudo iptables -t nat -F
 # Activate interfaces
 sudo ifconfig $BATINTERFACE up
 sudo ifconfig bat0 up
-sudo ifconfig bat0 $NETIP/16
+sudo ifconfig bat0 $NETIP/24
 " | tee -a $(pwd)/start-batman-adv.sh
 
 
