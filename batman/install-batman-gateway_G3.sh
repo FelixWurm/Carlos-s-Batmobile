@@ -61,7 +61,7 @@ sudo touch /etc/dnsmasq.conf
 echo "
 interface=bat0
 no-dhcp-interface=eth0
-dhcp-range=169.254.3.5,169.3.254.254,254.254.0.0,infinite
+dhcp-range=169.254.3.5,169.254.3.254,254.254.0.0,infinite
 " | sudo tee -a  /etc/dnsmasq.conf
 
 echo Installation done. Rebooting...

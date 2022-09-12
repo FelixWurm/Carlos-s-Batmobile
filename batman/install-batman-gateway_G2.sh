@@ -57,13 +57,13 @@ sudo touch /etc/dnsmasq.conf
 echo "
 interface=bat0
 no-dhcp-interface=eth0
-dhcp-range=169.254.3.5,169.3.254.254,12h
+dhcp-range=169.254.3.5,169.254.3.254,12h
 dhcp-option=option:router,$NETIP
 dhcp-option=option:dns-server,192.168.1.1
 
 dhcp-lease-max=1000
 dhcp-rapid-commit
-dhcp-script /home/pi/Carlos-s-Batmobile/batman/dhcp-logger.sh
+#dhcp-script /home/pi/Carlos-s-Batmobile/batman/dhcp-logger.sh
 
 log-queries
 log-dhcp
