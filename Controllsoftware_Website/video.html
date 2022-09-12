@@ -32,19 +32,27 @@
         <a href="#" id="right">&#8594;</a>
     </div>
     <script src="jquery-3.6.1.min.js"></script>
-    <script>let streams = {"27aec28e-6181-4753-9acd-0456a75f0289":{"name":"111111111","channels":{"0":{"url":"rtsp://192.168.137.142:8554/cam","on_demand":true},"1":{"url":"rtmp://171.25.232.10/12d525bc9f014e209c1280bc0d46a87e","status":1}}}};
+    <script>let streams = {
+        "27aec28e-6181-4753-9acd-0456a75f0289": {
+            "name": "111111111",
+            "channels": {
+                "0": {"url": "rtsp://192.168.137.142:8554/cam", "on_demand": true},
+                "1": {"url": "rtmp://171.25.232.10/12d525bc9f014e209c1280bc0d46a87e", "status": 1}
+            }
+        }
+    };
     </script>
     <script>
         let webrtc, webrtcSendChannel;
         let mediaStream;
 
-        $(document).ready(() => {
+        document.addEventListener("DOMContentLoaded", function() {
             startPlay();
         });
 
         async function startPlay() {
             mediaStream = new MediaStream();
-            $("#videoPlayer")[0].srcObject = mediaStream;
+            document.querySelector('#videoPlayer').srcObject = mediaStream;
             webrtc = new RTCPeerConnection({
                 iceServers: [{
                     urls: ["stun:stun.l.google.com:19302"]
@@ -128,8 +136,15 @@
         }
 
         async function handleNegotiationNeeded() {
-            let uuid = $('#uuid').val();
-            let channel = $('#channel').val();
+
+            const uuid = '27aec28e-6181-4753-9acd-0456a75f0289'
+            let channel;
+
+            if (window.location.hash) {
+                channel = window.location.hash.replace(/\D/g, '');
+            } else {
+                channel = 0;
+            }
             let url = "/stream/" + uuid + "/channel/" + channel + "/webrtc?uuid=" + uuid + '&channel=' + channel;
             let offer = await webrtc.createOffer();
 
@@ -150,7 +165,7 @@
             });
         }
 
-        $("#videoPlayer")[0].addEventListener('error', () => {
+        document.querySelector('#videoPlayer').addEventListener('error', () => {
             console.log('video_error')
         });
     </script>
