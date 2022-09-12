@@ -35,15 +35,14 @@ iface $BATINTERFACE inet manual
 sudo rm -f /etc/rc.local
 sudo touch /etc/rc.local
 sudo chmod +x /etc/rc.local
-echo "
-#!/bin/sh -e
-$(pwd)/start-batman-adv.sh
+echo "#!/bin/sh -e
+/home/pi/start-batman-adv.sh
 exit 0
 " | sudo tee -a /etc/rc.local
 
-rm -f $(pwd)/start-batman-adv.sh
-touch $(pwd)/start-batman-adv.sh
-chmod +x $(pwd)/start-batman-adv.sh
+rm -f /home/pi/start-batman-adv.sh
+touch /home/pi/start-batman-adv.sh
+chmod +x /home/pi/start-batman-adv.sh
 echo "
 sudo batctl if add $BATINTERFACE
 sudo ifconfig bat0 mtu 1468
@@ -51,7 +50,7 @@ sudo batctl gw_mode client
 sudo ifconfig $BATINTERFACE up
 sudo ifconfig bat0 up
 # sudo iw $BATINTERFACE set power_save off
-" | tee -a $(pwd)/start-batman-adv.sh
+" | tee -a /home/pi/start-batman-adv.sh
 
 
 echo Installation done. Rebooting...
