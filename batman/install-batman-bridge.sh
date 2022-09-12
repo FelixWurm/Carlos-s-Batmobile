@@ -14,7 +14,7 @@ echo "denyinterfaces bat0" | sudo tee --append /etc/dhcpcd.conf
 rm /home/pi/start-batman-adv.sh
 touch /home/pi/start-batman-adv.sh
 chmod +x /home/pi/start-batman-adv.sh
-echo "#!/bin/bash
+echo "
 # batman-adv interface to use
 sudo batctl if add wlan0
 sudo ifconfig bat0 mtu 1468
@@ -33,3 +33,7 @@ sudo ifconfig bat0 up
 sudo dhclient -r br0
 sudo dhclient br0
 " | tee -a /home/pi/start-batman-adv.sh
+
+echo Installation done. Rebooting...
+sleep 5
+reboot
