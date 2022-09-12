@@ -1,7 +1,7 @@
 
 BATINTERFACE="wlan0"
 GATEINTERFACE="eth0"
-NETIP=""
+NETIP="192.168.199.1"
 
 while getopts b:g:n: flag
 do
@@ -46,7 +46,7 @@ sudo iptables -A FORWARD -i bat0 -o $GATEINTERFACE -j ACCEPT
 # Activates batman-adv interfaces
 sudo ifconfig $BATINTERFACE up
 sudo ifconfig bat0 up
-sudo ifconfig bat0 192.168.199.1/24
+sudo ifconfig bat0 $NETIP/24
 " | tee -a $(pwd)/start-batman-adv.sh
 
 
