@@ -32,13 +32,13 @@ iface $BATINTERFACE inet manual
 " | sudo tee -a /etc/network/interfaces.d/$BATINTERFACE
     
 
-rm -f /etc/rc.local
-touch /etc/rc.local
-chmod +x /etc/rc.local
+sudo rm -f /etc/rc.local
+sudo touch /etc/rc.local
+sudo chmod +x /etc/rc.local
 echo "
 $(pwd)/start-batman-adv.sh
 exit 0
-" | tee -a /etc/rc.local
+" | sudo tee -a /etc/rc.local
 
 rm -f $(pwd)/start-batman-adv.sh
 touch $(pwd)/start-batman-adv.sh
