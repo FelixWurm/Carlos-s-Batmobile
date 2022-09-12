@@ -1,4 +1,4 @@
-sudo rm /etc/network/interfaces.d/bat0
+sudo rm -f /etc/network/interfaces.d/bat0
 
 sudo rm -f /etc/network/interfaces.d/wlan0
 sudo touch /etc/network/interfaces.d/wlan0
