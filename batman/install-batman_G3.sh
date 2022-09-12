@@ -32,6 +32,14 @@ iface $BATINTERFACE inet manual
 " | sudo tee -a /etc/network/interfaces.d/$BATINTERFACE
     
 
+rm -f /etc/rc.local
+touch /etc/rc.local
+chmod +x /etc/rc.local
+echo "
+$(pwd)/start-batman-adv.sh
+exit 0
+" | tee -a /etc/rc.local
+
 rm -f $(pwd)/start-batman-adv.sh
 touch $(pwd)/start-batman-adv.sh
 chmod +x $(pwd)/start-batman-adv.sh
@@ -45,7 +53,6 @@ sudo ifconfig bat0 up
 " | tee -a $(pwd)/start-batman-adv.sh
 
 
-sudo sed -i 's/exit 0/\/home\/pi\/start-batman-adv.sh\nexit 0/' /etc/rc.local
 echo Installation done. Rebooting...
 sleep 5
 reboot
