@@ -44,10 +44,6 @@ sudo iptables -t nat -A POSTROUTING ! -d 169.254.0.0/16 -o $GATEINTERFACE -j SNA
 sudo iptables -F
 sudo iptables -t nat -F
 
-#sudo iptables -t nat -A POSTROUTING -o $GATEINTERFACE -j MASQUERADE
-#sudo iptables -A FORWARD -i $GATEINTERFACE -o bat0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-#sudo iptables -A FORWARD -i bat0 -o $GATEINTERFACE -j ACCEPT
-
 
 # Activate interfaces
 sudo ifconfig $BATINTERFACE up
@@ -60,8 +56,25 @@ sudo rm /etc/dnsmasq.conf
 sudo touch /etc/dnsmasq.conf
 echo "
 interface=bat0
-dhcp-range=169.254.1.5,169.254.255.255,255.255.0.0,12h
+no-dhcp-interface=eth0
+dhcp-range=169.254.3.5,169.3.254.254,12h
+dhcp-option=option:router,$NETIP
+dhcp-option=option:dns-server,192.168.1.1
+
+dhcp-lease-max=1000
+dhcp-rapid-commit
+dhcp-script /home/pi/Carlos-s-Batmobile/batman/dhcp-logger.sh
+
+log-queries
+log-dhcp
+
+no-resolv
+address=/gateway/169.254.0.0
+dhcp-host=B2:3C:89:E1:D8:7A,spanier-ohne-auto-c # iwconfig cell
+dhcp-host=b8:27:eb:c3:27:9b,spanier-ohne-auto-w # ifconfig wlan0
+dhcp-host=3e:fa:da:13:fb:d5,spanier-ohne-auto-b # ifconfig bat0
 " | sudo tee -a  /etc/dnsmasq.conf
+chmod +x $(pwd)/Carlos-s-Batmobile/batman/dhcp-logger.sh
 
 echo Installation done. Rebooting...
 sleep 5
