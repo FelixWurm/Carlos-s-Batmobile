@@ -27,7 +27,7 @@ sudo touch /etc/network/interfaces.d/$BATINTERFACE
 echo "auto $BATINTERFACE
 iface $BATINTERFACE inet manual
     wireless-channel 3
-    wireless-essid BatNetG3
+    wireless-essid BatNet
     wireless-mode ad-hoc
 " | sudo tee -a /etc/network/interfaces.d/$BATINTERFACE
     
