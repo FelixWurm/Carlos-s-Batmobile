@@ -11,9 +11,9 @@ echo "denyinterfaces eth0" | sudo tee --append /etc/dhcpcd.conf
 echo "denyinterfaces bat0" | sudo tee --append /etc/dhcpcd.conf
 
 
-rm $(pwd)/start-batman-adv.sh
-touch $(pwd)/start-batman-adv.sh
-chmod +x $(pwd)/start-batman-adv.sh
+rm /home/pi/start-batman-adv.sh
+touch /home/pi/start-batman-adv.sh
+chmod +x /home/pi/start-batman-adv.sh
 echo "#!/bin/bash
 # batman-adv interface to use
 sudo batctl if add wlan0
@@ -32,4 +32,4 @@ sudo ifconfig bat0 up
 # Restart DHCP now bridge and mesh network are up
 sudo dhclient -r br0
 sudo dhclient br0
-" | tee -a $(pwd)/start-batman-adv.sh
+" | tee -a /home/pi/start-batman-adv.sh
