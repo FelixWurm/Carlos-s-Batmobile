@@ -45,4 +45,7 @@ sudo ifconfig bat0 up
 " | tee -a $(pwd)/start-batman-adv.sh
 
 
-echo insert $(pwd)/start-batman-adv.sh to /etc/rc.local before exit 0 and reboot
+sudo sed -i 's/exit 0/\/home\/pi\/start-batman-adv.sh\nexit 0/' /etc/rc.local
+echo Installation done. Rebooting...
+sleep 5
+reboot
