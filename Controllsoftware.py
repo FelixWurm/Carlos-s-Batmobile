@@ -2,15 +2,25 @@
 
 
 from logging import exception
+#TCP and UDP conection
 import socket
+
+#Timing
 from time import sleep as sl
 import time
 
-from typing import Counter
-from unittest import skip
+
+#from typing import Counter
+#from unittest import skip
+
+#struct to decode TCP packets
 import struct
+
+#waiting system
 import sys
 import select
+
+#Serial connection to the Joistick
 import serial
     
     
@@ -22,7 +32,7 @@ def serial_connect(device_name):
 
 serial_x = 0
 serial_y = 0
-new_set = (False, False)
+new_set = [False, False]
 
 serial_select_rover = 0;
 
@@ -39,7 +49,6 @@ def serial_read(current_device, devices,ser):
         if cash[0] == 'Y':
             serial_y = decode_number(cash)
             new_set[0] = True
-        return serial_y
         #direction
         if cash[0] == 'X':
             serial_x = decode_number(cash)
@@ -186,7 +195,7 @@ def connect_new_clinet(last_ip):
         soc = connect(ip_addr, ip_port)
         return soc
     except:
-        print
+        print("Faild to connect to Server")
 
 
 def setup_auto_discovery(port):
@@ -219,6 +228,11 @@ def next_device(current_device, devices):
 
 #list off sochets to all the connectet devices
 devices = []
+devices_last_keepalive = {}
+
+#!TOTO
+#Build to websockets, one at post 80 for the HTTP
+
 
 
 def main():
@@ -254,8 +268,19 @@ def main():
         
         #if there is new data from the Joystick
         if(new_set[0] and new_set[1]):
-            new.set = (False, False)
-            msg = struct.pack("Bff", msg_dict["DV_RAW_MODE"],serial_y,serial_y)
+            speed_a = serial_y
+            speed_b = serial_y
+            if(serial_x < 0):
+                serial_x = serial_x *(-1)
+                speed_b = speed_b - (serial_x * ((serial_y - 40) / 100))
+            else:
+                speed_a = speed_a - (serial_x * ((serial_y - 40) / 100))
+                
+            
+            new_set = [False, False]
+            msg = struct.pack("Bff", msg_dict["DV_RAW_MODE"],speed_a,speed_b)
+            devices[current_serial_device].sendall(msg)
+            print(serial_y)
 
              
         
@@ -274,7 +299,9 @@ def main():
             ready = select.select([soc],[],[],0)
             if ready[0]:
                 msg = soc.recv(2048)
-                decode(msg,soc)
+                if msg:
+                    if msg[0] == msg_dict["STAY_ALLIVE"]:
+                        devices_last_keepalive[soc.fileno()] = time.clock_gettime_ns(0)
             
             
         #read out the Keyboard
@@ -302,6 +329,7 @@ def main():
                 
                 if(cash[0] == "C"):
                     devices.append(connect_new_clinet(last_ip))
+                    devices_last_keepalive [devices[len(devices)-1].fileno()] = time.clock_gettime_ns(0)
                     last_ip = ".0.0.0.0"
                 
                 if(cash[0] == "Y"):
@@ -321,14 +349,6 @@ def main():
                     print("connected!")
                     
                     
-
-
-
-    soc.close()
-
-
-d = []
-d.append(2)
 
 
 main()
