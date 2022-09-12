@@ -29,30 +29,24 @@ rm $(pwd)/start-batman-adv.sh
 touch $(pwd)/start-batman-adv.sh
 chmod +x $(pwd)/start-batman-adv.sh
 echo "
+#!/bin/bash
+# batman-adv interface to use
 sudo batctl if add $BATINTERFACE
+sudo ifconfig bat0 mtu 1468
+
+# Tell batman-adv this is an internet gateway
 sudo batctl gw_mode server
 
-
-# routing / internet access
-sudo ip route add 169.254.0.0/16 dev bat0
-# sudo route add -net 169.254.0.0/16 dev bat0
-
+# Enable port forwarding
 sudo sysctl -w net.ipv4.ip_forward=1
+sudo iptables -t nat -A POSTROUTING -o $GATEINTERFACE -j MASQUERADE
+sudo iptables -A FORWARD -i $GATEINTERFACE -o bat0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+sudo iptables -A FORWARD -i bat0 -o $GATEINTERFACE -j ACCEPT
 
-sudo iptables -t nat -A POSTROUTING ! -d 169.254.0.0/16 -o $GATEINTERFACE -j SNAT --to-source $NETIP
-# sudo iptables -t nat -A POSTROUTING ! -d 169.254.0.0/16 -o $GATEINTERFACE -j MASQUERADE
-sudo iptables -F
-sudo iptables -t nat -F
-
-#sudo iptables -t nat -A POSTROUTING -o $GATEINTERFACE -j MASQUERADE
-#sudo iptables -A FORWARD -i $GATEINTERFACE -o bat0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-#sudo iptables -A FORWARD -i bat0 -o $GATEINTERFACE -j ACCEPT
-
-
-# Activate interfaces
+# Activates batman-adv interfaces
 sudo ifconfig $BATINTERFACE up
 sudo ifconfig bat0 up
-sudo ifconfig bat0 $NETIP/24
+sudo ifconfig bat0 192.168.199.1/24
 " | tee -a $(pwd)/start-batman-adv.sh
 
 
@@ -61,7 +55,7 @@ sudo touch /etc/dnsmasq.conf
 echo "
 interface=bat0
 no-dhcp-interface=eth0
-dhcp-range=169.254.3.5,169.254.3.254,254.254.0.0,infinite
+dhcp-range=192.168.199.2,192.168.199.99,255.255.255.0,12h
 " | sudo tee -a  /etc/dnsmasq.conf
 
 echo Installation done. Rebooting...
