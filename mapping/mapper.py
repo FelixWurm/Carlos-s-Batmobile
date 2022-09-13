@@ -1,8 +1,8 @@
-from bluepy.btle import Scanner
+# bluetooth low energy scan
+from bluetooth.ble import DiscoveryService
 
-scanner = Scanner()
-devices = scanner.scan(20.0)
+service = DiscoveryService()
+devices = service.discover(2)
 
-for device in devices:
-    print(f"DEV={device.addr} TYPE={device.addrType}  RSSI={device.rssi}")
-    device.getScanData()
+for address, name in devices.items():
+    print("name: {}, address: {}".format(name, address))
