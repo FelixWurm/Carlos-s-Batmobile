@@ -229,7 +229,9 @@ def main():
 
                 if ID == dict.msg_dict["DV_ROTATE"]:
                     data = struct.unpack("!Bf",data)
-                    set_motor_speed(convert_to_motor(data[1] * (-1)), convert_to_motor(data))
+                    cash = data[1]
+                    cash = cash *(-1)
+                    set_motor_speed(convert_to_motor(cash), convert_to_motor(data))
 
 
 
