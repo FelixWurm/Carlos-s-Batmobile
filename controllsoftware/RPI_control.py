@@ -178,6 +178,8 @@ def convert_to_motor(input):
         input -40
     else:
         input +40
+        
+    return input
 
 
 def main():
