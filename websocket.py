@@ -1,8 +1,8 @@
 import asyncio
-import json
-import struct
 import enum
+import json
 import socket
+import struct
 
 import websockets
 
@@ -16,8 +16,9 @@ class State(enum.Enum):
 
 
 STATE = State.KEEP_ALIVE
-
 UPDATE_EVENT = asyncio.Event()
+
+SPEED = 100
 
 
 async def carlos_controller():
@@ -25,21 +26,21 @@ async def carlos_controller():
 
     while True:
         try:
-            await asyncio.wait_for(UPDATE_EVENT.wait(), timeout=1)
+            await asyncio.wait_for(UPDATE_EVENT.wait(), timeout=0.2)
             UPDATE_EVENT.clear()
         except asyncio.exceptions.TimeoutError:
             pass
         data = []
         if STATE == State.FORWARD:
-            data = struct.pack("!Bff", int(1), 100, 5)
+            data = struct.pack("!Bf", int(1), 100)
         if STATE == State.BACKWARDS:
-            data = struct.pack("!Bff", int(1), -100, 5)
+            data = struct.pack("!Bf", int(1), -100)
         if STATE == State.KEEP_ALIVE:
-            data = struct.pack("!Bd", int(1), 1)
+            data = struct.pack("!B", int(6))
         if STATE == State.ROTATE_RIGHT:
-            data = struct.pack("!Bff", int(2), 100, 5)
+            data = struct.pack("!Bf", int(2), 100)
         if STATE == State.ROTATE_LEFT:
-            data = struct.pack("!Bff", int(2), -100, 5)
+            data = struct.pack("!Bf", int(2), -100)
 
         sock.sendto(data, ("192.168.199.24", 22))
         print(STATE)
