@@ -21,52 +21,37 @@ echo "batman-adv" | sudo tee --append /etc/modules
 # Prevent DHCPCD from automatically configuring $BATINTERFACE
 echo "denyinterfaces $BATINTERFACE" | sudo tee --append /etc/dhcpcd.conf
 
-sudo rm -f /etc/network/interfaces.d/bat0
-sudo touch /etc/network/interfaces.d/bat0
-echo "auto bat0
-iface bat0 inet auto
-    pre-up /usr/sbin/batctl if add $BATINTERFACE" | sudo tee -a /etc/network/interfaces.d/bat0
 
 sudo rm -f /etc/network/interfaces.d/$BATINTERFACE
 sudo touch /etc/network/interfaces.d/$BATINTERFACE
 echo "auto $BATINTERFACE
 iface $BATINTERFACE inet manual
-    mtu 1532
     wireless-channel 3
     wireless-essid BatNet
     wireless-mode ad-hoc
-    wireless-ap 02:12:34:56:78:9A" | sudo tee -a /etc/network/interfaces.d/$BATINTERFACE
+" | sudo tee -a /etc/network/interfaces.d/$BATINTERFACE
     
 
-rm -f $(pwd)/start-batman-adv.sh
-touch $(pwd)/start-batman-adv.sh
-chmod +x $(pwd)/start-batman-adv.sh
+sudo rm -f /etc/rc.local
+sudo touch /etc/rc.local
+sudo chmod +x /etc/rc.local
+echo "#!/bin/sh -e
+/home/pi/start-batman-adv.sh
+exit 0
+" | sudo tee -a /etc/rc.local
+
+rm -f /home/pi/start-batman-adv.sh
+touch /home/pi/start-batman-adv.sh
+chmod +x /home/pi/start-batman-adv.sh
 echo "
 sudo batctl if add $BATINTERFACE
+sudo ifconfig bat0 mtu 1600
 sudo batctl gw_mode client
 sudo ifconfig $BATINTERFACE up
 sudo ifconfig bat0 up
-sudo iw $BATINTERFACE set power_save off
-" | tee -a $(pwd)/start-batman-adv.sh
+# sudo iw $BATINTERFACE set power_save off
+" | tee -a /home/pi/start-batman-adv.sh
 
-
-rm -f ~/connect-to-gateway.sh
-touch ~/connect-to-gateway.sh
-echo "
-sudo rm -f /etc/resolv.conf
-sudo touch /etc/resolv.conf
-echo '
-nameserver 1.1.1.1
-nameserver 8.8.8.8
-' | sudo tee -a /etc/resolv.conf
-sudo ip route delete default
-sudo ip route add default via 169.254.0.0 dev bat0
-sudo dhcpcd -g
-" | tee -a ~/connect-to-gateway.sh
-
-
-# Enable interfaces on boot
-echo "$(pwd)/start-batman-adv.sh" >> ~/.bashrc
 
 echo Installation done. Rebooting...
 sleep 5
