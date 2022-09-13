@@ -6,7 +6,8 @@ msg_dict = {
     "CONN_REQUEST"  : int(4),       #Request a conecction, No additional value
     "CONN_ACCEPT"   : int(5),       #Accept a connection, NO additional value
     "DV_STOP"       : int(6),       #no additional value
-    "ACK"           : int(7)        #singal that something was recived
+    "ACK"           : int(7),       #singal that something was recived
+    "READY_CONN"    : int(9)        #ready for connection(UDP auto discovery)
 }
 
 #in order to connect to the server send a CONN_REQUEST and wait for a CONN_ACCEPT.
