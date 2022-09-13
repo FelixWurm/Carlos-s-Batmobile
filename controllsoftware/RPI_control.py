@@ -166,7 +166,7 @@ def main():
     
     #send discovery signal once, should by send every minuit, nonblocking server requiert.
     udp_soc = udp_discovery_setup()
-    udp_discovery(udp_port, udp_addr, udp_soc,dict.msg_dict["REDY_CON"])
+    udp_discovery(udp_port, udp_addr, udp_soc,dict.msg_dict["REDY_CONN"])
     
     #try to connect to a UDP Server:
     ip_addr = udp_connect(soc)    
