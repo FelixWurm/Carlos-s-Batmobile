@@ -17,7 +17,7 @@ chmod +x /home/pi/start-batman-adv.sh
 echo "
 # batman-adv interface to use
 sudo batctl if add wlan0
-sudo ifconfig bat0 mtu 1468
+sudo ifconfig bat0 mtu 1600
 
 sudo brctl addbr br0
 sudo brctl addif br0 eth0 bat0

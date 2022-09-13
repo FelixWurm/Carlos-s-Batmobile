@@ -32,7 +32,7 @@ echo "
 #!/bin/bash
 # batman-adv interface to use
 sudo batctl if add $BATINTERFACE
-sudo ifconfig bat0 mtu 1468
+sudo ifconfig bat0 mtu 1600
 
 # Tell batman-adv this is an internet gateway
 sudo batctl gw_mode server

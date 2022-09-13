@@ -45,7 +45,7 @@ touch /home/pi/start-batman-adv.sh
 chmod +x /home/pi/start-batman-adv.sh
 echo "
 sudo batctl if add $BATINTERFACE
-sudo ifconfig bat0 mtu 1468
+sudo ifconfig bat0 mtu 1600
 sudo batctl gw_mode client
 sudo ifconfig $BATINTERFACE up
 sudo ifconfig bat0 up
