@@ -7,7 +7,7 @@ from time import sleep as sl
 import time
 import socket
 import asyncio
-import msg_dict
+import dict
 
 #Debug
 DEBUG = True
@@ -100,7 +100,7 @@ def drive_dst(speed, distance):
     else:
         speed_ = (speed - cash) /10
     time = distance / speed_distance[int(10-speed_)]
-    drive_(speed, time);
+    drive_(speed, time)
 
 
 def rotate(speed, time):
@@ -152,8 +152,8 @@ def udp_connect(soc = socket.socket):
     counter = 0
     while True:
         data, addr= soc.recvfrom(1024)
-        if data[0] == msg_dict["CONN_REQUEST"]:
-            soc.sendto(msg_dict["CONN_ACCEPT"])
+        if data[0] == dict.msg_dict["CONN_REQUEST"]:
+            soc.sendto(dict.msg_dict["CONN_ACCEPT"])
             return addr
         else:
             counter +1
@@ -166,7 +166,7 @@ def main():
     
     #send discovery signal once, should by send every minuit, nonblocking server requiert.
     udp_soc = udp_discovery_setup()
-    udp_discovery(udp_port, udp_addr, udp_soc,msg_dict["REDY_CON"])
+    udp_discovery(udp_port, udp_addr, udp_soc,dict.msg_dict["REDY_CON"])
     
     #try to connect to a UDP Server:
     ip_addr = udp_connect(soc)    
@@ -183,8 +183,8 @@ def main():
     while(True):           
         #RAW mode Watchdog
         #1ns = 1E-9s
-        if time.clock_gettime_ns() - (time_last_update + 500000000):
-            set_motor_speed(0,0)
+        #if time.clock_gettime_ns() - (time_last_update + 500000000):
+            #set_motor_speed(0,0)
             
         
         try:
@@ -193,7 +193,7 @@ def main():
                 print(data)
                 ID = data[0]
             
-                if ID == msg_dict["DV_STRAIGHT"]:
+                if ID == dict.msg_dict["DV_STRAIGHT"]:
                     data = struct.unpack("!Bf",data)
                     data[1] = data[1] * 0.6
                     if data[1] < 0:
@@ -202,11 +202,11 @@ def main():
                         data[1] + 40
                     set_motor_speed(data[1], data[1])
 
-                if ID == msg_dict["DV_STOP"]:
+                if ID == dict.msg_dict["DV_STOP"]:
                     set_motor_speed(0,0)
 
 
-                if ID == msg_dict["DV_RAW_MODE"]:
+                if ID == dict.msg_dict["DV_RAW_MODE"]:
                     data = struct.unpack("Bff",data)
                     set_motor_speed(data[1], data[2])
                     raw_mode = True
