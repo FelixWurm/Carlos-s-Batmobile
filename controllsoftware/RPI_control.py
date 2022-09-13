@@ -195,12 +195,12 @@ def main():
             
                 if ID == dict.msg_dict["DV_STRAIGHT"]:
                     data = struct.unpack("!Bf",data)
-                    data[1] = data[1] * 0.6
-                    if data[1] < 0:
-                        data[1] - 40
+                    cash = data[1] * 0.6
+                    if cash < 0:
+                        cash - 40
                     else:
-                        data[1] + 40
-                    set_motor_speed(data[1], data[1])
+                        cash + 40
+                    set_motor_speed(cash, cash)
 
                 if ID == dict.msg_dict["DV_STOP"]:
                     set_motor_speed(0,0)
