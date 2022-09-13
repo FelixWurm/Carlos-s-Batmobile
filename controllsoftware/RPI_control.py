@@ -153,7 +153,7 @@ def udp_connect(soc = socket.socket):
     while True:
         data, addr= soc.recvfrom(1024)
         if data[0] == dict.msg_dict["CONN_REQUEST"]:
-            soc.sendto(dict.msg_dict["CONN_ACCEPT"])
+            soc.sendto(dict.msg_dict["CONN_ACCEPT"], addr)
             return addr
         else:
             counter +1
@@ -166,7 +166,7 @@ def main():
     
     #send discovery signal once, should by send every minuit, nonblocking server requiert.
     udp_soc = udp_discovery_setup()
-    udp_discovery(udp_port, udp_addr, udp_soc,dict.msg_dict["REDY_CONN"])
+    udp_discovery(udp_port, udp_addr, udp_soc,dict.msg_dict["READY_CONN"])
     
     #try to connect to a UDP Server:
     ip_addr = udp_connect(soc)    
