@@ -207,46 +207,39 @@ def main():
         #if time.clock_gettime_ns() - (time_last_update + 500000000):
             #set_motor_speed(0,0)
             
+    
+        data, cur_ip_addr = soc.recvfrom(1024)
+        if (ip_addr == cur_ip_addr):
+            print(data)
+            ID = data[0]
         
-        try:
-            data, cur_ip_addr = soc.recvfrom(1024)
-            if (ip_addr == cur_ip_addr):
-                print(data)
-                ID = data[0]
-            
-                if ID == dict.msg_dict["DV_STRAIGHT"]:
-                    data = struct.unpack("!Bf",data)
-                    cash = data[1] * 0.6
-                    if cash < 0:
-                        cash - 40
-                    else:
-                        cash + 40
-                    set_motor_speed(cash, cash)
+            if ID == dict.msg_dict["DV_STRAIGHT"]:
+                data = struct.unpack("!Bf",data)
+                cash = data[1] * 0.6
+                if cash < 0:
+                    cash - 40
+                else:
+                    cash + 40
+                set_motor_speed(cash, cash)
 
-                if ID == dict.msg_dict["DV_STOP"]:
-                    set_motor_speed(0,0)
+            if ID == dict.msg_dict["DV_STOP"]:
+                set_motor_speed(0,0)
 
 
-                if ID == dict.msg_dict["DV_ROTATE"]:
-                    data = struct.unpack("!Bf",data)
-                    cash = data[1]
-                    cash = cash *(-1)
-                    set_motor_speed(convert_to_motor(cash), convert_to_motor(data[1]))
+            if ID == dict.msg_dict["DV_ROTATE"]:
+                data = struct.unpack("!Bf",data)
+                cash = data[1]
+                cash = cash *(-1)
+                set_motor_speed(convert_to_motor(cash), convert_to_motor(data[1]))
 
 
 
-                if ID == dict.msg_dict["DV_RAW_MODE"]:
-                    data = struct.unpack("Bff",data)
-                    set_motor_speed(data[1], data[2])
-                    raw_mode = True
-                    last_update = time.clock_gettime_ns(0)
+            if ID == dict.msg_dict["DV_RAW_MODE"]:
+                data = struct.unpack("Bff",data)
+                set_motor_speed(data[1], data[2])
+                raw_mode = True
+                last_update = time.clock_gettime_ns(0)
 
-        except Exception as e:
-            print(e)
-            break
-        finally:
-            pass
-            #conn.disconnect()
             
             
             
