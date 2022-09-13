@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>WebSocket demo</title>
+        <meta charset="UTF-8">
+        <link href="page.css"
+              rel="stylesheet">
+    </head>
+    <!--
+      <script type= "text/javascript">
+        function InputControl(){
+          var distance = document.getElementById('dist').value;
+          var speed = document.getElementById('speed').value;
+          var rotation = document.getElementById('rotat').value;
+
+          //if no input, then value = undefined, so we need to change it to 0
+          if(dist === undefined){
+            distance = 0;
+          }
+          if(speed === undefined){
+            speed = 0;
+          }
+          if(rotation === undefined){
+            rotation = 0;
+          }
+
+          //to prevent incorrect input values for our functions
+          if((speed> -40 && speed <40 && speed != 0)||(speed >100 || speed< -100)){
+            alert("Please enter a positive or negative between 40 and 100");
+            return false;
+          }
+          if(rotation< -360 || rotation > 360){
+            alert("Please do maxiumum 360 degree turns only");
+            return false;
+          }
+        }
+      </script>
+    -->
+    
+    
+    <body>
+        <script src="main.js"></script> <!-- <script scr="main.js" type="module"></script>-->
+
+        <div id="seite">
+          <h1>Carlos' batmobile</h1>
+          <!--if not working going for button onclick and no form instead (scr: https://www.freecodecamp.org/news/html-form-input-type-and-submit-button-example/)-->
+          <form action="http;//localhost: 5678" method="POST">
+            <label for "dist">Enter distance in m: </label>
+            <input type="number" name="dist" id = dist placeholder="float"/> <br />
+            <label for "speed">Enter a speed: </label>
+            <input type="number" name="speed" id = speed placeholder="+/- 40-100 (int)"/> <br />
+            <label for "rotat">Enter a rotation</label>
+            <input type="number" name="rotat" id = rotat placeholder="-360 X 360 (int)"/> <br />
+            <input type="submit" value="Send" />
+          </form>
+
+          <!--
+          <button><input type="submit" value="Submit" onclick="InputControl()"/></button>
+          -->
+        </div>
+    </body>
+</html>

@@ -8,6 +8,7 @@ import time
 import socket
 import asyncio
 import websockets
+import msg_dict
 
 #Debug
 DEBUG = True
@@ -157,22 +158,28 @@ def udp_discovery(discovery_port, discovery_addres, udp_soc, msg):
 
 
 
-#TCP
-def tcp_setup():
-    soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#UDP
+def UDP_setup():
+    soc = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     #Bind Server to localhost
     soc.bind(("", 50000))
 
-    #Listen vor incomming connections
-    soc.listen(1)# wait for client connection
     return soc
 
-
+def udp_connect(soc = socket.socket):
+    while True:
+        data, addr= soc.recvfrom(1024)
+        if(data[0] == msg_dict[])
 
 def main():
     #setup the TCP server
-    soc = tcp_setup()
+    soc = UDP_setup()
+    
+    #try to connect to a UDP Server:
+    udp_connect(soc)
+
+
     
     
     #send discovery signal once, should by send every minuit, nonblocking server requiert.
@@ -190,9 +197,7 @@ def main():
     
     
     while(True):
-        
-        #connect to an avalible Host, print out the host adress
-        conn, addr = soc.accept()       
+            
         print("Connectet to ", addr)
     
         while(True):
