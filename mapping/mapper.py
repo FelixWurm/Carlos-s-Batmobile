@@ -1,8 +1,8 @@
 from bluepy.btle import Scanner
 
 scanner = Scanner()
-devices = scanner.scan(10.0)
+devices = scanner.scan(30.0)
 
 for device in devices:
-    print("DEV = {} RSSI = {}".format(device.addr, device.rssi))
+    print(f"DEV={device.addr} TYPE={device.addrType}  RSSI={device.rssi}")
     device.getScanData()
