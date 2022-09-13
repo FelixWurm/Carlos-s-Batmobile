@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>WebRTC</title>
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+        const websocket = new WebSocket("ws://localhost:8888");
+        const keys = ['w', 'a', 's', 'd'];
+        const pressedKeys = new Set();
+
+        document.addEventListener('keydown', function (event) {
+            keys.forEach(function (key) {
+                    if (key === event.key) {
+                        pressedKeys.add(key);
+                    }
+                }
+            )
+            checkPressedKeys();
+        });
+
+        document.addEventListener('keyup', function (event) {
+            keys.forEach(function (key) {
+                    if (key === event.key) {
+                        pressedKeys.delete(key);
+                    }
+                }
+            )
+            checkPressedKeys();
+        });
+
+        function checkPressedKeys() {
+            const [key] = pressedKeys;
+            if (key) {
+                sendKey(key);
+            } else {
+                sendKey('no_key');
+            }
+        }
+
+        function sendKey(key) {
+            const event = {type: "keyPress", key: key};
+            websocket.send(JSON.stringify(event));
+        }
+
+    </script>
+</body>
+</html>
