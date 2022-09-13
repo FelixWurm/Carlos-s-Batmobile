@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="mapping" pattern="file[Carlos-s-Batmobile]:mapping//*" />
+</component>
