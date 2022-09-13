@@ -1,2 +1,2 @@
-sudo apt-get install -y bluetooth python3-pip libglib2.0-dev
-sudo python3 -m pip install bluepy
+sudo apt-get install -y bluetooth python3-pip python-bluez python-dev libbluetooth-dev
+pip install pybluez
