@@ -70,16 +70,27 @@ def drive (speed_l, speed_r, time):
     pi_pwm_r_bwd.ChangeDutyCycle(0)
 
 def set_motor_speed(speed_l : int, speed_r :int):
-    if(speed_l > 0):
-        pi_pwm_l.ChangeDutyCycle(speed_l)
+    if speed_l == 0:
+         pi_pwm_l.ChangeDutyCycle(0)
+         pi_pwm_l_bwd.ChangeDutyCycle(0)
     else:
-        pi_pwm_l_bwd.ChangeDutyCycle(speed_l*(-1))
+        if(speed_l > 0):
+            pi_pwm_l.ChangeDutyCycle(speed_l)
+            pi_pwm_l_bwd.ChangeDutyCycle(0)
+        else:
+            pi_pwm_l.ChangeDutyCycle(0)
+            pi_pwm_l_bwd.ChangeDutyCycle(speed_l*(-1))
 
-
-    if(speed_r > 0):
-        pi_pwm_r.ChangeDutyCycle(speed_r)
+    if speed_r == 0:
+        pi_pwm_r.ChangeDutyCycle(0)
+        pi_pwm_r_bwd.ChangeDutyCycle(0) 
     else:
-        pi_pwm_r_bwd.ChangeDutyCycle(speed_r*(-1))    
+        if(speed_r > 0):
+            pi_pwm_r.ChangeDutyCycle(speed_r)
+            pi_pwm_r_bwd.ChangeDutyCycle(0)
+        else:
+            pi_pwm_r.ChangeDutyCycle(0)
+            pi_pwm_r_bwd.ChangeDutyCycle(speed_r*(-1))    
 
 
 def drive_ (speed, time):
@@ -159,6 +170,16 @@ def udp_connect(soc = socket.socket):
             counter +1
             print("conection with invalid init sequenz, open for retrys")
 
+
+#converts a number from -100 to 100 toto -100-40, 40-100
+def convert_to_motor(input):
+    input * 0.6
+    if(input < 0):
+        input -40
+    else:
+        input +40
+
+
 def main():
     #setup the TCP server
     soc = UDP_setup()
@@ -204,6 +225,12 @@ def main():
 
                 if ID == dict.msg_dict["DV_STOP"]:
                     set_motor_speed(0,0)
+
+
+                if ID == dict.msg_dict["DV_ROTATE"]:
+                    data = struct.unpack("!Bf",data)
+                    set_motor_speed(convert_to_motor(data[1] * (-1)), convert_to_motor(data))
+
 
 
                 if ID == dict.msg_dict["DV_RAW_MODE"]:
