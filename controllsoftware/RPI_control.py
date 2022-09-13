@@ -153,7 +153,7 @@ def udp_connect(soc = socket.socket):
     while True:
         data, addr= soc.recvfrom(1024)
         if data[0] == dict.msg_dict["CONN_REQUEST"]:
-            soc.sendto(dict.msg_dict["CONN_ACCEPT"], addr)
+            soc.sendto(struct.pack("!B", dict.msg_dict["CONN_ACCEPT"]), addr)
             return addr
         else:
             counter +1
