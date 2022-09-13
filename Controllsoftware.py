@@ -29,9 +29,74 @@ def serial_connect(device_name):
     return ser
 
 
+class device_maneger:
+    def __init__(ip,port,connect = False):
+        self.last_keepalive = time.time()
+        self.ip_addr = ip
+        self.ip_port = port
+        self.last_conn = 0
+        
+        if connect:
+            return self.connect()
+        else:
+            return True
+            
+    def connect():
+        print("Trying to connect to IP:", self.ip_addr,"  Port:", self.ip_port)
+
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.TCP_NODELAY)
+
+        Counter = 0
+        while True:
+            try:
+                self.sock.connect((ip_addr, ip_port))
+                self.last_comm = time.time()
+                return True
+            except Exception as e:
+                print("Faild to connect to server!.... Retrying")
+                print(str(e))
+                sl(1)
+
+            Counter = Counter +1
+            if Counter > 3:
+                print("FAILD to connect after 4 atemts. Exiting Programm")
+                exit()
+            
+        self.sock.setblocking(0)
+        print("Connection establoshed!")
+    
+    
+    
+    def send_data(msg):
+        counter = 0
+        while True:
+            try:
+                self.sock.sendall(msg)
+                self.last_conn = time.time()
+                return True
+            except:
+                if DEBUG:
+                    print("Faild to send data, Retrying...")
+                couner+1
+                
+                if(counter > 3):
+                    if DEBUG:
+                        print("Faild to connect after the 5th atempt")
+                    return False
+                    
+    def send_keepalive():
+        #sends if nesesary a keepalive signal. if the last communication is les then two seconds ago, do nothing
+        if(self.last_comm -time.time() < -2):
+            self.send_data(msg_dict["KEEP_ALIVE"])
+    
+    def set_keepalive():
+        self.last_comm = time.time()
+
+
 
 serial_x = 0
 serial_y = 0
+serial_Button = False
 new_set = [False, False]
 
 serial_select_rover = 0;
@@ -41,7 +106,13 @@ serial_port = 0
 def serial_read(current_device, devices,ser):
     global serial_x
     global serial_y
-    cash = ser.readline()
+    global serial_Button
+    try:
+        cash = ser.readline()
+    except:
+        print("Error trying to reed from device")
+        return False
+        
     if cash:
         cash = cash.decode()
         end = len(cash)-1
@@ -54,9 +125,8 @@ def serial_read(current_device, devices,ser):
             serial_x = decode_number(cash)
             new_set[1] = True
         if cash[0] == 'T':
-            return True
-    
-    return False
+            serial_Button = True
+    return True
             
     
 def decode_number(number: str):
@@ -121,32 +191,6 @@ def number(number_):
     return False 
 
 
-def connect(ip_addr, ip_port):
-    print("Trying to connect to IP:", ip_addr,"  Port:", ip_port)
-
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    Counter = 0
-    while True:
-        try:
-            sock.connect((ip_addr, ip_port))
-            return sock
-        except Exception as e:
-            print("Faild to connect to server!.... Retrying")
-            print(str(e))
-            sl(1)
-
-        Counter = Counter +1
-        if Counter > 3:
-            print("FAILD to connect after 3 atemts. Exiting Programm")
-            exit()
-            
-    sock.setblocking(0)
-    print("Connection establoshed!")
-
-
-
-
 #functions that findes a number and fives it back as a float
 def finde_number(input, position):
     first_number_found = False
@@ -170,8 +214,6 @@ def finde_number(input, position):
     return output
 
 
-def decode(msg,soc):
-    pass
 
 
 def connect_new_clinet(last_ip):
@@ -191,11 +233,14 @@ def connect_new_clinet(last_ip):
         print("Faild to reed in Port, please only use Numbers")
         exit()
     
-    try:
-        soc = connect(ip_addr, ip_port)
-        return soc
-    except:
-        print("Faild to connect to Server")
+    new_device = device_maneger(ip_addr, ip_port, False)
+    
+    if new_device.connect():
+        print("Device conectet Sucsesfully")
+        return new_device
+    else:
+        print("Faild to connect Device")
+
 
 
 def setup_auto_discovery(port):
@@ -214,6 +259,8 @@ def auto_discovery(udp_soc):
             return addr
         
     return False
+
+
         
 def next_device(current_device, devices):
     try:
@@ -228,11 +275,7 @@ def next_device(current_device, devices):
 
 #list off sochets to all the connectet devices
 devices = []
-devices_last_keepalive = {}
-
-#!TOTO
-#Build to websockets, one at post 80 for the HTTP
-
+            
 
 
 def main():
@@ -240,10 +283,12 @@ def main():
     #Values for seriell Stuff
     global serial_x
     global serial_y
+    global serial_Button
     global new_set
     
     time_last_update = 0
     serial_selectet_device = 0
+    console_select_device = 0
     
     #Programm Start, print some info
     print("Welcome to the ideal Roboter controll Center")
@@ -261,28 +306,53 @@ def main():
     while(True):
         #Serial controller stuff
         if serial_enable:
-            if serial_read(current_serial_device, devices,serial_port):
-                next_device(serial_selectet_device,devices)
-                pass
+            serial_read(current_serial_device, devices,serial_port)
             
+            if serial_Button:    
+                next_device(serial_selectet_device,devices)
+                serial_Button == False
+                
+
         
-        #if there is new data from the Joystick
-        if(new_set[0] and new_set[1]):
-            speed_a = serial_y
-            speed_b = serial_y
-            if(serial_x < 0):
-                serial_x = serial_x *(-1)
-                speed_b = speed_b - (serial_x * ((serial_y - 40) / 100))
-            else:
-                speed_a = speed_a - (serial_x * ((serial_y - 40) / 100))
+            #if there is new data from the Joystick
+            if(new_set[0] and new_set[1]):
+                speed_a = serial_y
+                speed_b = serial_y
+                if serial_y == 0:
+                    serial_x = serial_x * 0.6
+                   
+                    speed_a = serial_x
+                    if(speed_a < 0):
+                        speed_a -40
+                    else:
+                        speed_a +40
+                        
+                    speed_b = serial_x
+                    if(speed_b < 40):
+                        speed_b-40
+                    
+                    
+                    
+                else:
+                    if(serial_x < 0):
+                        serial_x = serial_x *(-1)
+                        speed_b = speed_b - (serial_x * ((serial_y - 40) / 100))
+                    else:
+                        speed_a = speed_a - (serial_x * ((serial_y - 40) / 100))
                 
             
-            new_set = [False, False]
-            msg = struct.pack("Bff", msg_dict["DV_RAW_MODE"],speed_a,speed_b)
-            devices[current_serial_device].sendall(msg)
-            print(serial_y)
+                new_set = [False, False]
+                msg = struct.pack("Bff", msg_dict["DV_RAW_MODE"],speed_a,speed_b)
+                
+                
+                devices[current_serial_device].sendall(msg)
 
-             
+        #end Serial Stuff
+         
+         
+        #keep alive 
+        for device in devices:
+            device.send_keepalive()
         
         
         #auto discovery
@@ -295,20 +365,26 @@ def main():
             
         
         #TCP conection handeling
-        for soc in devices:
-            ready = select.select([soc],[],[],0)
+        for device in devices:
+            ready = select.select([device.sock],[],[],0)
             if ready[0]:
-                msg = soc.recv(2048)
+                msg = device.sock.recv(1024)
                 if msg:
                     if msg[0] == msg_dict["STAY_ALLIVE"]:
-                        devices_last_keepalive[soc.fileno()] = time.clock_gettime_ns(0)
-            
+                        device.set_keepalive(time.time())
+                        
+        #send out keep alive signal eery two minuits
+        
+        
+        #check if the all conecet nods are still present
+        
             
         #read out the Keyboard
         ready = select.select([sys.stdin],[],[],0)
         if ready[0]:
             cash = sys.stdin.readline().rstrip()
             if cash:
+                #Drive vorwards
                 if(cash[0] == "D"):
                     position = 1
                     try:
@@ -317,19 +393,18 @@ def main():
                     except:
                         print("Invalid Input")
                     cash = struct.pack("!Bff", int(1), speed, distance)
-                    soc.sendall(cash)
+                    devices[console_select_device].send(cash)
                     
+                #Drive in reverse
                 if cash[0] == "R": 
                     pass
 
-
+                #print out a small Help promt:
                 if(cash[0] == "H"):
-                    #print out a small Help promt:
                     help("gerneal")
                 
                 if(cash[0] == "C"):
                     devices.append(connect_new_clinet(last_ip))
-                    devices_last_keepalive [devices[len(devices)-1].fileno()] = time.clock_gettime_ns(0)
                     last_ip = ".0.0.0.0"
                 
                 if(cash[0] == "Y"):

@@ -6,14 +6,11 @@ import RPi.GPIO as GPIO
 from time import sleep as sl
 import time
 import socket
-import select
-import sys
-
-#import asyncio
-#import websockets
+import asyncio
+import websockets
 
 #Debug
-DEBUG = False
+DEBUG = True
 
 
 #Motorconroll Pin
@@ -90,32 +87,17 @@ def drive (speed_l, speed_r, time):
     pi_pwm_l_bwd.ChangeDutyCycle(0)
     pi_pwm_r_bwd.ChangeDutyCycle(0)
 
-
-def set_motor_speed(speed_l, speed_r):
-    #prevents that the rover dose not stop
-    if(speed_l == 0):
-        pi_pwm_l.ChangeDutyCycle(0)
-        pi_pwm_l_bwd.ChangeDutyCycle(0)
-
+def set_motor_speed(speed_l : int, speed_r :int):
+    if(speed_l > 0):
+        pi_pwm_l.ChangeDutyCycle(speed_l)
     else:
-        if(speed_l > 0):
-            pi_pwm_l.ChangeDutyCycle(speed_l)
-            pi_pwm_l_bwd.ChangeDutyCycle(0)
-        else:
-            pi_pwm_l.ChangeDutyCycle(0)
-            pi_pwm_l_bwd.ChangeDutyCycle(speed_l*(-1))
+        pi_pwm_l_bwd.ChangeDutyCycle(speed_l*(-1))
 
 
-    if(speed_r == 0):
-        pi_pwm_r.ChangeDutyCycle(0)
-        pi_pwm_r_bwd.ChangeDutyCycle(0)
-    else :
-        if(speed_r > 0):
-            pi_pwm_r.ChangeDutyCycle(speed_r)
-            pi_pwm_r_bwd.ChangeDutyCycle(0)
-        else:
-            pi_pwm_r.ChangeDutyCycle(0)
-            pi_pwm_r_bwd.ChangeDutyCycle(speed_r*(-1))
+    if(speed_r > 0):
+        pi_pwm_r.ChangeDutyCycle(speed_r)
+    else:
+        pi_pwm_r_bwd.ChangeDutyCycle(speed_r*(-1))    
 
 
 def drive_ (speed, time):
@@ -171,6 +153,10 @@ def udp_discovery(discovery_port, discovery_addres, udp_soc, msg):
 
 
 
+
+
+
+
 #TCP
 def tcp_setup():
     soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -192,58 +178,43 @@ def main():
     #send discovery signal once, should by send every minuit, nonblocking server requiert.
     udp_soc = udp_discovery_setup()
     udp_discovery(udp_port, udp_addr, udp_soc,msg_udp_dict["REDY_CON"])
-
-
-
+    
+    
     print("IP:", get_local_ip())
-
-
+    
+    
     #some RAW_Mode suff
     raw_mode = False
     last_update = 0
-
-
-    #connect to an avalible Host, print out the host adress
-    try:
-        conn, addr = soc.accept()
-        conn.setblocking(0)
-        print("Redy to connect at", addr)
-    except Exception as e:
-        soc.close()
-        print ("faild to establish the Server the connection!")
-        print (e)
-
-
-    #Main Loop
+    
+    
+    
     while(True):
-        #RAW mode Watchdog
-        #1ns = 1E-9s
-        if raw_mode:
-            if time.clock_gettime_ns(0) - (last_update + 500000000):
-              #set_motor_speed(0,0)
-                pass
-
-        avalible = select.select([conn],[],[],0)
-        if avalible[0]:
+        
+        #connect to an avalible Host, print out the host adress
+        conn, addr = soc.accept()       
+        print("Connectet to ", addr)
+    
+        while(True):
+            #RAW mode Watchdog
+            #1ns = 1E-9s
+            if time.clock_gettime_ns() - (time_last_update + 500000000):
+                set_motor_speed(0,0)
+                
+            
             try:
                 data = conn.recv(1024)
+                print(data)
                 ID = data[0]
-
+                
                 if ID == int(1):
                     data = struct.unpack("!Bff",data)
                     drive_dst(data[1], data[2])
-
                 if ID == int(0):
                     conn.sendall(0xFF)
-
                 if ID == msg_dict["DV_RAW_MODE"]:
-                    try:
-                        data = struct.unpack("Bff",data)
-                        print(data[1], ",", data[2])
-                        if DEBUG:
-                            set_motor_speed(data[1], data[2])
-                    except Exception as s:
-                        print(s)
+                    data = struct.unpack("Bff",data)
+                    set_motor_speed(data[1], data[2])
                     raw_mode = True
                     last_update = time.clock_gettime_ns(0)
 
@@ -253,18 +224,9 @@ def main():
             finally:
                 pass
                 #conn.disconnect()
-
-        #read out the Keyboard
-        avalible = select.select([sys.stdin],[],[],0)
-        if avalible[0]:
-            cash = sys.stdin.readline().rstrip()
-            if cash:
-                if cash == "D":
-                    drive_dst(0.1, 60)
-                    print("now driving...")
-
-
-
+            
+            
+            
 main()
 
 
