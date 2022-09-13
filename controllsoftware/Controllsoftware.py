@@ -2,6 +2,7 @@
 
 
 from distutils.debug import DEBUG
+from ipaddress import ip_address
 from logging import exception
 
 #TCP and UDP conection
@@ -24,9 +25,18 @@ import select
 
 #Serial connection to the Joistick
 import serial
-    
+
+import msg_dict
+
+
+
 #Debug enable:
 DEBUG = False
+
+
+
+#Auto Discovery
+AUTO_DISCOVERY = True
 
 def serial_connect(device_name):
     ser = serial.Serial(device_name,115200,timeout = 0.1)
@@ -53,8 +63,17 @@ class device_maneger:
         Counter = 0
         while True:
             try:
-                self.sock.connect((ip_addr, ip_port))
+                self.sock.sendto(msg_dict["CONN_REQUEST"],(self.ip_addr, self.ip_port))
+                self.sock.setblocking(1)
+                self.sock.settimeout(100)
+                data = self.sock.recvfrom(1024)
+                if(data[0] == msg_dict["CONN_ACCEPT"]):
+                    pass
+                else:
+                    raise Exception("Error no response from server. Is the ip correct?")
+
                 self.last_comm = time.time()
+
                 break
             except Exception as e:
                 print("Faild to connect to server!.... Retrying")
@@ -76,7 +95,7 @@ class device_maneger:
         counter = 0
         while True:
             try:
-                self.sock.sendall(msg)
+                self.sock.sendto(msg)
                 self.last_conn = time.time()
                 return True
             except:
@@ -137,22 +156,6 @@ def serial_read(current_device, devices,ser):
 def decode_number(number: str):
     mynum = int(number[1:])
     return mynum
-
-
-
-msg_dict = {
-    "STAY_ALLIVE" : int(0),
-    "DV_STRATE" : int(1),
-    "DV_ROTAT" : int(2),
-    "DV_RAW_MODE" : int(3)
-}
-
-
-msg_udp_dict = {
-    "READY_CON" : int(64),
-    "ERROR" : int(128)
-}
-
 
 
 def get_local_ip():
@@ -225,7 +228,7 @@ def connect_new_clinet(last_ip):
     if(last_ip == "0.0.0.0"):
         print("Please enter a IP adress you wish to connect to:")
         ip_addr = input()
-        print("please enter a port:")
+        print("please enter a UDP port:")
         ip_port = input()
         
     else:
@@ -299,7 +302,8 @@ def main():
     print("Welcome to the ideal Roboter controll Center")
     print(get_local_ip(), "<< Local IP")
     
-    udp_soc = setup_auto_discovery(25565)
+    if AUTO_DISCOVERY:
+        udp_soc = setup_auto_discovery(25565)
     
     #save the last found ip to make connection easy
     last_ip = "0.0.0.0"
@@ -307,6 +311,8 @@ def main():
     #Serial suff
     serial_enable = False
     current_serial_device = 0
+
+
     #Main Loop
     while(True):
         #Serial controller stuff
@@ -361,15 +367,16 @@ def main():
         
         
         #auto discovery
-        cash =  auto_discovery(udp_soc)
+        if AUTO_DISCOVERY:
+            cash =  auto_discovery(udp_soc)
         
-        if cash:
-            print("Found new Device!  IP:", cash)
-            print("To add IP to list off connectet devices type C without any argumenst")
-            last_ip = cash
+            if cash:
+                print("Found new Device!  IP:", cash)
+                print("To add IP to list off connectet devices type C without any argumenst")
+                last_ip = cash
             
         
-        #TCP conection handeling
+        #UDP conection handeling
         for device in devices:
             ready = select.select([device.sock],[],[],0)
             if ready[0]:

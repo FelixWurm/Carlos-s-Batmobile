@@ -7,7 +7,6 @@ from time import sleep as sl
 import time
 import socket
 import asyncio
-import websockets
 import msg_dict
 
 #Debug
@@ -19,24 +18,6 @@ left_fwd = 12
 left_bwd = 26
 right_fwd = 13
 right_bwd = 19
-
-
-
-#auto Discovery
-msg_udp_dict = {
-    "REDY_CON" : int(64),
-    "ERROR" : int(128)
-}
-
-
-#TCP controll
-msg_dict = {
-    "STAY_ALLIVE" : int(0),
-    "DV_STRATE" : int(1),
-    "DV_ROTAT" : int(2),
-    "DV_RAW_MODE" : int(3)
-}
-
 
 
 udp_port = 25565
@@ -168,25 +149,28 @@ def UDP_setup():
     return soc
 
 def udp_connect(soc = socket.socket):
+    counter = 0
     while True:
         data, addr= soc.recvfrom(1024)
-        if(data[0] == msg_dict[])
+        if data[0] == msg_dict["CONN_REQUEST"]:
+            soc.sendto(msg_dict["CONN_ACCEPT"])
+            return addr
+        else:
+            counter +1
+            print("conection with invalid init sequenz, open for retrys")
 
 def main():
     #setup the TCP server
     soc = UDP_setup()
     
-    #try to connect to a UDP Server:
-    udp_connect(soc)
-
-
-    
     
     #send discovery signal once, should by send every minuit, nonblocking server requiert.
     udp_soc = udp_discovery_setup()
-    udp_discovery(udp_port, udp_addr, udp_soc,msg_udp_dict["REDY_CON"])
+    udp_discovery(udp_port, udp_addr, udp_soc,msg_dict["REDY_CON"])
     
-    
+    #try to connect to a UDP Server:
+    ip_addr = udp_connect(soc)    
+
     print("IP:", get_local_ip())
     
     
@@ -196,39 +180,44 @@ def main():
     
     
     
-    while(True):
+    while(True):           
+        #RAW mode Watchdog
+        #1ns = 1E-9s
+        if time.clock_gettime_ns() - (time_last_update + 500000000):
+            set_motor_speed(0,0)
             
-        print("Connectet to ", addr)
-    
-        while(True):
-            #RAW mode Watchdog
-            #1ns = 1E-9s
-            if time.clock_gettime_ns() - (time_last_update + 500000000):
-                set_motor_speed(0,0)
-                
-            
-            try:
-                data = conn.recv(1024)
+        
+        try:
+            data, cur_ip_addr = soc.recvfrom(1024)
+            if (ip_addr == cur_ip_addr):
                 print(data)
                 ID = data[0]
-                
-                if ID == int(1):
-                    data = struct.unpack("!Bff",data)
-                    drive_dst(data[1], data[2])
-                if ID == int(0):
-                    conn.sendall(0xFF)
+            
+                if ID == msg_dict["DV_STRAIGHT"]:
+                    data = struct.unpack("!Bf",data)
+                    data[1] = data[1] * 0.6
+                    if data[1] < 0:
+                        data[1] - 40
+                    else:
+                        data[1] + 40
+                    set_motor_speed(data[1], data[1])
+
+                if ID == msg_dict["DV_STOP"]:
+                    set_motor_speed(0,0)
+
+
                 if ID == msg_dict["DV_RAW_MODE"]:
                     data = struct.unpack("Bff",data)
                     set_motor_speed(data[1], data[2])
                     raw_mode = True
                     last_update = time.clock_gettime_ns(0)
 
-            except Exception as e:
-                print(e)
-                break
-            finally:
-                pass
-                #conn.disconnect()
+        except Exception as e:
+            print(e)
+            break
+        finally:
+            pass
+            #conn.disconnect()
             
             
             
