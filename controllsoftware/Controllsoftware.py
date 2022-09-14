@@ -242,7 +242,7 @@ def connect_new_clinet(last_ip):
 
             else:
                 print("please enter a UDP port:")
-            ip_port = input()
+                ip_port = input()
         
     else:
         ip_addr = last_ip[0]
