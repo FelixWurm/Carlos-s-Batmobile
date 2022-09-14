@@ -1,5 +1,6 @@
 # Scribt that runs on the RPi in order to controll the Movment and the Sensor data
-
+import os
+return_info = os.popen("/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server")    
 
 import select, sys, struct
 import RPi.GPIO as GPIO
@@ -7,6 +8,8 @@ from time import sleep as sl
 import time
 import socket
 import dict
+
+
 
 #Debug
 DEBUG = True
@@ -234,7 +237,6 @@ def main():
         if ip_addr == cur_ip_addr and data:
             #update the recived Counter
             last_update= time.time_ns()
-            print("update")
             
             ID = data[0]
             if ID == dict.msg_dict["DV_STRAIGHT"]:
