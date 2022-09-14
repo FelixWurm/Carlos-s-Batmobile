@@ -92,9 +92,9 @@ class device_maneger:
                 self.sock.sendto(msg,self,self.addr)
                 self.last_conn = time.clock_gettime_ns(0)
                 return True
-            except:
+            except Exception as e:
                 if DEBUG:
-                    print("Faild to send data, Retrying...")
+                    print("Faild to send data, Retrying... (",e,")")
                 counter+1
                 
                 if(counter > 3):
