@@ -264,7 +264,7 @@ def main():
 
 if __name__ == "__main__":
     while True:
-        subprocess.run(["killal", "rtsp_server"])
+        subprocess.run(["killall", "rtsp_server"])
         subprocess.run(["/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server", "/home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf"])
         #videostream = os.popen("(killall rtsp_server; /home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server /home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf)")        
         try: 
