@@ -51,9 +51,8 @@ class device_maneger:
         self.last_conn = 0
         
         if connect:
-            return self.connect()
-        else:
-            return True
+            if not self.connect():
+                raise Exception("Could not connect!")
             
     def connect(self):
         print("Trying to connect to IP:", self.ip_addr,"  Port:", self.ip_port)
@@ -123,7 +122,7 @@ serial_y = 0
 serial_Button = False
 new_set = [False, False]
 
-serial_select_rover = 0;
+serial_select_rover = 0
 
 serial_port = 0
 
