@@ -217,11 +217,11 @@ def main():
     while(True):     
         #stop the motor in case of bad connection      
         #1ns = 1E-9s
-        if time.clock_gettime_ns(0) - (last_update + 1000000) < 0:
+        if time.clock_gettime_ns(0) - (last_update + 100000000) < 0:
             set_motor_speed(0,0)
 
         #terminate the connection in case of very bad connection
-        if time.clock_gettime_ns(0) - (last_update + 30000000) < 0:
+        if time.clock_gettime_ns(0) - (last_update + 30000000000) < 0:
               break     
             
     
