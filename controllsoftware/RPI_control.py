@@ -238,10 +238,12 @@ def main():
         if ready[0]:
             data, cur_ip_addr = soc.recvfrom(1024)
             if ip_addr == cur_ip_addr and data:
+                print("I am Here")
                 #update the recived Counter
                 last_update= time.time_ns()
                 
                 ID = data[0]
+                ID = struct.unpack("!B", ID)
                 print(data)
                 if ID == dict.msg_dict["DV_STRAIGHT"]:
                     data = struct.unpack("!Bf",data)
