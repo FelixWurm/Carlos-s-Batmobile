@@ -243,7 +243,6 @@ def main():
                 last_update= time.time_ns()
                 
                 ID = data[0]
-                ID = struct.unpack("!B", ID)
                 print(data)
                 if ID == dict.msg_dict["DV_STRAIGHT"]:
                     data = struct.unpack("!Bf",data)
