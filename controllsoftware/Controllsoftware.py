@@ -78,6 +78,7 @@ class device_maneger:
                 print("FAILD to connect after 4 atemts")
                 return False
             
+        self.sock.settimeout(0)
         self.sock.setblocking(0)
         print("Connection establoshed!")
         return True
@@ -220,10 +221,28 @@ def finde_number(input, position):
 
 def connect_new_clinet(last_ip):
     if(last_ip == "0.0.0.0"):
-        print("Please enter a IP adress you wish to connect to:")
+        print("Please enter a IP adress you wish to connect to, or C1 to C5 for dafault Calos rover")
         ip_addr = input()
-        print("please enter a UDP port:")
-        ip_port = input()
+        if ip_addr[0] == "C":
+            if int(ip_addr[1]) == 1:
+                ip_addr = "192.168.199.101"
+                ip_port = 50000
+            elif int(ip_addr[1]) == 2:
+                ip_addr = "192.168.199.102"
+                ip_port = 50000
+            elif int(ip_addr[1]) == 3:
+                ip_addr = "192.168.199.103"
+                ip_port = 50000
+            elif int(ip_addr[1]) == 4:
+                ip_addr = "192.168.199.104"
+                ip_port = 50000
+            elif int(ip_addr[1]) == 5:
+                ip_addr = "192.168.199.105"
+                ip_port = 50000
+
+            else:
+                print("please enter a UDP port:")
+            ip_port = input()
         
     else:
         ip_addr = last_ip[0]
@@ -309,6 +328,8 @@ def main():
 
     #Main Loop
     while(True):
+        if DEBUG:
+            print("Runnning")
         #Serial controller stuff
         if serial_enable:
             serial_read(current_serial_device, devices,serial_port)
@@ -448,12 +469,12 @@ def main():
                 
                 if(cash[0] == "Y"):
                     print("connect a new Joystick to the USB port! Then enter the location of the port")
-                    print("input s for standart port")
+                    print("input S for standart port")
                     while True:
                         port = input()
                         if port:
                             break
-                    if port == "s":
+                    if port == "S":
                         serial_enable = True
                         serial_port = serial_connect("/dev/ttyACM0")
                     else:
@@ -461,6 +482,7 @@ def main():
                         serial_port = serial_connect(port)
                         
                     print("connected!")
+
                     
                     
 
