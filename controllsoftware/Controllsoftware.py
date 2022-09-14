@@ -357,7 +357,7 @@ def main():
          
         #keep alive 
         for device in devices:
-            if not device == NoneType:
+            if not device == None:
                 device.send_keepalive()
         
         
