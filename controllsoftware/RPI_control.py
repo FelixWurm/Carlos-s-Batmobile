@@ -218,7 +218,8 @@ def main():
     #Idee: Nach jeder veränderung der Geschwindigkeit Die Position neu bestimmen
 
 
-    while(True):     
+    while(True):    
+        print("running") 
         #stop the motor in case of bad connection      
         #1ns = 1E-9s
         if time.time_ns() - (last_update + 1000000000) > 0:
