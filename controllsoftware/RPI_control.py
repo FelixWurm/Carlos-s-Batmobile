@@ -197,8 +197,10 @@ def main():
     udp_soc = udp_discovery_setup()
     udp_discovery(udp_port, udp_addr, udp_soc,dict.msg_dict["READY_CONN"])
     
-    #try to connect to a UDP Server:
-    ip_addr = udp_connect(soc)    
+    #try to connect to a UDP Host:
+    ip_addr = udp_connect(soc)   
+    
+    print("Connectet to:", ip_addr)
     
     
     #some RAW_Mode suff

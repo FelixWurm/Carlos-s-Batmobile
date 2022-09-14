@@ -22,6 +22,7 @@ import struct
 #waiting system
 import sys
 import select
+from types import NoneType
 
 #Serial connection to the Joistick
 import serial
@@ -66,7 +67,7 @@ class device_maneger:
                 self.sock.setblocking(1)
                 self.sock.settimeout(5)
                 data = self.sock.recvfrom(1024)
-                if(data[0] == dict.msg_dict["CONN_ACCEPT"]):
+                if data[0] == dict.msg_dict["CONN_ACCEPT"]:
                     pass
                 else:
                     raise Exception("Error no response from server. Is the ip correct?")
@@ -362,7 +363,8 @@ def main():
          
         #keep alive 
         for device in devices:
-            device.send_keepalive()
+            if not device == NoneType:
+                device.send_keepalive()
         
         
         #auto discovery
@@ -445,7 +447,9 @@ def main():
                     help("gerneal")
                 
                 if(cash[0] == "C"):
-                    devices.append(connect_new_clinet(last_ip))
+                    cash = connect_new_clinet(last_ip)
+                    if not cash == NoneType:
+                        devices.append(cash)
                     last_ip = ".0.0.0.0"
                 
                 if(cash[0] == "Y"):
