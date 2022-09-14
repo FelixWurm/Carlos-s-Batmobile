@@ -191,6 +191,7 @@ def main():
     #setup the TCP server
     soc = UDP_setup()
     
+    print("IP:", get_local_ip())
     
     #send discovery signal once, should by send every minuit, nonblocking server requiert.
     udp_soc = udp_discovery_setup()
@@ -198,8 +199,6 @@ def main():
     
     #try to connect to a UDP Server:
     ip_addr = udp_connect(soc)    
-
-    print("IP:", get_local_ip())
     
     
     #some RAW_Mode suff
