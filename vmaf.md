@@ -38,7 +38,7 @@
   -lavfi
     "[0:v]setpts=PTS-STARTPTS[reference];
     [1:v]setpts=PTS-STARTPTS[distorted];
-    [distorted][reference]libvmaf=log_fmt=xml:log_path=/home/pi/VMAF/log_latest_vmaf:model='path=VMAF/vmaf-2.3.1/model/vmaf_v0.6.1.json':n_threads=4" -f null -`
+    [distorted][reference]libvmaf=log_fmt=xml:log_path=/home/pi/VMAF/log_latest_vmaf.xml:model='path=VMAF/vmaf-2.3.1/model/vmaf_v0.6.1.json':n_threads=4" -f null -`
 
 ### Options
 `-video_size` setze video size
@@ -50,7 +50,7 @@ falls video-size unterschiedlich ist (zB 480p und 288p) -> upscaling with bicubi
   -r 24 -i VMAF/vmaf-2.3.1/resource_test/mp4/Seeking_10_288_375.mp4
   -lavfi "[0:v]setpts=PTS-STARTPTS[reference];
     [1:v]scale=720:480:flags=bicubic,setpts=PTS-STARTPTS[distorted];
-    [distorted][reference]libvmaf=log_fmt=xml:log_path=/home/pi/VMAF/log_latest_vmaf:model='path=VMAF/vmaf-2.3.1/model/vmaf_v0.6.1.json':n_threads=4" -f null -`
+    [distorted][reference]libvmaf=log_fmt=xml:log_path=/home/pi/VMAF/log_latest_vmaf.xml:model='path=VMAF/vmaf-2.3.1/model/vmaf_v0.6.1.json':n_threads=4" -f null -`
 
 `-r` setze framerate (MUSS dieselbe framerate in beiden Videos sein)
 
