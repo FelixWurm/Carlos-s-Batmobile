@@ -1,7 +1,5 @@
 # Scribt that runs on the RPi in order to controll the Movment and the Sensor data
 import os
-return_info = os.popen("/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server 480p30fps1000000bit.conf")    
-
 import select, sys, struct
 import RPi.GPIO as GPIO
 from time import sleep as sl
@@ -191,7 +189,7 @@ def calculate_position(mode, time, speed, last_position):
         pass
 
 
-def main():
+def main():    
     #setup the TCP server
     soc = UDP_setup()
     
@@ -265,9 +263,13 @@ def main():
             
 
 if __name__ == "__main__":
-    while True:         
-        main()
-        print ("Something went wrong, connection terminatet and ready for new connection")
+    while True:
+        videostream = os.popen("/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server 480p30fps1000000bit.conf")        
+        try: 
+            main()
+            print ("Something went wrong, connection terminatet and ready for new connection")
+        except KeyboardInterrupt:
+            videostream.close()
 
 
 
