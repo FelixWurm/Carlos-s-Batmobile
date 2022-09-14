@@ -238,7 +238,6 @@ def main():
         if ready[0]:
             data, cur_ip_addr = soc.recvfrom(1024)
             if ip_addr == cur_ip_addr and data:
-                print("I am Here")
                 #update the recived Counter
                 last_update= time.time_ns()
                 
@@ -270,11 +269,11 @@ def main():
             
 
 if __name__ == "__main__":
-    if os.fork() != 0:
-        subprocess.run(["killall", "rtsp_server"])
-        subprocess.run(["/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server", "/home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf"])
-        print("Video Fail!")        
-    else:
+    #if os.fork() != 0:
+        #subprocess.run(["killall", "rtsp_server"])
+        #subprocess.run(["/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server", "/home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf"])
+        #print("Video Fail!")        
+    if True:
         while True:
             #subprocess.run(["killall", "rtsp_server"])
             #subprocess.run(["/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server", "/home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf"])
