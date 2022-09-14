@@ -44,7 +44,7 @@ def serial_connect(device_name):
 
 
 class device_maneger:
-    def __init__(ip,port,connect = False):
+    def __init__(self, ip,port,connect = False):
         self.last_keepalive = time.time()
         self.ip_addr = ip
         self.ip_port = port
@@ -55,7 +55,7 @@ class device_maneger:
         else:
             return True
             
-    def connect():
+    def connect(self):
         print("Trying to connect to IP:", self.ip_addr,"  Port:", self.ip_port)
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -63,11 +63,11 @@ class device_maneger:
         Counter = 0
         while True:
             try:
-                self.sock.sendto(msg_dict["CONN_REQUEST"],(self.ip_addr, self.ip_port))
+                self.sock.sendto(dict.msg_dict["CONN_REQUEST"],(self.ip_addr, self.ip_port))
                 self.sock.setblocking(1)
                 self.sock.settimeout(100)
                 data = self.sock.recvfrom(1024)
-                if(data[0] == msg_dict["CONN_ACCEPT"]):
+                if(data[0] == dict.msg_dict["CONN_ACCEPT"]):
                     pass
                 else:
                     raise Exception("Error no response from server. Is the ip correct?")
@@ -90,7 +90,7 @@ class device_maneger:
     
     
     
-    def send_data(msg):
+    def send_data(self,msg):
         counter = 0
         while True:
             try:
@@ -107,13 +107,13 @@ class device_maneger:
                         print("Faild to connect after the 5th atempt")
                     return False
                     
-    def send_keepalive():
+    def send_keepalive(self):
         #sends if nesesary a keepalive signal. if the last communication is les then two seconds ago, do nothing
         if(self.last_comm -time.time() < -2):
-            self.send_data(msg_dict["KEEP_ALIVE"])
+            self.send_data(dict.msg_dict["KEEP_ALIVE"])
     
 
-    def set_keepalive():
+    def set_keepalive(self):
         self.last_comm = time.time()
 
 
@@ -263,7 +263,7 @@ def auto_discovery(udp_soc):
     ready = select.select([udp_soc],[],[],0)
     if ready[0]:
         msg, addr = udp_soc.recvfrom(1024)
-        if msg[0] == msg_udp_dict["READY_CON"]:
+        if msg[0] == dict.msg_dict["READY_CON"]:
             return addr
         
     return False
@@ -353,7 +353,7 @@ def main():
                 
             
                 new_set = [False, False]
-                msg = struct.pack("Bff", msg_dict["DV_RAW_MODE"],speed_a,speed_b)
+                msg = struct.pack("Bff", dict.msg_dict["DV_RAW_MODE"],speed_a,speed_b)
                 
                 
                 devices[current_serial_device].sendall(msg)
@@ -382,7 +382,7 @@ def main():
             if ready[0]:
                 msg = device.sock.recv(1024)
                 if msg:
-                    if msg[0] == msg_dict["STAY_ALLIVE"]:
+                    if msg[0] == dict.msg_dict["STAY_ALLIVE"]:
                         device.set_keepalive(time.time())
                         
         #send out keep alive signal eery two minuits

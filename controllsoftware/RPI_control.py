@@ -218,17 +218,18 @@ def main():
     while(True):     
         #stop the motor in case of bad connection      
         #1ns = 1E-9s
-        if time.clock_gettime_ns() - (last_update + 1000000):
+        if time.clock_gettime_ns(0) - (last_update + 1000000) < 0:
             set_motor_speed(0,0)
 
         #terminate the connection in case of very bad connection
-        if time.clock_gettime_ns() - (last_update + 30000000):
+        if time.clock_gettime_ns(0) - (last_update + 30000000) < 0:
               break     
             
     
         data, cur_ip_addr = soc.recvfrom(1024)
         if ip_addr == cur_ip_addr and data:
-            
+            #update the recived Counter
+            last_update= time.clock_gettime_ns(0)
             
             ID = data[0]
             if ID == dict.msg_dict["DV_STRAIGHT"]:
