@@ -224,19 +224,19 @@ def connect_new_clinet(last_ip):
         print("Please enter a IP adress you wish to connect to, or C1 to C5 for dafault Calos rover")
         ip_addr = input()
         if ip_addr[0] == "C":
-            if int(ip_addr[1]) == 1:
+            if ip_addr[1] == "1":
                 ip_addr = "192.168.199.101"
                 ip_port = 50000
-            elif int(ip_addr[1]) == 2:
+            elif ip_addr[1] == "2":
                 ip_addr = "192.168.199.102"
                 ip_port = 50000
-            elif int(ip_addr[1]) == 3:
+            elif ip_addr[1] == "3":
                 ip_addr = "192.168.199.103"
                 ip_port = 50000
-            elif int(ip_addr[1]) == 4:
+            elif ip_addr[1] == "4":
                 ip_addr = "192.168.199.104"
                 ip_port = 50000
-            elif int(ip_addr[1]) == 5:
+            elif ip_addr[1] == "5":
                 ip_addr = "192.168.199.105"
                 ip_port = 50000
 
