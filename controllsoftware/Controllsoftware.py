@@ -1,10 +1,5 @@
 #Controllsoftware to controll one ore mor Calros Roboters
 
-
-from distutils.debug import DEBUG
-from ipaddress import ip_address
-from logging import exception
-
 #TCP and UDP conection
 import socket
 
