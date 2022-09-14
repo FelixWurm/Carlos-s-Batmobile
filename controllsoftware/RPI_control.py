@@ -1,6 +1,6 @@
 # Scribt that runs on the RPi in order to controll the Movment and the Sensor data
 import os
-return_info = os.popen("/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server")    
+return_info = os.popen("/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server 480p30fps1000000bit.conf")    
 
 import select, sys, struct
 import RPi.GPIO as GPIO
