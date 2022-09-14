@@ -26,7 +26,7 @@ import select
 #Serial connection to the Joistick
 import serial
 
-import msg_dict
+import dict
 
 
 

@@ -6,7 +6,6 @@ import RPi.GPIO as GPIO
 from time import sleep as sl
 import time
 import socket
-import asyncio
 import dict
 
 #Debug
@@ -181,7 +180,11 @@ def convert_to_motor(input):
 
     return input
 
-
+def calculate_position(mode, time, speed, last_position):
+    if mode == "R":
+        pass
+    if mode == "D":
+        pass
 
 
 def main():
