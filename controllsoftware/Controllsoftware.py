@@ -62,7 +62,7 @@ class device_maneger:
         Counter = 0
         while True:
             try:
-                self.sock.sendto(dict.msg_dict["CONN_REQUEST"],(self.ip_addr, self.ip_port))
+                self.sock.sendto(struct.pack("!B",dict.msg_dict["CONN_REQUEST"]),(self.ip_addr, self.ip_port))
                 self.sock.setblocking(1)
                 self.sock.settimeout(100)
                 data = self.sock.recvfrom(1024)
@@ -80,7 +80,7 @@ class device_maneger:
 
             Counter = Counter +1
             if Counter > 3:
-                print("FAILD to connect after 4 atemts. Exiting Programm")
+                print("FAILD to connect after 4 atemts")
                 return False
             
         self.sock.setblocking(0)
@@ -94,7 +94,7 @@ class device_maneger:
         while True:
             try:
                 self.sock.sendto(msg)
-                self.last_conn = time.time()
+                self.last_conn = time.clock_gettime_ns(0)
                 return True
             except:
                 if DEBUG:
@@ -103,12 +103,12 @@ class device_maneger:
                 
                 if(counter > 3):
                     if DEBUG:
-                        print("Faild to connect after the 5th atempt")
+                        print("Faild to connect after the 4th atempt")
                     return False
                     
     def send_keepalive(self):
         #sends if nesesary a keepalive signal. if the last communication is les then two seconds ago, do nothing
-        if(self.last_comm -time.time() < -2):
+        if(self.last_comm -time.clock_gettime_ns(0) < -2000000):
             self.send_data(dict.msg_dict["KEEP_ALIVE"])
     
 
