@@ -264,7 +264,7 @@ def main():
 
 if __name__ == "__main__":
     while True:
-        videostream = os.popen("/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server 480p30fps1000000bit.conf")        
+        videostream = os.popen("/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server /home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf")        
         try: 
             main()
             print ("Something went wrong, connection terminatet and ready for new connection")
