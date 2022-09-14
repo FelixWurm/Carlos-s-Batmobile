@@ -173,13 +173,14 @@ def udp_connect(soc = socket.socket):
 
 #converts a number from -100 to 100 toto -100-40, 40-100
 def convert_to_motor(input):
-    input * 0.6
+    input  = input* 0.6
     if(input < 0):
-        input -40
+        input = input -40
     else:
-        input +40
-        
+        input = input +40
+
     return input
+
 
 
 def main():
@@ -201,7 +202,7 @@ def main():
     raw_mode = False
     last_update = 0
     
-    
+    #L
     
     while(True):           
         #RAW mode Watchdog
@@ -211,17 +212,13 @@ def main():
             
     
         data, cur_ip_addr = soc.recvfrom(1024)
-        if (ip_addr == cur_ip_addr):
-            print(data)
+        if ip_addr == cur_ip_addr and data:
+            
+            
             ID = data[0]
-        
             if ID == dict.msg_dict["DV_STRAIGHT"]:
                 data = struct.unpack("!Bf",data)
-                cash = data[1] * 0.6
-                if cash < 0:
-                    cash - 40
-                else:
-                    cash + 40
+                cash = convert_to_motor(data[1])
                 set_motor_speed(cash, cash)
 
             if ID == dict.msg_dict["DV_STOP"]:

@@ -71,8 +71,7 @@ class device_maneger:
                     pass
                 else:
                     raise Exception("Error no response from server. Is the ip correct?")
-
-                self.last_comm = time.time()
+                self.last_comm = time.clock_gettime_ns()
 
                 break
             except Exception as e:
@@ -113,6 +112,7 @@ class device_maneger:
         if(self.last_comm -time.time() < -2):
             self.send_data(msg_dict["KEEP_ALIVE"])
     
+
     def set_keepalive():
         self.last_comm = time.time()
 
@@ -401,12 +401,42 @@ def main():
                     position = 1
                     try:
                         speed = finde_number(cash, position)
-                        distance = finde_number(cash, position)
                     except:
                         print("Invalid Input")
-                    cash = struct.pack("!Bff", int(1), speed, distance)
+                    cash = struct.pack("!Bf", dict.DV_STRAIGHT, speed)
                     devices[console_select_device].send(cash)
                     
+
+                #Rotate
+                if cash[0] == "R":
+                    pass
+
+
+                if(cash[0] == "D"):
+                    position = 1
+                    try:
+                        speed = finde_number(cash, position)
+                    except:
+                        print("Invalid Input")
+                    cash = struct.pack("!Bf", int(1), speed)
+                    devices[console_select_device].send(cash)
+
+
+                #cal Mode
+                if cash[0] == "C":
+                    try:
+                        speed = finde_number(cash, position)
+                        time_ = finde_number(cash, position)
+                    except:
+                        print("Invalid Input")
+
+                    cash = struct.pack("!Bf", dict.msg_dict["DV_STRAIGHT"], speed)
+                    devices[console_select_device].send(cash)
+                    sl(time_)
+                    cash = struct.pack("!Bf", dict.msg_dict["DV_STOP"], speed)
+                    devices[console_select_device].send(cash)                   
+
+
                 #Drive in reverse
                 if cash[0] == "R": 
                     pass
