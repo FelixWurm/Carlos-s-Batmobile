@@ -7,7 +7,9 @@ msg_dict = {
     "CONN_ACCEPT"   : int(5),       #Accept a connection, NO additional value
     "DV_STOP"       : int(6),       #no additional value
     "ACK"           : int(7),       #singal that something was recived
-    "READY_CONN"    : int(9)        #ready for connection(UDP auto discovery)
+    "READY_CONN"    : int(9),        #ready for connection(UDP auto discovery)
+    "ERROR_CONN"    : int(10)       #send this signal ig there is in invalid Connection attempt
+
 }
 
 #in order to connect to the server send a CONN_REQUEST and wait for a CONN_ACCEPT.
