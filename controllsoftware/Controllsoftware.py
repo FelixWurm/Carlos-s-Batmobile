@@ -78,7 +78,6 @@ class device_maneger:
                 print("FAILD to connect after 4 atemts")
                 return False
             
-        self.sock.settimeout(0)
         self.sock.setblocking(0)
         print("Connection establoshed!")
         return True
@@ -95,7 +94,7 @@ class device_maneger:
             except Exception as e:
                 if DEBUG:
                     print("Faild to send data, Retrying... (",e,")")
-                counter+1
+                counter = counter + 1
                 
                 if(counter > 3):
                     if DEBUG:
