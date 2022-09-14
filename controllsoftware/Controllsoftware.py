@@ -87,8 +87,10 @@ class device_maneger:
     def send_data(self,msg):
         counter = 0
         while True:
-            try:
+            try:   
+                self.sock.setblocking(1)
                 self.sock.sendto(msg,self.addr)
+                self.sock.setblocking(0)
                 self.last_conn = time.clock_gettime_ns(0)
                 return True
             except Exception as e:
