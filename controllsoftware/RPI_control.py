@@ -234,35 +234,36 @@ def main():
                 print("Connection timeout!")
             break     
             
-    
-        data, cur_ip_addr = soc.recvfrom(1024)
-        if ip_addr == cur_ip_addr and data:
-            #update the recived Counter
-            last_update= time.time_ns()
-            
-            ID = data[0]
-            print(data)
-            if ID == dict.msg_dict["DV_STRAIGHT"]:
-                data = struct.unpack("!Bf",data)
-                cash = convert_to_motor(data[1])
-                set_motor_speed(cash, cash)
+        ready = select.select([soc],[],[],0)
+        if ready[0]:
+            data, cur_ip_addr = soc.recvfrom(1024)
+            if ip_addr == cur_ip_addr and data:
+                #update the recived Counter
+                last_update= time.time_ns()
+                
+                ID = data[0]
+                print(data)
+                if ID == dict.msg_dict["DV_STRAIGHT"]:
+                    data = struct.unpack("!Bf",data)
+                    cash = convert_to_motor(data[1])
+                    set_motor_speed(cash, cash)
 
-            if ID == dict.msg_dict["DV_STOP"]:
-                set_motor_speed(0,0)
-
-
-            if ID == dict.msg_dict["DV_ROTATE"]:
-                data = struct.unpack("!Bf",data)
-                cash = data[1]
-                cash = cash *(-1)
-                set_motor_speed(convert_to_motor(cash), convert_to_motor(data[1]))
+                if ID == dict.msg_dict["DV_STOP"]:
+                    set_motor_speed(0,0)
 
 
+                if ID == dict.msg_dict["DV_ROTATE"]:
+                    data = struct.unpack("!Bf",data)
+                    cash = data[1]
+                    cash = cash *(-1)
+                    set_motor_speed(convert_to_motor(cash), convert_to_motor(data[1]))
 
-            if ID == dict.msg_dict["DV_RAW_MODE"]:
-                data = struct.unpack("Bff",data)
-                set_motor_speed(data[1], data[2])
-                raw_mode = True
+
+
+                if ID == dict.msg_dict["DV_RAW_MODE"]:
+                    data = struct.unpack("Bff",data)
+                    set_motor_speed(data[1], data[2])
+                    raw_mode = True
 
             
             
