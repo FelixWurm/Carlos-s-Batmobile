@@ -26,7 +26,7 @@ import dict
 
 
 #Debug enable:
-DEBUG = False
+DEBUG = True
 
 
 
