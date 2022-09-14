@@ -230,7 +230,7 @@ def main():
         data, cur_ip_addr = soc.recvfrom(1024)
         if ip_addr == cur_ip_addr and data:
             #update the recived Counter
-            last_update= time.clock_gettime_ns(0)
+            last_update= time.clock_gettime(0)
             
             ID = data[0]
             if ID == dict.msg_dict["DV_STRAIGHT"]:
@@ -254,7 +254,6 @@ def main():
                 data = struct.unpack("Bff",data)
                 set_motor_speed(data[1], data[2])
                 raw_mode = True
-                last_update = time.clock_gettime_ns(0)
 
             
             
