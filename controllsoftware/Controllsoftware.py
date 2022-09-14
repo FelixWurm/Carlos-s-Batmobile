@@ -89,7 +89,7 @@ class device_maneger:
         counter = 0
         while True:
             try:
-                self.sock.sendto(msg,self,self.addr)
+                self.sock.sendto(msg,self.addr)
                 self.last_conn = time.clock_gettime_ns(0)
                 return True
             except Exception as e:

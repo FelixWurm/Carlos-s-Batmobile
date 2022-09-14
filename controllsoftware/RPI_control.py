@@ -165,6 +165,7 @@ def udp_connect(soc = socket.socket):
         data, addr= soc.recvfrom(1024)
         if data[0] == dict.msg_dict["CONN_REQUEST"]:
             soc.sendto(struct.pack("!B", dict.msg_dict["CONN_ACCEPT"]), addr)
+            soc.setblocking(0)
             return addr
         else:
             counter = counter +1
@@ -218,7 +219,7 @@ def main():
     #Idee: Nach jeder veränderung der Geschwindigkeit Die Position neu bestimmen
 
 
-    while(True):    
+    while True:    
         print("running") 
         #stop the motor in case of bad connection      
         #1ns = 1E-9s
