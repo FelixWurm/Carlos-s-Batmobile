@@ -13,6 +13,7 @@ sudo apt upgrade -y
 sudo apt install -y libnl-3-dev libnl-genl-3-dev batctl alfred nmap git
 
 git clone https://github.com/FelixWurm/Carlos-s-Batmobile.git
+sh /home/pi/Carlos-s-Batmobile/enablessh.sh
 
 
 # Have batman-adv startup automatically on boot
