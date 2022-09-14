@@ -328,8 +328,6 @@ def main():
 
     #Main Loop
     while(True):
-        if DEBUG:
-            print("Runnning")
         #Serial controller stuff
         if serial_enable:
             serial_read(current_serial_device, devices,serial_port)
