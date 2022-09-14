@@ -25,6 +25,7 @@ CARLOS_NAMES = ["carlos-5.local", "carlos-4.local", "carlos-3.local", "carlos-4.
 
 DNS_CACHE = {}
 
+
 def get_ip(domain):
     try:
         if domain in DNS_CACHE:
@@ -41,13 +42,20 @@ async def carlos_controller():
     prev_channel = -1
     port = 50000
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.setblocking(False)
 
     while True:
         try:
-            await asyncio.wait_for(UPDATE_EVENT.wait(), timeout=0.2)
+            await asyncio.wait_for(UPDATE_EVENT.wait(), timeout=0.1)
             UPDATE_EVENT.clear()
         except asyncio.exceptions.TimeoutError:
             pass
+
+        resend_connect_request = False
+
+        request = struct.pack("!B", int(4))
+        # Todo: Wait for connection accept
+        sock.sendto(request, (get_ip(CARLOS_NAMES[CHANNEL]), port))
 
         if prev_channel != CHANNEL:
             request = struct.pack("!B", int(4))
@@ -59,6 +67,19 @@ async def carlos_controller():
                 sock.sendto(data, (get_ip(CARLOS_NAMES[prev_channel]), port))
                 sock.sendto(data, (get_ip(CARLOS_NAMES[prev_channel]), port))
             prev_channel = CHANNEL
+
+        try:
+            resp = sock.recvfrom(1500)
+            if resp[0] == 10:
+                resend_connect_request = True
+                print("Resend connection request")
+        except Exception as e:
+            pass
+
+        if resend_connect_request:
+            request = struct.pack("!B", int(4))
+            # Todo: Wait for connection accept
+            sock.sendto(request, (get_ip(CARLOS_NAMES[CHANNEL]), port))
 
         data = []
         if type(SPEED) != float and type(SPEED) != int:
