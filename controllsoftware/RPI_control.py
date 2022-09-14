@@ -6,7 +6,7 @@ from time import sleep as sl
 import time
 import socket
 import dict
-
+import subprocess
 
 
 #Debug
@@ -264,12 +264,14 @@ def main():
 
 if __name__ == "__main__":
     while True:
-        videostream = os.popen("(killall rtsp_server; /home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server /home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf)")        
+        subprocess.run(["killal", "rtsp_server"])
+        subprocess.run(["/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server", "/home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf"])
+        #videostream = os.popen("(killall rtsp_server; /home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server /home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf)")        
         try: 
             main()
             print ("Something went wrong, connection terminatet and ready for new connection")
         except KeyboardInterrupt:
-            videostream.close()
+            #videostream.close()
             exit()
 
 
