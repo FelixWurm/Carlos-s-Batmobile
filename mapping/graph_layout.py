@@ -19,7 +19,7 @@ def getNodes():
                 if weight == '':
                     G.add_edge(pinger, pingee)
                 else:
-                    G.add_edge(pinger, pingee, weight=1 / max(.001, int(weight)))
+                    G.add_edge(pinger, pingee, weight=256 - max(.001, int(weight)))
 
     pos = nx.kamada_kawai_layout(G)
 

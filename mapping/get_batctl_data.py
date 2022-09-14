@@ -14,7 +14,8 @@ def createCSV(hosts):
         try:
             if host == "127.0.0.1":
                 resstr = subprocess.run('sudo batctl o -H'.split(), stdout=subprocess.PIPE).stdout.decode("utf-8")
-                name = "This node"
+                name = re.findall("wlan0\/(\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)", subprocess.run('sudo batctl n'.split(), stdout=subprocess.PIPE).stdout.decode("utf-8"))[0]
+                print(f"This node: {name}")
             else:
                 resstr = get_batctl_ssh.get(host)
                 name = get_batctl_ssh.resolvName(host)

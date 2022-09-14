@@ -19,4 +19,7 @@ def setEdges(nodes):
                 if pingee == "from/to":
                     continue
                 if bool(row[pingee]):
-                    pingerN.neighbors.append(findNodeWithName(nodes, pingee).pos)
+                    pingeeN = findNodeWithName(nodes, pingee)
+                    if pingerN.pos in pingeeN.neighbors:
+                        continue
+                    pingerN.neighbors.append(pingeeN.pos)
