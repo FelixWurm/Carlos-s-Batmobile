@@ -64,13 +64,12 @@ class device_maneger:
                 if data[0] == dict.msg_dict["CONN_ACCEPT"]:
                     pass
                 else:
-                    raise Exception("Error no response from server. Is the ip correct?")
+                    raise Exception("Error wrong response from server. Is the ip correct?")
                 self.last_comm = time.clock_gettime_ns()
 
                 break
             except Exception as e:
-                print("Faild to connect to server!.... Retrying")
-                print(str(e))
+                print("Faild to connect to server!.... Retrying (", e, ")")
                 sl(1)
 
             Counter = Counter +1
@@ -103,7 +102,7 @@ class device_maneger:
                     
     def send_keepalive(self):
         #sends if nesesary a keepalive signal. if the last communication is les then two seconds ago, do nothing
-        if(self.last_comm -time.clock_gettime_ns(0) < -2000000):
+        if(self.last_comm -time.clock_gettime_ns(0) < -2000000000):
             self.send_data(dict.msg_dict["KEEP_ALIVE"])
     
 

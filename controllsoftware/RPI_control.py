@@ -166,8 +166,9 @@ def udp_connect(soc = socket.socket):
             soc.sendto(struct.pack("!B", dict.msg_dict["CONN_ACCEPT"]), addr)
             return addr
         else:
-            counter +1
-            print("conection with invalid init sequenz, open for retrys")
+            counter+1
+            print("conection with invalid init sequenz, open for retrys : ", counter)
+            soc.sendto(struct.pack(dict.msg_dict["ERROR_CONN"]), addr)
 
 
 #converts a number from -100 to 100 toto -100-40, 40-100
@@ -248,7 +249,6 @@ def main():
                 data = struct.unpack("!Bf",data)
                 cash = data[1]
                 cash = cash *(-1)
-                print("Rotate : ",cash )
                 set_motor_speed(convert_to_motor(cash), convert_to_motor(data[1]))
 
 
