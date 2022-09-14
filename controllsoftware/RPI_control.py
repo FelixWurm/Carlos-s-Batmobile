@@ -263,16 +263,21 @@ def main():
             
 
 if __name__ == "__main__":
-    while True:
+    if os.fork() != 0:
         subprocess.run(["killall", "rtsp_server"])
         subprocess.run(["/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server", "/home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf"])
-        #videostream = os.popen("(killall rtsp_server; /home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server /home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf)")        
-        try: 
-            main()
-            print ("Something went wrong, connection terminatet and ready for new connection")
-        except KeyboardInterrupt:
-            #videostream.close()
-            exit()
+        print("Video Fail!")        
+    else:
+        while True:
+            #subprocess.run(["killall", "rtsp_server"])
+            #subprocess.run(["/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server", "/home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf"])
+            #videostream = os.popen("(killall rtsp_server; /home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server /home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf)")        
+            try: 
+                main()
+                print ("Something went wrong, connection terminatet and ready for new connection")
+            except KeyboardInterrupt:
+                #videostream.close()
+                exit()
 
 
 
