@@ -66,7 +66,7 @@ class device_maneger:
                     pass
                 else:
                     raise Exception("Error wrong response from server. Is the ip correct?")
-                self.last_comm = time.clock_gettime_ns()
+                self.last_comm = time.clock_gettime_ns(0)
 
                 break
             except Exception as e:

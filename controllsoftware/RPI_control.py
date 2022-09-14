@@ -206,7 +206,7 @@ def main():
     
     #some RAW_Mode suff
     raw_mode = False
-    last_update = time.clock_gettime(0)
+    last_update = time.time_ns()
     
     #Odometrie
     list_of_moves = []
@@ -220,11 +220,11 @@ def main():
     while(True):     
         #stop the motor in case of bad connection      
         #1ns = 1E-9s
-        if time.clock_gettime(0) - (last_update + 1.0) > 0:
+        if time.time_ns() - (last_update + 1000000000) > 0:
             set_motor_speed(0,0)
 
         #terminate the connection in case of very bad connection
-        if time.clock_gettime(0) - (last_update + 30.0) > 0:
+        if time.time_ns() - (last_update + 30000000000) > 0:
             if DEBUG:
                 print("Connection timeout!")
             break     
@@ -233,7 +233,8 @@ def main():
         data, cur_ip_addr = soc.recvfrom(1024)
         if ip_addr == cur_ip_addr and data:
             #update the recived Counter
-            last_update= time.clock_gettime(0)
+            last_update= time.time_ns()
+            print("update")
             
             ID = data[0]
             if ID == dict.msg_dict["DV_STRAIGHT"]:
