@@ -248,6 +248,7 @@ def main():
                 data = struct.unpack("!Bf",data)
                 cash = data[1]
                 cash = cash *(-1)
+                print("Rotate : ",cash )
                 set_motor_speed(convert_to_motor(cash), convert_to_motor(data[1]))
 
 
