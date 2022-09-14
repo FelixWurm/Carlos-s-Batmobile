@@ -269,11 +269,11 @@ def main():
             
 
 if __name__ == "__main__":
-    #if os.fork() != 0:
-        #subprocess.run(["killall", "rtsp_server"])
-        #subprocess.run(["/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server", "/home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf"])
-        #print("Video Fail!")        
-    if True:
+    if os.fork() == 0:
+        subprocess.run(["killall", "rtsp_server"])
+        subprocess.run(["/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server", "/home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf"])
+        print("Video Fail!")        
+    else:
         while True:
             #subprocess.run(["killall", "rtsp_server"])
             #subprocess.run(["/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server", "/home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf"])
