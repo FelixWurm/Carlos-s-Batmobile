@@ -270,7 +270,7 @@ if __name__ == "__main__":
             print ("Something went wrong, connection terminatet and ready for new connection")
         except KeyboardInterrupt:
             videostream.close()
-            break
+            exit()
 
 
 
