@@ -203,7 +203,7 @@ def main():
     
     #some RAW_Mode suff
     raw_mode = False
-    last_update = time.clock_gettime_ns()
+    last_update = time.clock_gettime_ns(0)
     
     #Odometrie
     list_of_moves = []
