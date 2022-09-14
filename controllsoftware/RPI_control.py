@@ -166,7 +166,7 @@ def udp_connect(soc = socket.socket):
             soc.sendto(struct.pack("!B", dict.msg_dict["CONN_ACCEPT"]), addr)
             return addr
         else:
-            counter+1
+            counter = counter +1
             print("conection with invalid init sequenz, open for retrys : ", counter)
             soc.sendto(struct.pack("!B",dict.msg_dict["ERROR_CONN"]), addr)
 
