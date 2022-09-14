@@ -60,7 +60,7 @@ class device_maneger:
                 self.sock.sendto(struct.pack("!B",dict.msg_dict["CONN_REQUEST"]),(self.ip_addr, self.ip_port))
                 self.sock.setblocking(1)
                 self.sock.settimeout(5)
-                data , addr = self.sock.recvfrom(1024)
+                data , self.addr = self.sock.recvfrom(1024)
                 print (data)
                 if data[0] == dict.msg_dict["CONN_ACCEPT"]:
                     pass
@@ -89,7 +89,7 @@ class device_maneger:
         counter = 0
         while True:
             try:
-                self.sock.sendto(msg)
+                self.sock.sendto(msg,self,self.addr)
                 self.last_conn = time.clock_gettime_ns(0)
                 return True
             except:
