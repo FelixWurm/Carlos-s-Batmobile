@@ -17,7 +17,6 @@ import struct
 #waiting system
 import sys
 import select
-from types import NoneType
 
 #Serial connection to the Joistick
 import serial
