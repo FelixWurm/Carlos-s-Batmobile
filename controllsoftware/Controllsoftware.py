@@ -423,7 +423,7 @@ def main():
 
 
                 #cal Mode
-                if cash[0] == "C":
+                if cash[0] == "T":
                     try:
                         speed = finde_number(cash, position)
                         time_ = finde_number(cash, position)
