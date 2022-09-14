@@ -442,7 +442,7 @@ def main():
                 
                 if(cash[0] == "C"):
                     cash = connect_new_clinet(last_ip)
-                    if not cash == NoneType:
+                    if not cash == None:
                         devices.append(cash)
                     last_ip = ".0.0.0.0"
                 
