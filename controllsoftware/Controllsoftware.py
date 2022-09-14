@@ -441,9 +441,9 @@ def main():
                     help("gerneal")
                 
                 if(cash[0] == "C"):
-                    cash = connect_new_clinet(last_ip)
-                    if cash:
-                        devices.append(cash)
+                    cash_ = connect_new_clinet(last_ip)
+                    if cash_:
+                        devices.append(cash_)
                     last_ip = ".0.0.0.0"
                 
                 if(cash[0] == "Y"):
