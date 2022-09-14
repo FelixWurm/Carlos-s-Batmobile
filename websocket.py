@@ -19,14 +19,28 @@ STATE = State.KEEP_ALIVE
 UPDATE_EVENT = asyncio.Event()
 
 SPEED = 100
+CHANNEL = 0
+
+CARLOS_NAMES = ["carlos-5.local", "carlos-4.local", "carlos-3.local", "carlos-4.local"]
+
+DNS_CACHE = {}
+
+def get_ip(domain):
+    try:
+        if domain in DNS_CACHE:
+            return DNS_CACHE[domain]
+        ip = socket.gethostbyname(domain)
+        DNS_CACHE[domain] = ip
+        return ip
+    except socket.gaierror:
+        print("Address resolution failed: " + domain)
+        return "127.0.0.1"
 
 
 async def carlos_controller():
+    prev_channel = -1
+    port = 50000
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-    request = struct.pack("!B", int(4))
-    # Todo: Wait for connection accept
-    sock.sendto(request, ("192.168.199.34", 50000))
 
     while True:
         try:
@@ -34,7 +48,21 @@ async def carlos_controller():
             UPDATE_EVENT.clear()
         except asyncio.exceptions.TimeoutError:
             pass
+
+        if prev_channel != CHANNEL:
+            request = struct.pack("!B", int(4))
+            # Todo: Wait for connection accept
+            sock.sendto(request, (get_ip(CARLOS_NAMES[CHANNEL]), port))
+            if prev_channel != -1:
+                # Send stop signal to previous channel
+                data = struct.pack("!B", int(6))
+                sock.sendto(data, (get_ip(CARLOS_NAMES[prev_channel]), port))
+                sock.sendto(data, (get_ip(CARLOS_NAMES[prev_channel]), port))
+            prev_channel = CHANNEL
+
         data = []
+        if type(SPEED) != float and type(SPEED) != int:
+            continue
         if STATE == State.FORWARD:
             data = struct.pack("!Bf", int(1), SPEED)
         if STATE == State.BACKWARDS:
@@ -42,18 +70,17 @@ async def carlos_controller():
         if STATE == State.KEEP_ALIVE:
             data = struct.pack("!B", int(6))
         if STATE == State.ROTATE_RIGHT:
-            data = struct.pack("!Bf", int(2), SPEED)
-        if STATE == State.ROTATE_LEFT:
             data = struct.pack("!Bf", int(2), -SPEED)
+        if STATE == State.ROTATE_LEFT:
+            data = struct.pack("!Bf", int(2), SPEED)
 
-        sock.sendto(data, ("192.168.199.34", 50000))
-        print(STATE)
-        print(SPEED)
+        sock.sendto(data, (get_ip(CARLOS_NAMES[CHANNEL]), port))
 
 
 async def handler(websocket):
     global STATE
     global SPEED
+    global CHANNEL
 
     async for message in websocket:
         event = json.loads(message)
@@ -72,6 +99,8 @@ async def handler(websocket):
                 STATE = State.KEEP_ALIVE
         if event["type"] == "speed":
             SPEED = event["speed"]
+        if event["type"] == "channel":
+            CHANNEL = event["channel"]
 
         UPDATE_EVENT.set()
 

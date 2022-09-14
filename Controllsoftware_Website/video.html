@@ -32,16 +32,6 @@
         <p id="current-channel"></p>
         <a href="#" id="right">&#8594;</a>
     </div>
-    <script>let streams = {
-        "27aec28e-6181-4753-9acd-0456a75f0289": {
-            "name": "111111111",
-            "channels": {
-                "0": {"url": "rtsp://192.168.137.142:8554/cam", "on_demand": true},
-                "1": {"url": "rtmp://171.25.232.10/12d525bc9f014e209c1280bc0d46a87e", "status": 1}
-            }
-        }
-    };
-    </script>
     <script>
         let webrtc, webrtcSendChannel;
         let mediaStream;
@@ -72,7 +62,6 @@
         }
 
         function ontrack(event) {
-            console.log(event.streams.length + ' track is delivered');
             mediaStream.addTrack(event.track);
         }
 

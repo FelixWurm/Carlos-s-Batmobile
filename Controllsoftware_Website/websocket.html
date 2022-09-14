@@ -13,35 +13,69 @@
 <body>
     <p>Use wasd for control</p>
     <label for="speed">Speed of Carlos(10-100):</label>
-    <input type="number" id="speed" step="10" onchange="speedUpdate(this.value)" name="speed" value="100" min="10" max="100">
+    <input type="number" id="speed" step="10" onchange="speedUpdate(this.value)" name="speed" value="100" min="10"
+           max="100">
+
+    <label for="channel">Select channel:</label>
+    <input type="number" id="channel" step="1" onchange="channelUpdate(this.value)" name="channel" value="0" min="0"
+           max="3">
 
     <script>
-        const websocket = new WebSocket("ws://localhost:8888");
+        let websocket;
+
         const keys = ['w', 'a', 's', 'd'];
         const pressedKeys = new Set();
 
-        document.addEventListener('keydown', function (event) {
-            keys.forEach(function (key) {
-                    if (key === event.key) {
-                        pressedKeys.add(key);
-                    }
-                }
-            )
-            checkPressedKeys();
-        });
+        function connect() {
+            websocket = new WebSocket("ws://localhost:8888");
+            websocket.onopen = function (event) {
+                checkPressedKeys();
+                speedUpdate(document.getElementById("speed").value);
+                channelUpdate(document.getElementById("channel").value);
+            };
 
-        document.addEventListener('keyup', function (event) {
-            keys.forEach(function (key) {
-                    if (key === event.key) {
-                        pressedKeys.delete(key);
+            websocket.onclose = function (event) {
+                console.log("Socket closed. Attempt reconnect.", event.reason);
+                setTimeout(function () {
+                    connect();
+                }, 1000);
+            };
+
+            websocket.onerror = function (err) {
+                console.error("Websocket error", err);
+                websocket.close();
+            }
+
+            document.addEventListener('keydown', function (event) {
+                keys.forEach(function (key) {
+                        if (key === event.key) {
+                            pressedKeys.add(key);
+                        }
                     }
-                }
-            )
-            checkPressedKeys();
-        });
+                )
+                checkPressedKeys();
+            });
+
+            document.addEventListener('keyup', function (event) {
+                keys.forEach(function (key) {
+                        if (key === event.key) {
+                            pressedKeys.delete(key);
+                        }
+                    }
+                )
+                checkPressedKeys();
+            });
+
+        }
+
 
         function speedUpdate(speed) {
-            const event = {type: "speed", speed: speed};
+            const event = {type: "speed", speed: parseInt(speed)};
+            websocket.send(JSON.stringify(event));
+        }
+
+        function channelUpdate(channel) {
+            const event = {type: "channel", channel: parseInt(channel)};
             websocket.send(JSON.stringify(event));
         }
 
@@ -58,6 +92,8 @@
             const event = {type: "keyPress", key: key};
             websocket.send(JSON.stringify(event));
         }
+
+        connect();
 
     </script>
 </body>
