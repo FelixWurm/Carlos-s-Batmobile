@@ -183,6 +183,7 @@ def convert_to_motor(input):
 
 
 
+
 def main():
     #setup the TCP server
     soc = UDP_setup()
@@ -200,15 +201,26 @@ def main():
     
     #some RAW_Mode suff
     raw_mode = False
-    last_update = 0
+    last_update = time.clock_gettime_ns()
     
-    #L
-    
-    while(True):           
-        #RAW mode Watchdog
+    #Odometrie
+    list_of_moves = []
+    start_position = [0,0]    
+    current_position = [0,0]
+    current_direction = [0,0] 
+
+    #Idee: Nach jeder veränderung der Geschwindigkeit Die Position neu bestimmen
+
+
+    while(True):     
+        #stop the motor in case of bad connection      
         #1ns = 1E-9s
-        #if time.clock_gettime_ns() - (time_last_update + 500000000):
-            #set_motor_speed(0,0)
+        if time.clock_gettime_ns() - (last_update + 1000000):
+            set_motor_speed(0,0)
+
+        #terminate the connection in case of very bad connection
+        if time.clock_gettime_ns() - (last_update + 30000000):
+              break     
             
     
         data, cur_ip_addr = soc.recvfrom(1024)
@@ -241,8 +253,11 @@ def main():
 
             
             
-            
-main()
+
+if __name__ == "__main__":
+    while True:         
+        main()
+        print ("Something went wrong, connection terminatet and ready for new connection")
 
 
 
