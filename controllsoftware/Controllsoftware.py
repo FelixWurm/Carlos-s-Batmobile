@@ -484,7 +484,7 @@ def main():
                             serial_port = serial_connect(port)
                             serial_enable = True
                             print("connected!")
-                        except serial.serialutil.SerialExeption as e:
+                        except Exception as e:
                             print("Could not connect Joystick (",e,")")
                         
 
