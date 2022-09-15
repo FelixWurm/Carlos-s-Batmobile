@@ -305,11 +305,11 @@ def main():
         if ready[0]:
             data, cur_ip_addr = soc.recvfrom(1024)
             if ip_addr == cur_ip_addr and data:
-                #update the recived Counter
-                last_update= time.time_ns()
+                #update the last received Counter
+                last_update = time.time_ns()
                 
                 ID = data[0]
-                print(data)
+
                 if ID == dict.msg_dict["DV_STRAIGHT"]:
                     data = struct.unpack("!Bf",data)
                     cash = convert_to_motor(data[1])
@@ -344,7 +344,7 @@ if __name__ == "__main__":
         while True:      
             try: 
                 main()
-                print ("Something went wrong, connection terminatet and ready for new connection")
+                print ("Something went wrong, connection terminated and ready for new connection")
             except KeyboardInterrupt:
                 #videostream.close()
                 exit()

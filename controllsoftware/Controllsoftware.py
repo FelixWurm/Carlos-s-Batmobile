@@ -369,7 +369,7 @@ def main():
                 msg = struct.pack("Bff", dict.msg_dict["DV_RAW_MODE"],speed_a,speed_b)
                 
                 
-                devices[current_serial_device].sendall(msg)
+                devices[current_serial_device].send(msg)
 
         #end Serial Stuff
          
