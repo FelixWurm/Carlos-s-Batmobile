@@ -1,6 +1,6 @@
-#Controllsoftware to controll one ore mor Calros Roboters
+#Control-software to control one ore mor Calros robot
 
-#TCP and UDP conection
+#for connection to outside
 import socket
 
 #Timing
@@ -18,7 +18,7 @@ import struct
 import sys
 import select
 
-#Serial connection to the Joistick
+#Serial connection to the joystick
 import serial
 
 import dict
@@ -38,9 +38,8 @@ def serial_connect(device_name):
     return ser
 
 
-class device_maneger:
+class device_manager:
     def __init__(self, ip,port,connect = False):
-        self.last_keepalive = time.time()
         self.ip_addr = ip
         self.ip_port = port
         self.last_conn = 0
@@ -66,20 +65,20 @@ class device_maneger:
                     pass
                 else:
                     raise Exception("Error wrong response from server. Is the ip correct?")
-                self.last_comm = time.clock_gettime_ns(0)
+                self.last_comm = time.time_ns()
 
                 break
             except Exception as e:
-                print("Faild to connect to server!.... Retrying (", e, ")")
+                print("Failed to connect to server!.... Retrying (", e, ")")
                 sl(1)
 
             Counter = Counter +1
             if Counter > 3:
-                print("FAILD to connect after 4 atemts")
+                print("Failed to connect after 4 attempts")
                 return False
             
         self.sock.setblocking(0)
-        print("Connection establoshed!")
+        print("Connection established!")
         return True
     
     
@@ -91,24 +90,24 @@ class device_maneger:
                 self.sock.setblocking(1)
                 self.sock.sendto(msg,self.addr)
                 self.sock.setblocking(0)
-                self.last_conn = time.clock_gettime_ns(0)
+                self.last_conn = time.time_ns()
                 return True
             except Exception as e:
                 if DEBUG:
-                    print("Faild to send data, Retrying... (",e,")")
+                    print("Failed to send data, Retrying... (",e,")")
                 counter = counter + 1
                 
                 if(counter > 3):
                     if DEBUG:
-                        print("Faild to connect after the 4th atempt")
+                        print("Failed to connect after the 4th attempt")
                     return False
-                    
-    def send_keepalive(self):
-        #sends if nesesary a keepalive signal. if the last communication is les then two seconds ago, do nothing
-        if(self.last_comm -time.clock_gettime_ns(0) < -2000000000):
-            self.send_data(struct.pack("!B", dict.msg_dict["STAY_ALLIVE"]))
-    
 
+    #sends if necessary a keepalive signal. if the last communication is les then two seconds ago, do nothing
+    def send_keepalive(self):
+        if(self.last_comm -time.time_ns() < -2000000000):
+            self.send_data(struct.pack("!B", dict.msg_dict["STAY_ALIVE"]))
+    
+    #an ACK for a keepalive is receive
     def set_keepalive(self):
         self.last_comm = time.time()
 
@@ -150,8 +149,8 @@ def serial_read(current_device, devices,ser):
             
     
 def decode_number(number: str):
-    mynum = int(number[1:])
-    return mynum
+    my_num = int(number[1:])
+    return my_num
 
 
 def get_local_ip():
@@ -172,7 +171,7 @@ def get_local_ip():
 
 
 
-def help(typeofhelp):
+def help(typeof_help):
     print("----------------------------------HELP--------------------------------------")
     print("commands:")
     print("D drive strate, needs speed and distance")
@@ -180,8 +179,6 @@ def help(typeofhelp):
     print("R rotate, needs angle and speed")
 
 
-def decode(msg, soc, adress, port):
-    print("incomming message Detectet!")
 
 #returns True if it contains a number
 def number(number_):
@@ -195,8 +192,8 @@ def number(number_):
     return False 
 
 
-#functions that findes a number and fives it back as a float
-def finde_number(input, position):
+#functions that finds a number and fives it back as a float
+def find_number(input, position):
     first_number_found = False
     output = ""
     while True:
@@ -213,16 +210,16 @@ def finde_number(input, position):
     try:
         output = float(output)
     except:
-        print("Faild to convert")
+        print("Failed to convert")
         return 0
     return output
 
 
 
 
-def connect_new_clinet(last_ip):
+def connect_new_client(last_ip):
     if(last_ip == "0.0.0.0"):
-        print("Please enter a IP adress you wish to connect to, or C1 to C5 for dafault Calos rover")
+        print("Please enter a IP address you wish to connect to, or C1 to C5 for default Calos rover")
         ip_addr = input()
         if ip_addr[0] == "C":
             if ip_addr[1] == "1":
@@ -252,16 +249,16 @@ def connect_new_clinet(last_ip):
     try:
         ip_port = int(ip_port)
     except:
-        print("Faild to reed in Port, please only use Numbers")
+        print("Failed to reed in Port, please only use Numbers")
         exit()
     
-    new_device = device_maneger(ip_addr, ip_port, False)
+    new_device = device_manager(ip_addr, ip_port, False)
     
     if new_device.connect():
-        print("Device conectet Sucsesfully")
+        print("Device connected successful")
         return new_device
     else:
-        print("Faild to connect Device")
+        print("Failed to connect Device")
 
 
 
@@ -295,25 +292,25 @@ def next_device(current_device, devices):
         print("Device changed to:", 0)
         return 0
 
-#list off sochets to all the connectet devices
+#list off Sockets to all the connected devices
 devices = []
             
 
 
 def main():
     
-    #Values for seriell Stuff
+    #Values for serial Stuff
     global serial_x
     global serial_y
     global serial_Button
     global new_set
     
     time_last_update = 0
-    serial_selectet_device = 0
+    serial_selected_device = 0
     console_select_device = 0
     
-    #Programm Start, print some info
-    print("Welcome to the ideal Roboter controll Center")
+    #Program Start, print some info
+    print("Welcome to the ideal rover control Center")
     print(get_local_ip(), "<< Local IP")
     
     if AUTO_DISCOVERY:
@@ -322,7 +319,7 @@ def main():
     #save the last found ip to make connection easy
     last_ip = "0.0.0.0"
     
-    #Serial suff
+    #Serial stuff
     serial_enable = False
     current_serial_device = 0
 
@@ -334,7 +331,7 @@ def main():
             serial_read(current_serial_device, devices,serial_port)
             
             if serial_Button:    
-                next_device(serial_selectet_device,devices)
+                next_device(serial_selected_device,devices)
                 serial_Button == False
                 
 
@@ -387,11 +384,11 @@ def main():
         
             if cash:
                 print("Found new Device!  IP:", cash)
-                print("To add IP to list off connectet devices type C without any argumenst")
+                print("To add IP to list off connect devices type C without any arguments")
                 last_ip = cash
             
         
-        #UDP conection handeling
+        #UDP connection handling
         for device in devices:
             ready = select.select([device.sock],[],[],0)
             if ready[0]:
@@ -400,10 +397,10 @@ def main():
                     if msg[0] == dict.msg_dict["STAY_ALLIVE"]:
                         device.set_keepalive(time.time())
                         
-        #send out keep alive signal eery two minuits
+        #send out keep alive signal eery two minutes
         
         
-        #check if the all conecet nods are still present
+        #check if the all connected nods are still present
         
             
         #read out the Keyboard
@@ -411,11 +408,11 @@ def main():
         if ready[0]:
             cash = sys.stdin.readline().rstrip()
             if cash:
-                #Drive vorwards
+                #Drive forwards
                 if(cash[0] == "D"):
                     position = 1
                     try:
-                        speed = finde_number(cash, position)
+                        speed = find_number(cash, position)
                     except:
                         print("Invalid Input")
                     cash = struct.pack("!Bf", dict.DV_STRAIGHT, speed)
@@ -430,7 +427,7 @@ def main():
                 if(cash[0] == "D"):
                     position = 1
                     try:
-                        speed = finde_number(cash, position)
+                        speed = find_number(cash, position)
                     except:
                         print("Invalid Input")
                     cash = struct.pack("!Bf", int(1), speed)
@@ -440,8 +437,8 @@ def main():
                 #cal Mode
                 if cash[0] == "T":
                     try:
-                        speed = finde_number(cash, position)
-                        time_ = finde_number(cash, position)
+                        speed = find_number(cash, position)
+                        time_ = find_number(cash, position)
                     except:
                         print("Invalid Input")
 
@@ -458,17 +455,17 @@ def main():
 
                 #print out a small Help promt:
                 if(cash[0] == "H"):
-                    help("gerneal")
+                    help("general")
                 
                 if(cash[0] == "C"):
-                    cash_ = connect_new_clinet(last_ip)
+                    cash_ = connect_new_client(last_ip)
                     if cash_:
                         devices.append(cash_)
                     last_ip = ".0.0.0.0"
                 
                 if(cash[0] == "Y"):
                     print("connect a new Joystick to the USB port! Then enter the location of the port")
-                    print("input S for standart port")
+                    print("input S for default port")
                     while True:
                         port = input()
                         if port:
@@ -485,8 +482,6 @@ def main():
                     
                     
 
-
-main()
-
-#print(finde_number("D  67876.98  fwwes", 0))
+if __name__ == "__main__":
+    main()
 
