@@ -213,7 +213,7 @@ def find_number(input, position):
     except:
         print("Failed to convert")
         return 0
-    return output
+    return output , position
 
 
 
@@ -441,7 +441,7 @@ def main():
                     if cash[1] == "S" or cash[1] == "D":
                         try:
                             position = 2
-                            speed = find_number(cash, position)
+                            speed , position= find_number(cash, position)
                             time_ = find_number(cash, position)
                         except:
                             print("Invalid Input")
@@ -453,7 +453,7 @@ def main():
                     if cash[1] == "R":
                         try:
                             position = 2
-                            speed = (cash, position)
+                            speed , position= (cash, position)
                             time_ = find_number(cash, position)
                         except:
                             print("Invalid Input")
