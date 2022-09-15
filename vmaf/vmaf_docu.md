@@ -68,13 +68,15 @@ Videocapture without (-n) / with (-p) preview with specified width, height, fram
 
 ## Experiment with encoding settings via ffmpeg
 
+### libx264
+
 Different CRF value (0 - 51): 0 lossless (best quality); 23 default; 51 wort quality (in-/decreases bitrate automatically)
 
-`ffmpeg -i input.h264 -c:v libx264 -crf xx -r 30 -c:a copy output.mkv`
+`ffmpeg -i input.h264 -c:v libx264 -crf xx -r 30 output.mkv`
 
 Zero Latency
 
-`ffmpeg -i input.h264 -c:v libx264 -tune zerolatency -r 30 -c:a copy output.mkv`
+`ffmpeg -i input.h264 -c:v libx264 -tune zerolatency -r 30 output.mkv`
 
 Downscale video resolution
 
@@ -82,9 +84,15 @@ Downscale video resolution
 
 Set maximum bitrate
 
-`ffmpeg -i input.h264 -c:v libx264 -r 30 -maxrate 1M -bufsize 500k -c:a copy output.mkv`
+`ffmpeg -i input.h264 -c:v libx264 -r 30 -maxrate 1M -bufsize 500k output.mkv`
 
 Set constant bitrate (`-b:v 1M` average bitrate, `-bufsize` interval in which bitrate is checked (shouldnt be lower than half of the average bitrate))
 
-`ffmpeg -i input.h264 -c:v libx264 -r 30 -b:v 1M -minrate 1M -maxrate 1M -bufsize 500k -c:a copy output.mkv`
+`ffmpeg -i input.h264 -c:v libx264 -r 30 -b:v 1M -minrate 1M -maxrate 1M -bufsize 500k output.mkv`
+
+### mjpeg
+
+change quality with `-q:v x` (with x = 0 being the highest quality; x < 2 might have compatibility issues)
+
+`ffmpeg -i input.h264 -c:v mjpeg -r 30 -q:v 2 output.mkv`
 
