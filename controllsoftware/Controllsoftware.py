@@ -440,6 +440,7 @@ def main():
                 if cash[0] == "T":
                     if cash[1] == "D":
                         try:
+                            position = 2
                             speed = find_number(cash, position)
                             time_ = find_number(cash, position)
                         except:
@@ -451,7 +452,8 @@ def main():
 
                     if cash[1] == "R":
                         try:
-                            speed = find_number(cash, position)
+                            position = 2
+                            speed = (cash, position)
                             time_ = find_number(cash, position)
                         except:
                             print("Invalid Input")
