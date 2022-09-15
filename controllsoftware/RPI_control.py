@@ -336,7 +336,7 @@ def main():
                 if ID == dict.msg_dict["DV_CALL_STRAIGHT"]:
                     try:
                         data2 = struct.unpack("!Bff",data)
-                        drive(data2[0],data2[0],data2[1])
+                        drive(data2[1],data2[1],data2[2])
                     except Exception as e:
                         print("ERROR 01 (",e,")")
 
@@ -344,7 +344,7 @@ def main():
                 if ID == dict.msg_dict["DV_CALL_ROTATE"]:
                     try:
                         data2 = struct.unpack("!Bff",data)
-                        drive(data2[0], -data2[0],data2[1])
+                        drive(data2[1], -data2[1],data2[2])
                     except Exception as e:
                         print("ERROR 02 (",e,")")
 
