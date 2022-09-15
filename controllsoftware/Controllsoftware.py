@@ -106,10 +106,11 @@ class device_manager:
     def send_keepalive(self):
         if(self.last_comm -time.time_ns() < -2000000000):
             self.send_data(struct.pack("!B", dict.msg_dict["STAY_ALIVE"]))
+            self.last_comm = time.time_ns()
     
     #an ACK for a keepalive is receive
     def set_keepalive(self):
-        self.last_comm = time.time()
+        self.last_comm = time.time_ns()
 
 
 
@@ -236,7 +237,9 @@ def connect_new_client(last_ip):
             elif ip_addr[1] == "5":
                 ip_addr = "192.168.199.105"
                 ip_port = 50000
-
+            elif ip_addr[1] == "6":
+                ip_addr = "192.168.199.106"
+                ip_port = 50000
             else:
                 print("please enter a UDP port:")
                 ip_port = input()
@@ -470,13 +473,20 @@ def main():
                         if port:
                             break
                     if port == "S":
-                        serial_enable = True
-                        serial_port = serial_connect("/dev/ttyACM0")
+                        try:
+                            serial_enable = True
+                            serial_port = serial_connect("/dev/ttyACM0")
+                            print("connected!")
+                        except:
+                            print("Could not connect to default port. check connection!")
                     else:
-                        serial_enable = True
-                        serial_port = serial_connect(port)
+                        try:
+                            serial_port = serial_connect(port)
+                            serial_enable = True
+                            print("connected!")
+                        except serial.serialutil.SerialExeption as e:
+                            print("Could not connect Joystick (",e,")")
                         
-                    print("connected!")
 
                     
                     
