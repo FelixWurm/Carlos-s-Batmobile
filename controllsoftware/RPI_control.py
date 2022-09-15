@@ -311,8 +311,8 @@ def main():
                 ID = data[0]
 
                 if ID == dict.msg_dict["DV_STRAIGHT"]:
-                    data = struct.unpack("!Bf",data)
-                    cash = convert_to_motor(data[1])
+                    data2 = struct.unpack("!Bf",data)
+                    cash = convert_to_motor(data2[1])
                     set_motor_speed(cash, cash)
 
                 if ID == dict.msg_dict["DV_STOP"]:
@@ -320,33 +320,33 @@ def main():
 
 
                 if ID == dict.msg_dict["DV_ROTATE"]:
-                    data = struct.unpack("!Bf",data)
-                    cash = data[1]
+                    data2 = struct.unpack("!Bf",data)
+                    cash = data2[1]
                     cash = cash *(-1)
                     set_motor_speed(convert_to_motor(cash), convert_to_motor(data[1]))
 
 
 
                 if ID == dict.msg_dict["DV_RAW_MODE"]:
-                    data = struct.unpack("Bff",data)
-                    set_motor_speed(data[1], data[2])
+                    data2 = struct.unpack("Bff",data)
+                    set_motor_speed(data2[1], data2[2])
                     raw_mode = True
 
                 #modes for cal
                 if ID == dict.msg_dict["DV_CALL_STRAIGHT"]:
                     try:
-                        data = struct.unpack("!Bff",data)
-                        drive(data[0],data[0],data[1])
-                    except:
-                        print("ERROR 01")
+                        data2 = struct.unpack("!Bff",data)
+                        drive(data2[0],data2[0],data2[1])
+                    except Exception as e:
+                        print("ERROR 01 (",e,")")
 
 
                 if ID == dict.msg_dict["DV_CALL_ROTATE"]:
                     try:
-                        data = struct.unpack("!Bff",data)
-                        drive(data[0], -data[0],data[1])
-                    except:
-                        print("ERROR 02")
+                        data2 = struct.unpack("!Bff",data)
+                        drive(data2[0], -data2[0],data2[1])
+                    except Exception as e:
+                        print("ERROR 02 (",e,")")
 
             
             
