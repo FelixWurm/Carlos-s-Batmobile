@@ -27,5 +27,5 @@ hostnamectl set-hostname $1
 
 echo "
 sudo ifconfig bat0 $2
-" | sudo tee -a /home/pi/start_batman-adv.sh
+" | sudo tee -a /home/pi/start-batman-adv.sh
 
