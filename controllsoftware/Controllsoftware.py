@@ -438,17 +438,26 @@ def main():
 
                 #cal Mode
                 if cash[0] == "T":
-                    try:
-                        speed = find_number(cash, position)
-                        time_ = find_number(cash, position)
-                    except:
-                        print("Invalid Input")
+                    if cash[1] == "D":
+                        try:
+                            speed = find_number(cash, position)
+                            time_ = find_number(cash, position)
+                        except:
+                            print("Invalid Input")
 
-                    cash = struct.pack("!Bf", dict.msg_dict["DV_STRAIGHT"], speed)
-                    devices[console_select_device].send(cash)
-                    sl(time_)
-                    cash = struct.pack("!Bf", dict.msg_dict["DV_STOP"], speed)
-                    devices[console_select_device].send(cash)                   
+                        cash = struct.pack("!Bff", dict.msg_dict["DV_CALL_STRAIGHT"], speed,time_)
+                        devices[console_select_device].send_data(cash)
+                 
+
+                    if cash[1] == "R":
+                        try:
+                            speed = find_number(cash, position)
+                            time_ = find_number(cash, position)
+                        except:
+                            print("Invalid Input")
+
+                        cash = struct.pack("!Bf", dict.msg_dict["DV_CALL_ROTATE"], speed, time_)
+                        devices[console_select_device].send(cash)
 
 
                 #Drive in reverse

@@ -332,6 +332,22 @@ def main():
                     set_motor_speed(data[1], data[2])
                     raw_mode = True
 
+                #modes for cal
+                if ID == dict.msg_dict["DV_CALL_STRAIGHT"]:
+                    try:
+                        data = struct.unpack("!Bff",data)
+                        drive(data[0],data[0],data[1])
+                    except:
+                        print("ERROR 01")
+
+
+                if ID == dict.msg_dict["DV_CALL_ROTATE"]:
+                    try:
+                        data = struct.unpack("!Bff",data)
+                        drive(data[0], -data[0],data[1])
+                    except:
+                        print("ERROR 02")
+
             
             
 
