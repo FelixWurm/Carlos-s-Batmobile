@@ -82,5 +82,9 @@ Downscale video resolution
 
 Set maximum bitrate
 
-`ffmpeg -i input.h264 -c:v libx264 -r 30 -maxrate 1M -bufsize 2M -c:a copy output.mkv`
+`ffmpeg -i input.h264 -c:v libx264 -r 30 -maxrate 1M -bufsize 500k -c:a copy output.mkv`
+
+Set constant bitrate (`-b:v 1M` average bitrate, `-bufsize` interval in which bitrate is checked (shouldnt be lower than half of the average bitrate))
+
+`ffmpeg -i input.h264 -c:v libx264 -r 30 -b:v 1M -minrate 1M -maxrate 1M -bufsize 500k -c:a copy output.mkv`
 
