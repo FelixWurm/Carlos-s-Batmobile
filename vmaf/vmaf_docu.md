@@ -92,7 +92,7 @@ Set constant bitrate (`-b:v 1M` average bitrate, `-bufsize` interval in which bi
 
 ### mjpeg
 
-change quality with `-q:v x` (with x = 0 being the highest quality; x < 2 might have compatibility issues)
+change quality with `-q:v x` (0: highest quality; 31: lowest quality; x < 2 might have compatibility issues)
 
 `ffmpeg -i input.h264 -c:v mjpeg -r 30 -q:v 2 output.mkv`
 
