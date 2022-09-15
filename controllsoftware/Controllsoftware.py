@@ -396,7 +396,7 @@ def main():
             if ready[0]:
                 msg = device.sock.recv(1024)
                 if msg:
-                    if msg[0] == dict.msg_dict["STAY_ALLIVE"]:
+                    if msg[0] == dict.msg_dict["STAY_ALIVE"]:
                         device.set_keepalive(time.time())
                         
         #send out keep alive signal eery two minutes
@@ -438,7 +438,7 @@ def main():
 
                 #cal Mode
                 if cash[0] == "T":
-                    if cash[1] == "D":
+                    if cash[1] == "S" or cash[1] == "D":
                         try:
                             position = 2
                             speed = find_number(cash, position)
@@ -458,7 +458,7 @@ def main():
                         except:
                             print("Invalid Input")
 
-                        cash = struct.pack("!Bf", dict.msg_dict["DV_CALL_ROTATE"], speed, time_)
+                        cash = struct.pack("!Bff", dict.msg_dict["DV_CALL_ROTATE"], speed, time_)
                         devices[console_select_device].send(cash)
 
 
