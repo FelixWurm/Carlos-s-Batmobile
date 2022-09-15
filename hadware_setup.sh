@@ -11,7 +11,7 @@ apt-get upgrade
 sudo apt install pip -y
 
 #rtsp stuff
-(cd /home/pi/Carlos-s-Batmobile/rtsp_server/; wget share.schwabauer.co/rtsp-server -O rtsp_server; chmod +x rtsp_server)
+(cd /home/pi/Carlos-s-Batmobile/rtsp_server/; wget share.schwabauer.co/rtsp_server -O rtsp_server; chmod +x rtsp_server)
 
 
 #install librarys for the camera

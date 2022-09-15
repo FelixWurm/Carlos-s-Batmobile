@@ -28,7 +28,7 @@ class Move:
     end_position    : point
     direction       :int
 
-    move_mode       : int = dict.msg_dict["NO_MOVE"]
+    move_mode       : int = dict.msg_dict["NO_MODE"]
     move_speed      : int = 0
     move_start      : int = 0
     move_end        : int = 0
