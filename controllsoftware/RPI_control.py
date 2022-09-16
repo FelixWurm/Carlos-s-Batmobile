@@ -266,7 +266,6 @@ def udp_connect(soc = socket.socket):
 
 #converts a number from -100 to 100 toto -100-40, 40-100
 def convert_to_motor(input):
-    print(input)
     input  = input* 0.6
     if(input < 0):
         input = input -40
@@ -344,8 +343,8 @@ def main():
                 if ID == dict.msg_dict["DV_ROTATE"]:
                     data2 = struct.unpack("!Bf",data)
                     cash = data2[1]
-                    cash = cash *(-1)
-                    set_motor_speed(convert_to_motor(cash), convert_to_motor(data[1]))
+                    cash2 = cash * (-1)
+                    set_motor_speed(convert_to_motor(cash2), convert_to_motor(cash))
 
 
 
