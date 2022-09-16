@@ -292,7 +292,7 @@ def main():
     #Idee: Nach jeder veränderung der Geschwindigkeit Die Position neu bestimmen
 
     #init drive class
-    Drive = drive
+    Drive = drive()
 
     while True:
         Drive.run()
