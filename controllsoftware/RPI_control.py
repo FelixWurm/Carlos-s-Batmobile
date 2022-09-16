@@ -358,8 +358,8 @@ def main():
                     try:
                         data2 = struct.unpack("!Bff",data)
                         speed = convert_to_motor(data[1])
-                        time = cash2[2]
-                        Drive.drive(speed,speed,time)
+                        duration = cash2[2]
+                        Drive.drive(speed,speed,duration)
                     except Exception as e:
                         print("ERROR 01 (",e,")")
 
@@ -367,8 +367,8 @@ def main():
                 if ID == dict.msg_dict["DV_CALL_ROTATE"]:
                     try:
                         speed = convert_to_motor(data[1])
-                        time = cash2[2]
-                        Drive.drive(speed,-speed,time)
+                        duration = cash2[2]
+                        Drive.drive(speed,-speed,duration)
                     except Exception as e:
                         print("ERROR 02 (",e,")")
 
