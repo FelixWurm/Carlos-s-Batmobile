@@ -2,7 +2,6 @@
 import os
 from pickletools import long4
 import select, sys, struct
-from turtle import distance
 import RPi.GPIO as GPIO
 from time import sleep as sl
 import time
