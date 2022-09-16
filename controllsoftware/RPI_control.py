@@ -266,6 +266,7 @@ def udp_connect(soc = socket.socket):
 
 #converts a number from -100 to 100 toto -100-40, 40-100
 def convert_to_motor(input):
+    print(input)
     input  = input* 0.6
     if(input < 0):
         input = input -40
@@ -273,6 +274,8 @@ def convert_to_motor(input):
         input = input +40
 
     return input
+
+
 
 def calculate_position(mode, time, speed, last_position):
     if mode == "R":
