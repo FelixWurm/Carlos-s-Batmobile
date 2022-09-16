@@ -350,14 +350,31 @@ def main():
                    
                     speed_a = serial_x
                     if(speed_a < 0):
-                        speed_a -40
+                        speed_a  = speed_a-40
                     else:
-                        speed_a +40
+                        speed_a  = speed_a+40
                         
                     speed_b = serial_x
                     if(speed_b < 40):
-                        speed_b-40
+                        speed_b  = speed_b- 40
+                    else:
+                        speed_b  = speed_b +40
+
+
+                elif(serial_x == 0):
+                    speed_a = serial_x * 0.6
+                    speed_b = serial_x * 0.6 
                     
+                    if(speed_a < 0):
+                        speed_a  = speed_a-40
+                    else:
+                        speed_a  = speed_a+40
+                        
+                    speed_b = serial_x
+                    if(speed_b < 40):
+                        speed_b  = speed_b- 40
+                    else:
+                        speed_b  = speed_b +40  
                     
                     
                 else:
