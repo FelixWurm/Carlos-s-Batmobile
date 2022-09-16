@@ -445,8 +445,8 @@ def main():
                             time_  = find_number(cash, position)
 
                             print(speed, " : ", time_)
-                        except:
-                            print("Invalid Input")
+                        except Exception as e:
+                            print("Invalid Input (", e, ")")
 
                         cash = struct.pack("!Bff", dict.msg_dict["DV_CALL_STRAIGHT"], speed,time_)
                         devices[console_select_device].send_data(cash)
