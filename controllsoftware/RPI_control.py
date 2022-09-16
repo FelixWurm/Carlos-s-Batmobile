@@ -98,6 +98,8 @@ class drive:
 
 
 def set_motor_speed(speed_l : int, speed_r :int):
+    speed_l = value_check(speed_l)
+    speed_r = value_check(speed_r)
     if speed_l == 0:
          pi_pwm_l.ChangeDutyCycle(0)
          pi_pwm_l_bwd.ChangeDutyCycle(0)
@@ -120,6 +122,15 @@ def set_motor_speed(speed_l : int, speed_r :int):
             pi_pwm_r.ChangeDutyCycle(0)
             pi_pwm_r_bwd.ChangeDutyCycle(speed_r*(-1))    
 
+
+def value_check(value):
+    if(value > 100):
+        print("value was to big! (",value, ")")
+        value = 100
+    elif value < -100:
+        print ("Value was to small! (", value, ")")
+
+    return value
 
 def drive_ (speed, time):
     drive(speed, speed, time)
