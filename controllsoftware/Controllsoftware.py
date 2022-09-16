@@ -445,9 +445,8 @@ def main():
                         try:
                             position = 2
                             speed , position= find_number(cash, position)
-                            time_  = find_number(cash, position)
+                            time_  , position= find_number(cash, position)
 
-                            print(speed, " : ", time_)
                         except Exception as e:
                             print("Invalid Input (", e, ")")
 
@@ -459,7 +458,7 @@ def main():
                         try:
                             position = 2
                             speed , position= (cash, position)
-                            time_ = find_number(cash, position)
+                            time_ = , positionfind_number(cash, position)
                         except Exception as e:
                             print("Invalid Input (", e, ")")
 
