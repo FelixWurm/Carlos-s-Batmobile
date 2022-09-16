@@ -71,25 +71,29 @@ pi_pwm_r_bwd.start(0)
 
 
 #Drive...
-def drive (speed_l, speed_r, time):
-    #check for correct input
-    if((0 < speed_l < 40)or (-40 < speed_l < 0)):
-        raise Exception("incorrect Input speed_l, must be between -100 to -40 or 40 to 100" )
-
-    if((0 < speed_r < 40)or (-40 < speed_r < 0)):
-        raise Exception("incorrect Input speed_r, must be between -100 to -40 or 40 to 100" )
-
-    set_motor_speed(speed_l, speed_r)
+class drive:
+    def __init__(self):
+        self.end_time = 0
 
 
-    #wait for the specified Time
-    sl(time)
-    print("running")
+    def drive (self, speed_l, speed_r, time):
+        #check for correct input
+        if((0 < speed_l < 40)or (-40 < speed_l < 0)):
+            print("incorrect Input speed_l, must be between -100 to -40 or 40 to 100" )
+            return
 
-    pi_pwm_l.ChangeDutyCycle(0)
-    pi_pwm_r.ChangeDutyCycle(0)
-    pi_pwm_l_bwd.ChangeDutyCycle(0)
-    pi_pwm_r_bwd.ChangeDutyCycle(0)
+        if((0 < speed_r < 40)or (-40 < speed_r < 0)):
+            print("incorrect Input speed_r, must be between -100 to -40 or 40 to 100" )
+            return
+
+        set_motor_speed(speed_l, speed_r)
+        self.end_time = time.time_ns() + (time * 1000000000)
+
+    def run(self):
+        if self.end_time < time.time_ns() and self.end_time != 0:
+            set_motor_speed(0,0)
+            self.end_time = 0
+
 
 
 
@@ -287,8 +291,12 @@ def main():
 
     #Idee: Nach jeder veränderung der Geschwindigkeit Die Position neu bestimmen
 
+    #init drive class
+    Drive = drive
 
-    while True:    
+    while True:
+        Drive.run()
+
         #stop the motor in case of bad connection      
         #1ns = 1E-9s
         if time.time_ns() - (last_update + 1000000000) > 0:
@@ -336,7 +344,7 @@ def main():
                 if ID == dict.msg_dict["DV_CALL_STRAIGHT"]:
                     try:
                         data2 = struct.unpack("!Bff",data)
-                        drive(data2[1],data2[1],data2[2])
+                        Drive.drive(data2[1],data2[1],data2[2])
                     except Exception as e:
                         print("ERROR 01 (",e,")")
 
@@ -344,7 +352,7 @@ def main():
                 if ID == dict.msg_dict["DV_CALL_ROTATE"]:
                     try:
                         data2 = struct.unpack("!Bff",data)
-                        drive(data2[1], -data2[1],data2[2])
+                        Drive. drive(data2[1], -data2[1],data2[2])
                     except Exception as e:
                         print("ERROR 02 (",e,")")
 
