@@ -443,6 +443,8 @@ def main():
                             position = 2
                             speed , position= find_number(cash, position)
                             time_  = find_number(cash, position)
+
+                            print(speed, " : ", time_)
                         except:
                             print("Invalid Input")
 
