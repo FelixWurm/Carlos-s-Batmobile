@@ -1,0 +1,13 @@
+import socket
+import time
+
+
+while True:
+    try:
+        ip = socket.gethostbyname("www.google.com")
+        if ip:
+            break
+        else:
+            time.sleep(1)
+    except:
+        time.sleep(1)

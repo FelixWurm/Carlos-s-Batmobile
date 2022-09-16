@@ -1,5 +1,6 @@
-# Scribt that runs on the RPi in order to controll the Movment and the Sensor data
+# Script that runs on the RPi in order to control the movement and the Sensor data
 import os
+from pickletools import long4
 import select, sys, struct
 import RPi.GPIO as GPIO
 from time import sleep as sl
@@ -7,13 +8,34 @@ import time
 import socket
 import dict
 import subprocess
-
+from dataclasses import dataclass
 
 #Debug
 DEBUG = True
 
 
-#Motorconroll Pin
+#Objects to store the position values
+@dataclass
+class point:
+    x : float = 0
+    y : float = 0
+
+
+
+@dataclass
+class Move:
+    start_position  : point
+    end_position    : point
+    direction       :int
+
+    move_mode       : int = dict.msg_dict["NO_MODE"]
+    move_speed      : int = 0
+    move_start      : int = 0
+    move_end        : int = 0
+
+
+
+#Motor control Pin
 left_fwd = 12
 left_bwd = 26
 right_fwd = 13
@@ -148,6 +170,58 @@ def udp_discovery(discovery_port, discovery_addres, udp_soc, msg):
 
 
 
+class mv_observer:
+    def __init__(self) -> None:
+        #mode (strate, rotate since the last change)
+        self.last_mode = dict.msg_dict["NO_MODE"]
+        self.last_speed = 0
+        self.last_mode_beginning = 0
+        self.last_start_position = point(0,0)
+        self.last_direction = 0
+
+        self.list_of_moves = []
+
+    
+    def move(self,mode, speed):
+        #lok if the mode has changed significantly, if so save the old move, and calculate start and end position.
+        if not (mode == self.last_mode and speed == self.last_speed):
+            #Filter out just start moving 
+            if self.last_mode ==  dict.msg_dict["NO_MODE"]:
+                #com from no move to some movement
+                self.last_mode = mode
+                self.last_speed = speed
+                self.last_mode_beginning = time.time_ns()
+            
+            else:
+                #there was some change, so there needs to by an event appended
+
+                #save the current data
+                cash_move = Move
+                cash_move.move_speed = self.last_speed
+                cash_move.move_type = self.last_mode
+                cash_move.move_start = self.last_mode_beginning
+                cash_move.start_position = self.last_start_position
+
+
+                cash_move.move_end = time.time_ns()
+
+                self.list_of_moves.append(cash_move)
+
+                #save the new last set data
+                self.last_mode = mode
+                self.last_speed = speed
+                self.last_mode_beginning = time.time_ns()   
+
+    def cal_end_position(self, move = Move):
+        if move.move_mode == dict.msg_dict["NO_MODE"]:return
+
+        if move.move_mode == dict.msg_dict["DV_STRATE"]:
+            pass
+            #Calculate passed time, than use that to calculate the Distance (influenced by the speed), then calculate a new point
+        if move.move_mode == dict.msg_dict["DV_ROTATE"]:
+            pass
+
+
 
 
 
@@ -171,7 +245,7 @@ def udp_connect(soc = socket.socket):
             return addr
         else:
             counter = counter +1
-            print("conection with invalid init sequenz, open for retrys : ", counter)
+            print("connection attempt with invalid init sequence, open for retrys : ", counter)
             soc.sendto(struct.pack("!B",dict.msg_dict["ERROR_CONN"]), addr)
 
 
@@ -205,18 +279,11 @@ def main():
     #try to connect to a UDP Host:
     ip_addr = udp_connect(soc)   
     
-    print("Connectet to:", ip_addr)
+    print("Connected to:", ip_addr)
     
     
-    #some RAW_Mode suff
-    raw_mode = False
     last_update = time.time_ns()
-    
-    #Odometrie
-    list_of_moves = []
-    start_position = [0,0]    
-    current_position = [0,0]
-    current_direction = [0,0] 
+      
 
     #Idee: Nach jeder veränderung der Geschwindigkeit Die Position neu bestimmen
 
@@ -238,14 +305,14 @@ def main():
         if ready[0]:
             data, cur_ip_addr = soc.recvfrom(1024)
             if ip_addr == cur_ip_addr and data:
-                #update the recived Counter
-                last_update= time.time_ns()
+                #update the last received Counter
+                last_update = time.time_ns()
                 
                 ID = data[0]
-                print(data)
+
                 if ID == dict.msg_dict["DV_STRAIGHT"]:
-                    data = struct.unpack("!Bf",data)
-                    cash = convert_to_motor(data[1])
+                    data2 = struct.unpack("!Bf",data)
+                    cash = convert_to_motor(data2[1])
                     set_motor_speed(cash, cash)
 
                 if ID == dict.msg_dict["DV_STOP"]:
@@ -253,17 +320,33 @@ def main():
 
 
                 if ID == dict.msg_dict["DV_ROTATE"]:
-                    data = struct.unpack("!Bf",data)
-                    cash = data[1]
+                    data2 = struct.unpack("!Bf",data)
+                    cash = data2[1]
                     cash = cash *(-1)
                     set_motor_speed(convert_to_motor(cash), convert_to_motor(data[1]))
 
 
 
                 if ID == dict.msg_dict["DV_RAW_MODE"]:
-                    data = struct.unpack("Bff",data)
-                    set_motor_speed(data[1], data[2])
+                    data2 = struct.unpack("Bff",data)
+                    set_motor_speed(data2[1], data2[2])
                     raw_mode = True
+
+                #modes for cal
+                if ID == dict.msg_dict["DV_CALL_STRAIGHT"]:
+                    try:
+                        data2 = struct.unpack("!Bff",data)
+                        drive(data2[1],data2[1],data2[2])
+                    except Exception as e:
+                        print("ERROR 01 (",e,")")
+
+
+                if ID == dict.msg_dict["DV_CALL_ROTATE"]:
+                    try:
+                        data2 = struct.unpack("!Bff",data)
+                        drive(data2[1], -data2[1],data2[2])
+                    except Exception as e:
+                        print("ERROR 02 (",e,")")
 
             
             
@@ -274,13 +357,10 @@ if __name__ == "__main__":
         subprocess.run(["/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server", "/home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf"])
         print("Video Fail!")        
     else:
-        while True:
-            #subprocess.run(["killall", "rtsp_server"])
-            #subprocess.run(["/home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server", "/home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf"])
-            #videostream = os.popen("(killall rtsp_server; /home/pi/Carlos-s-Batmobile/rtsp-server/rtsp_server /home/pi/Carlos-s-Batmobile/rtsp-server/480p30fps2000000bit.conf)")        
+        while True:      
             try: 
                 main()
-                print ("Something went wrong, connection terminatet and ready for new connection")
+                print ("Something went wrong, connection terminated and ready for new connection")
             except KeyboardInterrupt:
                 #videostream.close()
                 exit()

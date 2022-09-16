@@ -21,21 +21,13 @@ UPDATE_EVENT = asyncio.Event()
 SPEED = 100
 CHANNEL = 0
 
-CARLOS_NAMES = ["carlos-5.local", "carlos-4.local", "carlos-3.local", "carlos-4.local"]
+CARLOS_NAMES = ["192.168.199.104", "192.168.199.101", "192.168.199.102", "192.168.199.103", "192.168.199.105", "192.168.199.106"]
 
 DNS_CACHE = {}
 
 
 def get_ip(domain):
-    try:
-        if domain in DNS_CACHE:
-            return DNS_CACHE[domain]
-        ip = socket.gethostbyname(domain)
-        DNS_CACHE[domain] = ip
-        return ip
-    except socket.gaierror:
-        print("Address resolution failed: " + domain)
-        return "127.0.0.1"
+    return domain
 
 
 async def carlos_controller():
@@ -73,7 +65,7 @@ async def carlos_controller():
             if resp[0] == 10:
                 resend_connect_request = True
                 print("Resend connection request")
-        except Exception as e:
+        except socket.error:
             pass
 
         if resend_connect_request:
@@ -84,6 +76,7 @@ async def carlos_controller():
         data = []
         if type(SPEED) != float and type(SPEED) != int:
             continue
+        print(STATE)
         if STATE == State.FORWARD:
             data = struct.pack("!Bf", int(1), SPEED)
         if STATE == State.BACKWARDS:

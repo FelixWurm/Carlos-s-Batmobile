@@ -2,15 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>WebRTC</title>
+    <title>Carlos Controller</title>
 
+    <link rel="stylesheet" href="https://unpkg.com/axist@latest/dist/axist.min.css"/>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-        }
-
         .video-size {
-            width: 50%;
+            width: 80%;
             aspect-ratio: 4 / 3;
             display: block;
             margin: 0 auto;
@@ -20,6 +17,15 @@
         .flex-center {
             display: flex;
             justify-content: center;
+        }
+
+        .box {
+            display: flex;
+            align-items: stretch;
+        }
+
+        .item {
+            padding: 1em;
         }
     </style>
 </head>
@@ -34,16 +40,21 @@
     </div>
 
     <p>Use wasd for control</p>
-    <label for="speed">Speed of Carlos(10-100):</label>
-    <input type="number" id="speed" step="10" onchange="speedUpdate(this.value)" name="speed" value="100" min="10"
-           max="100">
+    <div class="box">
+        <div class="item">
+            <label for="speed">Speed of Carlos(10-100):</label>
+            <input type="number" id="speed" step="10" onchange="speedUpdate(this.value)" name="speed" value="100"
+                   min="10"
+                   max="100">
+        </div>
 
-    <br>
-
-    <label for="channel">Select channel:</label>
-    <input type="number" id="channel" step="1" onchange="channelUpdate(this.value)" name="channel" value="0" min="0"
-           max="3">
-
+        <div class = "item">
+            <label for="channel">Select channel:</label>
+            <input type="number" id="channel" step="1" onchange="channelUpdate(this.value)" name="channel" value="0"
+                   min="0"
+                   max="5">
+        </div>
+    </div>
     <script>
         let webrtc, webrtcSendChannel;
         let mediaStream;
@@ -78,7 +89,7 @@
         }
 
         function setChannel(channel) {
-            const maxChannel = 4;
+            const maxChannel = 10;
             let next_channel = parseInt(document.getElementById("video-channel").innerText) + channel;
             next_channel = Math.min(maxChannel, next_channel);
             next_channel = Math.max(0, next_channel);

@@ -58,6 +58,9 @@ main (int argc, char *argv[])
     buffer << t.rdbuf();
     auto pipeline = buffer.str();
 
+    /* Set UDP */
+    gst_rtsp_media_factory_set_protocols (factory, GST_RTSP_LOWER_TRANS_UDP);
+
     gst_rtsp_media_factory_set_launch (factory, pipeline.c_str());
     gst_rtsp_media_factory_set_shared (factory, TRUE);
 
