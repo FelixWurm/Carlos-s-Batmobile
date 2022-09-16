@@ -198,15 +198,18 @@ def find_number(input, position):
     first_number_found = False
     output = ""
     while True:
-        if number(input[position]):
-            output += input[position]
-            position = position +1
-            first_number_found = True
-        else:
-            if first_number_found == False:
+        try:
+            if number(input[position]):
+                output += input[position]
                 position = position +1
+                first_number_found = True
             else:
-                break
+                if first_number_found == False:
+                    position = position +1
+                else:
+                    break
+        except IndexError:
+            break        
     
     try:
         output = float(output)
