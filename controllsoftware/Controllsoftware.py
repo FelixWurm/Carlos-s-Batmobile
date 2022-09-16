@@ -328,12 +328,18 @@ def main():
     serial_enable = False
     current_serial_device = 0
 
-
+    serial_failed_counter = 0
     #Main Loop
     while(True):
         #Serial controller stuff
         if serial_enable:
-            serial_read(current_serial_device, devices,serial_port)
+            if not serial_read(current_serial_device, devices,serial_port):
+                serial_failed_counter = serial_failed_counter+1
+            else:
+                serial_failed_counter = 0
+
+            if serial_failed_counter >20:
+                serial_enable = False
             
             if serial_Button:    
                 next_device(serial_selected_device,devices)
@@ -345,6 +351,10 @@ def main():
             if(new_set[0] and new_set[1]):
                 speed_a = serial_y
                 speed_b = serial_y
+                if( serial_x == 0 and serial_y == 0):
+                    speed_a = 0
+                    speed_b = 0
+                    
                 if serial_y == 0:
                     serial_x = serial_x * 0.6
                    
@@ -370,16 +380,16 @@ def main():
                     else:
                         speed_a  = speed_a+40
                         
-                    speed_b = serial_x
                     if(speed_b < 40):
                         speed_b  = speed_b- 40
                     else:
-                        speed_b  = speed_b +40  
+                        speed_b  = speed_b +40 
+
+                    speed_b = speed_b *(-1) 
                     
                     
                 else:
                     if(serial_x < 0):
-                        serial_x = serial_x *(-1)
                         speed_b = speed_b - (serial_x * ((serial_y - 40) / 100))
                     else:
                         speed_a = speed_a - (serial_x * ((serial_y - 40) / 100))
