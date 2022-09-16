@@ -2,6 +2,7 @@
 import os
 from pickletools import long4
 import select, sys, struct
+from turtle import distance
 import RPi.GPIO as GPIO
 from time import sleep as sl
 import time
@@ -357,20 +358,21 @@ def main():
                 if ID == dict.msg_dict["DV_CALL_STRAIGHT"]:
                     try:
                         data2 = struct.unpack("!Bff",data)
-                        speed = convert_to_motor(data[1])
-                        duration = cash2[2]
-                        Drive.drive(speed,speed,duration)
+                        speed = convert_to_motor(data2[1])
+                        duration = data2[2]
+                        Drive.drive(speed, speed, duration)
                     except Exception as e:
                         print("ERROR 01 (",e,")")
 
 
                 if ID == dict.msg_dict["DV_CALL_ROTATE"]:
                     try:
-                        speed = convert_to_motor(data[1])
-                        duration = cash2[2]
-                        Drive.drive(speed,-speed,duration)
+                        data2 = struct.unpack("!Bff",data)
+                        speed = convert_to_motor(data2[1])
+                        duration = data2[2]
+                        Drive.drive(speed, -speed, duration)
                     except Exception as e:
-                        print("ERROR 02 (",e,")")
+                        print("ERROR 01 (",e,")")
 
             
             
