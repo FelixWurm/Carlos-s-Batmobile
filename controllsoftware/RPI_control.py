@@ -76,7 +76,7 @@ class drive:
         self.end_time = 0
 
 
-    def drive (self, speed_l, speed_r, time):
+    def drive (self, speed_l, speed_r, dv_time):
         #check for correct input
         if((0 < speed_l < 40)or (-40 < speed_l < 0)):
             print("incorrect Input speed_l, must be between -100 to -40 or 40 to 100" )
@@ -87,7 +87,7 @@ class drive:
             return
 
         set_motor_speed(speed_l, speed_r)
-        self.end_time = time.time_ns() + (time * 1000000000)
+        self.end_time = time.time_ns() + (dv_time * 1000000000)
 
     def run(self):
         if self.end_time < time.time_ns() and self.end_time != 0:
