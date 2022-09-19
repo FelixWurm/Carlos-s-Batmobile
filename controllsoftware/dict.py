@@ -10,8 +10,9 @@ msg_dict = {
     "READY_CONN"        : int(9),       #ready for connection(UDP auto discovery)
     "ERROR_CONN"        : int(10),      #send this signal ig there is in invalid Connection attempt
     "NO_MODE"           : int(11),      #only for internal 
-    "DV_CALL_STRAIGHT"  : int(12),       #only for testing, first float speed , second time
-    "DV_CALL_ROTATE"    : int(13)       #only for testing, first float speed , second time
+    "DV_CALL_STRAIGHT"  : int(12),      #only for testing, first float speed , second time
+    "DV_CALL_ROTATE"    : int(13),      #only for testing, first float speed , second time
+    "POS_CURRENT_RAW"   : int(14)       #long x, long y
 
 }
 

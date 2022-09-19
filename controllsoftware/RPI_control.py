@@ -9,6 +9,8 @@ import time
 from dataclasses import dataclass
 from pickletools import long4
 from time import sleep as sl
+import evdev
+
 
 import RPi.GPIO as GPIO
 import dict
@@ -267,6 +269,12 @@ def calculate_position(mode, time, speed, last_position):
     if mode == "D":
         pass
 
+def find_mouse():
+    for d in DEVICES:
+        if 'Mouse' in d.name:
+            DEVICE = d
+            print('Found %s at %s...' % (d.name, d.fn))
+            return DEVICE
 
 def main():
     # setup the TCP server
@@ -290,6 +298,13 @@ def main():
     # init drive class
     Drive = drive()
 
+    #position (Mouse sending)
+    pos_x = 0
+    pos_y = 0
+
+    mouse = find_mouse()
+
+
     while True:
         Drive.run()
 
@@ -304,9 +319,28 @@ def main():
             if DEBUG:
                 print("Connection timeout!")
             break
+        
+
+        #read in mouse data
+
+        ready = select(mouse, [], [])
+
+        if ready:
+            for event in DEVICE.read():
+                if event.type == evdev.ecodes.EV_REL:
+                    if event.code == evdev.ecodes.REL_X:
+                        X += event.value
+                    if event.code == evdev.ecodes.REL_Y:
+                        Y += event.value
+
 
         ready = select.select([soc], [], [], 0)
         if ready[0]:
+            #send as a reply the current position:
+            msg = struct.pack("!Bqq",dict.msg_dict["POS_CURRENT_RAW"],pos_x, pos_y )
+            soc.sendto(msg, ip_addr)
+
+
             data, cur_ip_addr = soc.recvfrom(1024)
             if ip_addr == cur_ip_addr and data:
                 # update the last received Counter
