@@ -15,7 +15,7 @@ if __name__ == '__main__':
     DEVICES = [evdev.InputDevice(fn) for fn in evdev.list_devices()]
 
     for d in DEVICES:
-        if 'Touchpad' in d.name:
+        if 'Mouse' in d.name:
             DEVICE = d
             print('Found %s at %s...' % (d.name, d.fn))
             break
