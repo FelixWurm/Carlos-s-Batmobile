@@ -30,7 +30,7 @@
     </style>
 </head>
 <body>
-    <video id="videoPlayer" class="video-size" autoplay muted playsinline></video>
+    <video class="video-size" id="stream" autoplay playsinline>Your browser does not support video</video>
     <br>
     <div class="flex-center">
         <a href="javascript:setChannel(-1)" id="left">&#8592;</a>
@@ -55,133 +55,119 @@
                    max="5">
         </div>
     </div>
-    <script>
-        let webrtc, webrtcSendChannel;
-        let mediaStream;
 
-        document.addEventListener("DOMContentLoaded", function () {
-            startPlay();
-        });
-
-        async function startPlay() {
-            mediaStream = new MediaStream();
-            document.querySelector('#videoPlayer').srcObject = mediaStream;
-            webrtc = new RTCPeerConnection({
-                iceServers: [{
-                    urls: ["stun:stun.l.google.com:19302"]
-                }],
-                sdpSemantics: "unified-plan"
-            });
-            webrtc.onnegotiationneeded = handleNegotiationNeeded;
-            webrtc.onsignalingstatechange = signalingstatechange;
-
-            webrtc.ontrack = ontrack
-            let offer = await webrtc.createOffer({
-
-                offerToReceiveAudio: true,
-                offerToReceiveVideo: true
-            });
-            await webrtc.setLocalDescription(offer);
-        }
-
-        function ontrack(event) {
-            mediaStream.addTrack(event.track);
-        }
-
-        function setChannel(channel) {
-            const maxChannel = 10;
-            let next_channel = parseInt(document.getElementById("video-channel").innerText) + channel;
-            next_channel = Math.min(maxChannel, next_channel);
-            next_channel = Math.max(0, next_channel);
-
-            document.getElementById("video-channel").innerText = next_channel.toString();
-
-            mediaStream.getTracks().forEach(track => track.stop());
-            webrtc.close();
-            startPlay();
-        }
-
-        async function signalingstatechange() {
-            switch (webrtc.signalingState) {
-                case 'have-local-offer':
-                    const schema = 'http'
-                    const server = 'localhost'
-                    const port = '8083'
-                    const uuid = '27aec28e-6181-4753-9acd-0456a75f0289'
-
-                    let channel = parseInt(document.getElementById("video-channel").innerText);
+     <script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+     <script type="text/javascript">
+       var html5VideoElement;
+       var websocketConnection;
+       var webrtcPeerConnection;
+       var webrtcConfiguration;
+       var reportError;
 
 
-                    let url = schema + '://' + server + ':' + port + '/stream/' + uuid + '/channel/' + channel + '/webrtc?uuid=' + uuid + '&channel=' + channel;
-
-                    let http = new XMLHttpRequest();
-                    http.open('POST', url, true);
-                    http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-                    http.onreadystatechange = function () {
-                        if (http.readyState === 4 && http.status === 200) {
-                            console.log(http.responseText);
-                            webrtc.setRemoteDescription(new RTCSessionDescription({
-                                type: 'answer',
-                                sdp: atob(http.responseText)
-                            }));
-                        } else {
-                            console.warn(http.status)
-                        }
-                    }
-
-                    http.send('data=' + btoa(webrtc.localDescription.sdp));
-
-                    break;
-                case 'stable':
+       function onLocalDescription(desc) {
+         console.log("Local description: " + JSON.stringify(desc));
+         webrtcPeerConnection.setLocalDescription(desc).then(function() {
+           websocketConnection.send(JSON.stringify({ type: "sdp", "data": webrtcPeerConnection.localDescription }));
+         }).catch(reportError);
+       }
 
 
-                    break;
+       function onIncomingSDP(sdp) {
+         console.log("Incoming SDP: " + JSON.stringify(sdp));
+         webrtcPeerConnection.setRemoteDescription(sdp).catch(reportError);
+         webrtcPeerConnection.createAnswer().then(onLocalDescription).catch(reportError);
+       }
 
-                case 'closed':
+
+       function onIncomingICE(ice) {
+         var candidate = new RTCIceCandidate(ice);
+         console.log("Incoming ICE: " + JSON.stringify(ice));
+         webrtcPeerConnection.addIceCandidate(candidate).catch(reportError);
+       }
 
 
-                    break;
+       function onAddRemoteStream(event) {
+         html5VideoElement.srcObject = event.streams[0];
+       }
 
-                default:
-                    console.log(`unhandled signalingState is ${webrtc.signalingState}`);
-                    break;
-            }
-        }
 
-        async function handleNegotiationNeeded() {
+       function onIceCandidate(event) {
+         if (event.candidate == null)
+           return;
 
-            const uuid = '27aec28e-6181-4753-9acd-0456a75f0289'
-            let channel = parseInt(document.getElementById("video-channel").innerText);
+         console.log("Sending ICE candidate out: " + JSON.stringify(event.candidate));
+         websocketConnection.send(JSON.stringify({ "type": "ice", "data": event.candidate }));
+       }
 
-            let url = "/stream/" + uuid + "/channel/" + channel + "/webrtc?uuid=" + uuid + '&channel=' + channel;
-            let offer = await webrtc.createOffer();
 
-            await webrtc.setLocalDescription(offer);
+       function onServerMessage(event) {
+         var msg;
 
-            let http = new XMLHttpRequest();
-            http.open('POST', url, true);
-            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+         try {
+           msg = JSON.parse(event.data);
+         } catch (e) {
+           return;
+         }
 
-            http.onreadystatechange = function () {
-                if (http.readyState === 4 && http.status === 200) {
-                    console.log(http.responseText);
-                    webrtc.setRemoteDescription(new RTCSessionDescription({
-                        type: 'answer',
-                        sdp: atob(http.responseText)
-                    }));
-                } else {
-                    console.warn(http.status)
-                }
-            }
+         if (!webrtcPeerConnection) {
+           webrtcPeerConnection = new RTCPeerConnection(webrtcConfiguration);
+           webrtcPeerConnection.ontrack = onAddRemoteStream;
+           webrtcPeerConnection.onicecandidate = onIceCandidate;
+         }
 
-            http.send('data=' + btoa(webrtc.localDescription.sdp));
-        }
+         switch (msg.type) {
+           case "sdp": onIncomingSDP(msg.data); break;
+           case "ice": onIncomingICE(msg.data); break;
+           default: break;
+         }
+       }
 
-        document.querySelector('#videoPlayer').addEventListener('error', () => {
-            console.log('video_error')
-        });
-    </script>
+
+       function playStream(videoElement, hostname, port, path, configuration, reportErrorCB) {
+         var l = window.location;
+         var wsHost = (hostname !== undefined) ? hostname : l.hostname;
+         var wsPort = (port !== undefined) ? port : l.port;
+         var wsPath = (path !== undefined) ? path : "ws";
+         if (wsPort)
+          wsPort = ":" + wsPort;
+        var wsUrl = "ws://" + wsHost + wsPort + "/" + wsPath;
+
+         html5VideoElement = videoElement;
+         webrtcConfiguration = configuration;
+         reportError = (reportErrorCB !== undefined) ? reportErrorCB : function(text) {};
+
+         websocketConnection = new WebSocket(wsUrl);
+         websocketConnection.addEventListener("message", onServerMessage);
+       }
+
+       window.onload = function() {
+         let vidstream = document.getElementById("stream");
+         let config = { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }] };
+        playStream(vidstream, "localhost", 57770, 'ws', config, function (errmsg) { console.error(errmsg); });
+       };
+
+
+       function setChannel(channel) {
+           const maxChannel = 10;
+           let next_channel = parseInt(document.getElementById("video-channel").innerText) + channel;
+           next_channel = Math.min(maxChannel, next_channel);
+           next_channel = Math.max(0, next_channel);
+
+           document.getElementById("video-channel").innerText = next_channel.toString();
+
+           html5VideoElement.srcObject.getTracks().forEach(track => track.stop());
+           webrtcPeerConnection.close();
+           webrtcPeerConnection = undefined;
+           websocketConnection.close();
+           websocketConnection = undefined;
+           let port = 57770 + next_channel;
+
+           let vidstream = document.getElementById("stream");
+           let config = { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }] };
+           playStream(vidstream, "localhost", port, 'ws', config, function (errmsg) { console.error(errmsg); });
+       }
+     </script>
 
     <script>
         let websocket;

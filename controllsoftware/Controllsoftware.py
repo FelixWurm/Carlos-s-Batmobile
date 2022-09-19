@@ -243,9 +243,9 @@ def connect_new_client(last_ip):
             elif ip_addr[1] == "6":
                 ip_addr = "192.168.199.106"
                 ip_port = 50000
-            else:
-                print("please enter a UDP port:")
-                ip_port = input()
+        else:
+            print("please enter a UDP port:")
+            ip_port = input()
         
     else:
         ip_addr = last_ip[0]
