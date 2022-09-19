@@ -3,6 +3,8 @@
 #include <gst/gst.h>
 #include <gst/sdp/sdp.h>
 
+#include <string>
+
 #ifdef G_OS_UNIX
 
 #include <glib-unix.h>
@@ -21,16 +23,12 @@
 #define RTP_AUDIO_PAYLOAD_TYPE "97"
 #define STUN_SERVER "stun.l.google.com:19302"
 
-#ifdef G_OS_WIN32
-#define VIDEO_SRC "mfvideosrc"
-#else
-#define VIDEO_SRC "v4l2src"
-#endif
+#define VIDEO_SRC "rtspsrc"
 
-gchar *video_priority = NULL;
-gchar *audio_priority = NULL;
+gchar *video_priority = nullptr;
+gchar *audio_priority = nullptr;
 gint port = 57770;
-gchar *rtsp_server_ip = NULL;
+gchar *rtsp_server_ip = nullptr;
 
 
 typedef struct _ReceiverEntry ReceiverEntry;
@@ -178,8 +176,8 @@ static gboolean
 bus_watch_cb(GstBus *bus, GstMessage *message, gpointer user_data) {
     switch (GST_MESSAGE_TYPE (message)) {
         case GST_MESSAGE_ERROR: {
-            GError *error = NULL;
-            gchar *debug = NULL;
+            GError *error = nullptr;
+            gchar *debug = nullptr;
 
             gst_message_parse_error(message, &error, &debug);
             g_error ("Error on bus: %s (debug: %s)", error->message, debug);
@@ -188,8 +186,8 @@ bus_watch_cb(GstBus *bus, GstMessage *message, gpointer user_data) {
             break;
         }
         case GST_MESSAGE_WARNING: {
-            GError *error = NULL;
-            gchar *debug = NULL;
+            GError *error = nullptr;
+            gchar *debug = nullptr;
 
             gst_message_parse_warning(message, &error, &debug);
             g_warning ("Warning on bus: %s (debug: %s)", error->message, debug);
@@ -204,7 +202,7 @@ bus_watch_cb(GstBus *bus, GstMessage *message, gpointer user_data) {
     return G_SOURCE_CONTINUE;
 }
 
-static GstWebRTCPriorityType
+static int
 _priority_from_string(const gchar *s) {
     GEnumClass *klass =
             (GEnumClass *) g_type_class_ref(GST_TYPE_WEBRTC_PRIORITY_TYPE);
@@ -229,7 +227,7 @@ create_receiver_entry(SoupWebsocketConnection *connection) {
     GArray *transceivers;
     GstBus *bus;
 
-    receiver_entry = g_slice_alloc0(sizeof(ReceiverEntry));
+    receiver_entry = static_cast<ReceiverEntry *>(g_slice_alloc0(sizeof(ReceiverEntry)));
     receiver_entry->connection = connection;
 
     g_object_ref (G_OBJECT(connection));
@@ -237,16 +235,17 @@ create_receiver_entry(SoupWebsocketConnection *connection) {
     g_signal_connect (G_OBJECT(connection), "message",
                       G_CALLBACK(soup_websocket_message_cb), (gpointer) receiver_entry);
 
-    error = NULL;
+    error = nullptr;
+    std::string pipeline{};
+    pipeline += "webrtcbin name=webrtcbin stun-server=stun://"
+                STUN_SERVER " ";
+    pipeline += "rtspsrc location=rtsp://" + std::string{rtsp_server_ip} + "/cam";
+    pipeline += " ! application/x-rtp,media=video,encoding-name=H264,payload="
+                RTP_PAYLOAD_TYPE " ! webrtcbin. ";
+
     receiver_entry->pipeline =
-            gst_parse_launch("webrtcbin name=webrtcbin stun-server=stun://"
-                             STUN_SERVER " "
-                             VIDEO_SRC
-                             " ! videorate ! videoscale ! video/x-raw,width=640,height=360,framerate=15/1 ! videoconvert ! queue max-size-buffers=1 ! x264enc bitrate=600 speed-preset=ultrafast tune=zerolatency key-int-max=15 ! video/x-h264,profile=constrained-baseline ! queue max-size-time=100000000 ! h264parse ! "
-                             "rtph264pay config-interval=-1 name=payloader aggregate-mode=zero-latency ! "
-                             "application/x-rtp,media=video,encoding-name=H264,payload="
-                             RTP_PAYLOAD_TYPE " ! webrtcbin. ", &error);
-    if (error != NULL) {
+            gst_parse_launch(pipeline.c_str(), &error);
+    if (error != nullptr) {
         g_error ("Could not create WebRTC pipeline: %s\n", error->message);
         g_error_free(error);
         goto cleanup;
@@ -265,7 +264,7 @@ create_receiver_entry(SoupWebsocketConnection *connection) {
     if (video_priority) {
         GstWebRTCPriorityType priority;
 
-        priority = _priority_from_string(video_priority);
+        priority = static_cast<GstWebRTCPriorityType>(_priority_from_string(video_priority));
         if (priority) {
             GstWebRTCRTPSender *sender;
 
@@ -280,7 +279,7 @@ create_receiver_entry(SoupWebsocketConnection *connection) {
     if (audio_priority) {
         GstWebRTCPriorityType priority;
 
-        priority = _priority_from_string(audio_priority);
+        priority = static_cast<GstWebRTCPriorityType>(_priority_from_string(audio_priority));
         if (priority) {
             GstWebRTCRTPSender *sender;
 
@@ -434,7 +433,7 @@ soup_websocket_message_cb(G_GNUC_UNUSED SoupWebsocketConnection *connection,
             return;
 
         case SOUP_WEBSOCKET_DATA_TEXT:
-            data = g_bytes_unref_to_data(message, &size);
+            data = static_cast<gchar *>(g_bytes_unref_to_data(message, &size));
             /* Convert to NULL-terminated string */
             data_string = g_strndup(data, size);
             g_free(data);

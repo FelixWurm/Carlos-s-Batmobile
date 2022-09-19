@@ -10,9 +10,9 @@ pkg_check_modules(GST REQUIRED
         libsoup-2.4
         json-glib-1.0)
 
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 20)
 
-add_executable(webrtc_server main.c)
+add_executable(webrtc_server main.cpp)
 
 target_include_directories(webrtc_server PRIVATE ${GST_INCLUDE_DIRS})
 target_link_libraries(webrtc_server ${GST_LIBRARIES})

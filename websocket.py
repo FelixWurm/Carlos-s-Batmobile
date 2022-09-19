@@ -3,6 +3,7 @@ import enum
 import json
 import socket
 import struct
+import subprocess
 
 import websockets
 
@@ -21,7 +22,7 @@ UPDATE_EVENT = asyncio.Event()
 SPEED = 100
 CHANNEL = 0
 
-CARLOS_NAMES = ["192.168.199.104", "192.168.199.101", "192.168.199.102", "192.168.199.103", "192.168.199.105", "192.168.199.106"]
+CARLOS_NAMES = []
 
 DNS_CACHE = {}
 
@@ -76,7 +77,6 @@ async def carlos_controller():
         data = []
         if type(SPEED) != float and type(SPEED) != int:
             continue
-        print(STATE)
         if STATE == State.FORWARD:
             data = struct.pack("!Bf", int(1), SPEED)
         if STATE == State.BACKWARDS:
@@ -129,6 +129,19 @@ async def main():
 
 
 if __name__ == "__main__":
+    with open("hosts") as hosts:
+        CARLOS_NAMES = hosts.readlines()
+        CARLOS_NAMES = [line.rstrip() for line in CARLOS_NAMES]
+        CARLOS_NAMES = list(filter(None, CARLOS_NAMES))
+
+    subprocess.call(["killall", "webrtc_server"])
+    print(CARLOS_NAMES)
+    enum_hosts = enumerate(CARLOS_NAMES)
+    for i, host in enum_hosts:
+        webrtc_port = 57770 + i
+        print(webrtc_port)
+        subprocess.Popen(
+            ["./webrtc-server/webrtc_server", "--rtsp-server-ip=" + host + ":8554", "--port=" + str(webrtc_port)])
     try:
         asyncio.run(main())
     except KeyboardInterrupt:

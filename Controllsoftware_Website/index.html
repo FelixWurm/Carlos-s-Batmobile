@@ -158,6 +158,9 @@
 
            html5VideoElement.srcObject.getTracks().forEach(track => track.stop());
            webrtcPeerConnection.close();
+           webrtcPeerConnection = undefined;
+           websocketConnection.close();
+           websocketConnection = undefined;
            let port = 57770 + next_channel;
 
            let vidstream = document.getElementById("stream");
