@@ -237,9 +237,9 @@ create_receiver_entry(SoupWebsocketConnection *connection) {
 
     error = nullptr;
     std::string pipeline{};
-    pipeline += "webrtcbin name=webrtcbin stun-server=stun://"
+    pipeline += "webrtcbin bundle-policy=max-bundle name=webrtcbin stun-server=stun://"
                 STUN_SERVER " ";
-    pipeline += "rtspsrc location=rtsp://" + std::string{rtsp_server_ip} + "/cam";
+    pipeline += "rtspsrc location=rtsp://" + std::string{rtsp_server_ip} + "/cam latency=0";
     pipeline += " ! application/x-rtp,media=video,encoding-name=H264,payload="
                 RTP_PAYLOAD_TYPE " ! webrtcbin. ";
 
