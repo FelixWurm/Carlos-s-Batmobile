@@ -271,6 +271,8 @@ def calculate_position(mode, time, speed, last_position):
 
 def find_mouse():
     for d in DEVICES:
+        DEVICE = None
+        DEVICES = [evdev.InputDevice(fn) for fn in evdev.list_devices()]
         if 'Mouse' in d.name:
             DEVICE = d
             print('Found %s at %s...' % (d.name, d.fn))
