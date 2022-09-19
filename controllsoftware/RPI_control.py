@@ -325,7 +325,7 @@ def main():
 
         #read in mouse data
 
-        ready = select(mouse, [], [])
+        ready = select([mouse], [], [])
 
         if ready:
             for event in DEVICE.read():
