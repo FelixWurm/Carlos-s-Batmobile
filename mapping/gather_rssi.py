@@ -29,6 +29,8 @@ class Gatherer:
 
 
     def update_values(self, addr, new_val):
+        if addr not in self.last_values:
+            self.last_values[addr] = []
         if len(self.last_values[addr]) >= vals:
             self.last_values[addr].pop(0)
         self.last_values[addr].append(new_val)
@@ -51,7 +53,7 @@ class Gatherer:
 
 class Server:
     serv_sock: socket.socket
-    conns: List[socket.socket]
+    conns: List[socket.socket] = []
 
 
     def create_socket(self):
@@ -85,22 +87,27 @@ def main():
     server = Server()
     server.create_socket()
 
-    gatherer = Gatherer(bt_names.name_map.keys())
+    gatherer = Gatherer(list(bt_names.name_map))
 
-    while 1:
-        gatherer.scan_next()
+    try:
+        while 1:
+            gatherer.scan_next()
 
-        if req := server.check_for_request():
-            req, sock = req
-            cmd = req[0]
-            req = req[1:]
+            if req := server.check_for_request():
+                req, sock = req
+                cmd = req[0]
+                req = req[1:]
 
-            if cmd == "getdata":
-                server.send_to_sock(sock, json.dumps(gatherer.get_values()))
-            elif cmd == "hostlist":
-                pass
-            elif cmd == "stop":
-                exit(0)
+                if cmd == "getdata":
+                    server.send_to_sock(sock, json.dumps(gatherer.get_values()))
+                elif cmd == "hostlist":
+                    pass
+                elif cmd == "stop":
+                    exit(0)
+    except KeyboardInterrupt:
+        exit(0)
+    except Exception as e:
+        print(e)
 
 
 if __name__ == '__main__':
