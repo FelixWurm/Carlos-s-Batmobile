@@ -16,7 +16,7 @@ cmd = [
 
 
 if __name__ == '__main__':
-    cmd = cmd[4]
+    cmd = cmd[2]
     print(cmd)
     forks = 6
     hosts = []

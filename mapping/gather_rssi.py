@@ -1,17 +1,18 @@
 import select
 import socket
+import time
 from typing import List, Dict
 import numpy as np
 import json
 import bt_names
 from bt_proximity import BluetoothRSSI
 
-vals = 10
+vals = 30
 port = 25022
 
 
 class Gatherer:
-    last_values: Dict[str, List] = {}
+    last_values: Dict[str, any] = {}
 
 
     def __init__(self, host_list):
@@ -20,6 +21,7 @@ class Gatherer:
 
 
     def scan_next(self):
+
         if not self.host_list:
             return
         self.last_index += 1
@@ -30,10 +32,12 @@ class Gatherer:
 
     def update_values(self, addr, new_val):
         if addr not in self.last_values:
-            self.last_values[addr] = []
-        if len(self.last_values[addr]) >= vals:
-            self.last_values[addr].pop(0)
-        self.last_values[addr].append(new_val)
+            self.last_values[addr] = {}
+            self.last_values[addr]["data"] = []
+        if len(self.last_values[addr]["data"]) >= vals:
+            self.last_values[addr]["data"].pop(0)
+        self.last_values[addr]["lastUpdate"] = time.time()
+        self.last_values[addr]["data"].append(new_val)
 
 
     def bluetooth_listen(self, addr):
@@ -44,10 +48,15 @@ class Gatherer:
             self.update_values(addr, rssi)
 
 
-    def get_values(self) -> Dict[str, float]:
+    def get_values(self) -> Dict[str, any]:
         out = {}
         for addr in self.last_values:
-            out[addr] = float(np.mean(self.last_values[addr]))
+            out[addr] = {
+                "lastUpdate": self.last_values[addr]["lastUpdate"],
+                "mean": float(np.mean(self.last_values[addr]["data"])),
+                "min": max(self.last_values[addr]["data"]),
+                "max": min(self.last_values[addr]["data"])
+            }
         return out
 
 
@@ -59,13 +68,13 @@ class Server:
     def create_socket(self):
         self.serv_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.serv_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.serv_sock.bind(("127.0.0.1", port))
+        self.serv_sock.bind(("0.0.0.0", port))
         self.serv_sock.listen(5)
         self.conns.append(self.serv_sock)
 
 
     def check_for_request(self) -> (List[str], socket.socket):
-        read_socks: List[socket.socket] = select.select(self.conns, [], [])[0]
+        read_socks: List[socket.socket] = select.select(self.conns, [], [], 0)[0]
         for sock in read_socks:
             if sock == self.serv_sock:
                 sockfd, addr = self.serv_sock.accept()
@@ -78,18 +87,17 @@ class Server:
 
 
     def send_to_sock(self, sock: socket.socket, data: str):
-        sock.send(bytes(data))
+        sock.send(bytes(data, "utf-8"))
         sock.close()
         self.conns.remove(sock)
 
 
 def main():
-    server = Server()
-    server.create_socket()
-
-    gatherer = Gatherer(list(bt_names.name_map))
-
     try:
+        server = Server()
+        server.create_socket()
+
+        gatherer = Gatherer(list(bt_names.name_map))
         while 1:
             gatherer.scan_next()
 
@@ -102,12 +110,10 @@ def main():
                     server.send_to_sock(sock, json.dumps(gatherer.get_values()))
                 elif cmd == "hostlist":
                     pass
-                elif cmd == "stop":
+                elif cmd == "exit":
                     exit(0)
     except KeyboardInterrupt:
         exit(0)
-    except Exception as e:
-        print(e)
 
 
 if __name__ == '__main__':
