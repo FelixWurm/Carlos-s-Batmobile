@@ -4,4 +4,4 @@ pip install numpy pybluez bt-proximity
 echo "
 # bluetooth rssi mapping server
 python /home/pi/Carlos-s-Batmobile/mapping/gather_rssi.py &
-" | tee -a start-batman-adv.sh
+" | sudo tee -a start-batman-adv.sh
