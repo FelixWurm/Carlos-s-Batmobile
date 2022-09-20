@@ -7,7 +7,7 @@ def get(host):
     command = "sudo batctl o -H"
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(host, 22, "pi", "pi")
+    ssh.connect(host, 22, "pi", "pi", timeout=1)
     stdin, stdout, stderr = ssh.exec_command(command)
     lines = stdout.readlines()
     out = ""

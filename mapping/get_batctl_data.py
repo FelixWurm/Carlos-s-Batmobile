@@ -7,6 +7,13 @@ pattern = "(.)\s(\w\w:\w\w:\w\w:\w\w:\w\w:\w\w)\s*\S*\s*\((\s*\d+)\)\s*(\w\w:\w\
 
 
 def createCSV(hosts):
+    if False:
+        hosts = []
+        for h in range(110):
+            if h == 25:
+                continue
+            hosts.append(f"192.168.199.{h}")
+
     nn = []
     dn = []
     names = ["from/to"]
@@ -19,6 +26,7 @@ def createCSV(hosts):
             else:
                 resstr = get_batctl_ssh.get(host)
                 name = get_batctl_ssh.resolvName(host)
+                # name = host
 
             nodes = {}
             adjacencies = {}
