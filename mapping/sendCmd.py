@@ -4,19 +4,8 @@ import numpy as np
 import ssh_tools
 from ssh_tools import send
 
-#
 
-cmd = [
-    "sudo config wlan0 txpower 30",
-    "sudo batctl hp",
-    "bluetoothctl discoverable on",
-    "sudo batctl gwl",
-    "hostname -I",
-]
-
-
-if __name__ == '__main__':
-    cmd = cmd[2]
+def spread(cmd):
     print(cmd)
     forks = 6
     hosts = []
@@ -32,7 +21,7 @@ if __name__ == '__main__':
         while forks:
             os.wait()
             forks -= 1
-        exit(0)
+        return
 
     print("fork", forks, "- START - with", len(hosts), "hosts")
     for host in hosts:
@@ -43,4 +32,25 @@ if __name__ == '__main__':
             exit(0)
         except:
             pass
+    exit(0)
 
+
+cmd = [
+    "sudo config wlan0 txpower 30",             # 0
+    "sudo batctl hp",                           # 1
+    "bluetoothctl discoverable on",             # 2
+    "bluetoothctl discoverable-timeout 3600",   # 3
+    "bluetoothctl list",                        # 4
+    "sudo batctl gwl",                          # 5
+    "hostname -I",                              # 6
+]
+
+
+def main():
+    spread(cmd[3])
+    spread(cmd[2])
+    spread(cmd[4])
+
+
+if __name__ == '__main__':
+    main()
