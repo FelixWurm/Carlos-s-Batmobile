@@ -2,9 +2,9 @@ import select
 import socket
 from typing import List, Dict
 import numpy as np
-from bt_proximity import BluetoothRSSI
 import json
 import bt_names
+from bt_proximity import BluetoothRSSI
 
 vals = 10
 port = 25022
