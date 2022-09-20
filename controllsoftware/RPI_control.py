@@ -26,8 +26,8 @@ class Point:
 
 @dataclass
 class Move:
-    start_position: point
-    end_position: point
+    start_position: Point
+    end_position: Point
     direction: int
 
     move_mode: int = dict.msg_dict["NO_MODE"]
@@ -182,7 +182,7 @@ class MvObserver:
         self.last_mode = dict.msg_dict["NO_MODE"]
         self.last_speed = 0
         self.last_mode_beginning = 0
-        self.last_start_position = point(0, 0)
+        self.last_start_position = Point(0, 0)
         self.last_direction = 0
 
         self.list_of_moves = []
