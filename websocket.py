@@ -71,11 +71,12 @@ async def carlos_controller():
         try:
             while True:
                 data, address = sock.recvfrom(1500)
-                print("Got packet " + str(int(data[0])))
-                if data[0] == 11:
-                    x, y = struct.unpack("!qq", resp[1:])
-                    POSITION[CHANNEL] = Position(x, y)
-                    POSITION_EVENT.set()
+
+                if data[0] == 14:
+                    x, y = struct.unpack("!qq", data[1:])
+                    if POSITION[CHANNEL].x != x or POSITION[CHANNEL].y != y:
+                        POSITION[CHANNEL] = Position(x, y)
+                        POSITION_EVENT.set()
 
                 if data[0] == 10:
                     resend_connect_request = True
@@ -108,8 +109,8 @@ async def position_handler(websocket):
     try:
         while True:
             await asyncio.wait_for(POSITION_EVENT.wait(), timeout=None)
-            websocket.send(json.dumps(
-                {"event": "position", "channel": CHANNEL, "data": {"x": POSITON[CHANNEL].x, "y": POSITION[CHANNEL].y}}))
+            event = {"type": "position", "channel": CHANNEL, "data": {"x": POSITION[CHANNEL].x, "y": POSITION[CHANNEL].y}}
+            await websocket.send(json.dumps(event))
             POSITION_EVENT.clear()
     except Exception as e:
         print(e)

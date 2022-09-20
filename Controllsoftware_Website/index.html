@@ -191,6 +191,13 @@
                 }, 1000);
             };
 
+            websocket.onmessage = function (event) {
+                let event_data = JSON.parse(event.data);
+                if(event_data.type === "position") {
+                   mapUpdate(event_data);
+                }
+            };
+
             websocket.onerror = function (err) {
                 console.error("Websocket error", err);
                 websocket.close();
@@ -218,6 +225,9 @@
 
         }
 
+        function mapUpdate(event) {
+            console.log("Position: " + event.data.x + " " + event.data.y + ", channel: " + event.channel);
+        }
 
         function speedUpdate(speed) {
             const event = {type: "speed", speed: parseInt(speed)};
