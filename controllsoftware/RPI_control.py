@@ -327,66 +327,66 @@ def main():
 
         # read in mouse data
 
-        ready = select.select([mouse], [], [])
+        read_ready, _, _ = select.select([mouse, soc], [], [])
 
-        if ready:
-            for event in mouse.read():
-                if event.type == evdev.ecodes.EV_REL:
-                    if event.code == evdev.ecodes.REL_X:
-                        pos_x += event.value
-                    if event.code == evdev.ecodes.REL_Y:
-                        pos_y += event.value
+        for read_fds in read_ready:
+            if read_fds == mouse:
+                for event in mouse.read():
+                    if event.type == evdev.ecodes.EV_REL:
+                        if event.code == evdev.ecodes.REL_X:
+                            pos_x += event.value
+                        if event.code == evdev.ecodes.REL_Y:
+                            pos_y += event.value
 
-        ready = select.select([soc], [], [], 0)
-        if ready[0]:
-            # send as a reply the current position:
-            msg = struct.pack("!Bqq", dict.msg_dict["POS_CURRENT_RAW"], pos_x, pos_y)
-            soc.sendto(msg, ip_addr)
+            if read_fds == soc:
+                # send as a reply the current position:
+                msg = struct.pack("!Bqq", dict.msg_dict["POS_CURRENT_RAW"], pos_x, pos_y)
+                soc.sendto(msg, ip_addr)
 
-            data, cur_ip_addr = soc.recvfrom(1024)
-            if ip_addr == cur_ip_addr and data:
-                # update the last received Counter
-                last_update = time.time_ns()
+                data, cur_ip_addr = soc.recvfrom(1024)
+                if ip_addr == cur_ip_addr and data:
+                    # update the last received Counter
+                    last_update = time.time_ns()
 
-                code = data[0]
+                    code = data[0]
 
-                if code == dict.msg_dict["DV_STRAIGHT"]:
-                    data2 = struct.unpack("!Bf", data)
-                    cash = convert_to_motor(data2[1])
-                    set_motor_speed(cash, cash)
+                    if code == dict.msg_dict["DV_STRAIGHT"]:
+                        data2 = struct.unpack("!Bf", data)
+                        cash = convert_to_motor(data2[1])
+                        set_motor_speed(cash, cash)
 
-                if code == dict.msg_dict["DV_STOP"]:
-                    set_motor_speed(0, 0)
+                    if code == dict.msg_dict["DV_STOP"]:
+                        set_motor_speed(0, 0)
 
-                if code == dict.msg_dict["DV_ROTATE"]:
-                    data2 = struct.unpack("!Bf", data)
-                    cash = data2[1]
-                    cash2 = cash * (-1)
-                    set_motor_speed(convert_to_motor(cash2), convert_to_motor(cash))
+                    if code == dict.msg_dict["DV_ROTATE"]:
+                        data2 = struct.unpack("!Bf", data)
+                        cash = data2[1]
+                        cash2 = cash * (-1)
+                        set_motor_speed(convert_to_motor(cash2), convert_to_motor(cash))
 
-                if code == dict.msg_dict["DV_RAW_MODE"]:
-                    data2 = struct.unpack("Bff", data)
-                    set_motor_speed(data2[1], data2[2])
-                    raw_mode = True
+                    if code == dict.msg_dict["DV_RAW_MODE"]:
+                        data2 = struct.unpack("Bff", data)
+                        set_motor_speed(data2[1], data2[2])
+                        raw_mode = True
 
-                # modes for cal
-                if code == dict.msg_dict["DV_CALL_STRAIGHT"]:
-                    try:
-                        data2 = struct.unpack("!Bff", data)
-                        speed = convert_to_motor(data2[1])
-                        duration = data2[2]
-                        drive.drive(speed, speed, duration)
-                    except Exception as e:
-                        print("ERROR 01 (", e, ")")
+                    # modes for cal
+                    if code == dict.msg_dict["DV_CALL_STRAIGHT"]:
+                        try:
+                            data2 = struct.unpack("!Bff", data)
+                            speed = convert_to_motor(data2[1])
+                            duration = data2[2]
+                            drive.drive(speed, speed, duration)
+                        except Exception as e:
+                            print("ERROR 01 (", e, ")")
 
-                if code == dict.msg_dict["DV_CALL_ROTATE"]:
-                    try:
-                        data2 = struct.unpack("!Bff", data)
-                        speed = convert_to_motor(data2[1])
-                        duration = data2[2]
-                        drive.drive(speed, -speed, duration)
-                    except Exception as e:
-                        print("ERROR 01 (", e, ")")
+                    if code == dict.msg_dict["DV_CALL_ROTATE"]:
+                        try:
+                            data2 = struct.unpack("!Bff", data)
+                            speed = convert_to_motor(data2[1])
+                            duration = data2[2]
+                            drive.drive(speed, -speed, duration)
+                        except Exception as e:
+                            print("ERROR 01 (", e, ")")
 
 
 if __name__ == "__main__":
