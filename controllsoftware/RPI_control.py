@@ -216,16 +216,15 @@ class MvObserver:
                 self.last_speed = speed
                 self.last_mode_beginning = time.time_ns()
 
-    @staticmethod
-    def cal_end_position(move=Move):
-        if move.move_mode == dict.msg_dict["NO_MODE"]:
+    def cal_end_position(self):
+        if self.move_mode == dict.msg_dict["NO_MODE"]:
             return
 
-        if move.move_mode == dict.msg_dict["DV_STRAIGHT"]:
+        if self.move_mode == dict.msg_dict["DV_STRAIGHT"]:
             pass
             # Calculate passed time, then use that to calculate the Distance (influenced by the speed),
             # then calculate a new point
-        if move.move_mode == dict.msg_dict["DV_ROTATE"]:
+        if self.move_mode == dict.msg_dict["DV_ROTATE"]:
             pass
 
 
