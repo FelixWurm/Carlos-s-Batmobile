@@ -128,6 +128,14 @@ Since mjpeg doesnt have a bitrate option, quality can be changed with `-q:v`
 | ORIGINAL-144p30fps.h264		|	99.7538         | 99.3537       |
 
 
+## VMAF: original video with lower resolution video
+| Comparison    | VMAF bright env | VMAF dark env |
+| :---:         | :---:           | :---:         |
+| 720p -> 600p  | 93.2493         | 79.8725       |
+| 720p -> 480p  | 90.8330         | 76.1043       |
+| 720p -> 240p  | 76.9833         | 63.7809       |
+| 720p -> 144p  | 65.7241         | 56.3362       |
+
 ## VMAF scores in comparison
 <table>
 <tr><th>Encoder</th><th>Bright Environment 30fps</th><th>Dark Environment 30fps</th>
