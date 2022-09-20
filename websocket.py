@@ -4,9 +4,8 @@ import json
 import socket
 import struct
 import subprocess
-from dataclasses import dataclass
-
 import websockets
+from dataclasses import dataclass
 
 
 class State(enum.Enum):
@@ -109,7 +108,8 @@ async def position_handler(websocket):
     try:
         while True:
             await asyncio.wait_for(POSITION_EVENT.wait(), timeout=None)
-            event = {"type": "position", "channel": CHANNEL, "data": {"x": POSITION[CHANNEL].x, "y": POSITION[CHANNEL].y}}
+            event = {"type": "position", "channel": CHANNEL,
+                     "data": {"x": POSITION[CHANNEL].x, "y": POSITION[CHANNEL].y}}
             await websocket.send(json.dumps(event))
             POSITION_EVENT.clear()
     except Exception as e:
