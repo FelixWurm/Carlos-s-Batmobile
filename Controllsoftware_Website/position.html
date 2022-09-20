@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Carlos Controller</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/axist@latest/dist/axist.min.css"/>
+    <style>
+
+    </style>
+</head>
+<body>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"
+            integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <canvas width="400px" height="400px" id="positionMap"></canvas>
+
+    <script>
+        new Chart('positionMap', {
+            type: 'bubble',
+            plugins: [{
+                beforeDraw: () => {
+                }
+            }],
+            data: {
+                datasets: [{
+                    label: 'Carlos Position',
+                    data: [{x: -3, y: 5}, {x: -2, y: 0}, {x: -1, y: -3}, {x: 0, y: -4}, {x: 1, y: -3}, {
+                        x: 2,
+                        y: 0
+                    }, {x: 3, y: 5}],
+                    borderColor: 'red'
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        ticks: {
+                            stepSize: 1,
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            stepSize: 1,
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
