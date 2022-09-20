@@ -119,13 +119,13 @@ Since mjpeg doesnt have a bitrate option, quality can be changed with `-q:v`
 
 
 ## VMAF: original video with itself
-| Original file             | vmaf value  |
-| :-----------------------: | :---------: |
-| ORIGINAL-720p30fps.h264   | 99.7924     |
-| ORIGINAL-600p30fps.h264		|	99.7756     |
-| ORIGINAL-480p30fps.h264		|	99.7715     |
-| ORIGINAL-240p30fps.h264		|	99.7606     |
-| ORIGINAL-144p30fps.h264		|	99.7538     |
+| Original file             | VMAF bright env | VMAF dark env |
+| :---:                     | :---:           | :---:         |
+| ORIGINAL-720p30fps.h264   | 99.7924         | 99.8200       |
+| ORIGINAL-600p30fps.h264		|	99.7756         | 99.5113       |
+| ORIGINAL-480p30fps.h264		|	99.7715         | 99.4573       |
+| ORIGINAL-240p30fps.h264		|	99.7606         | 99.3798       |
+| ORIGINAL-144p30fps.h264		|	99.7538         | 99.3537       |
 
 
 ## VMAF scores in comparison
@@ -159,49 +159,49 @@ Since mjpeg doesnt have a bitrate option, quality can be changed with `-q:v`
 
 | 720p    | 600p    | 480p    | 240p    | 144p    |
 | :---:   | :---:   | :---:   | :---:   | :---:   |
-| 99.9999 | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
+| 96.9826 | 97.9301 | 98.0103 | 97.1149 | 96.8449 |
+| 98.6467 | 98.7742 | 98.6823 | 98.1251 | 97.8179 |
+| 85.6334 | 93.7485 | 97.3958 | 99.7606 | 99.5232 |
+| 66.8929 | 83.1435 | 90.2666 | 98.7915 | 99.2679 |
+| 40.4617 | 49.8921 | 63.3883 | 92.9990 | 97.9435 |
 
 | 720p    | 600p    | 480p    | 240p    | 144p    |
 | :---:   | :---:   | :---:   | :---:   | :---:   |
-| 99.9999 | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
+| 93.9466 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
+| 97.0788 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
+| 95.6419 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
+| 92.8056 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
+| 82.7695 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
 
 | 720p    | 600p    | 480p    | 240p    | 144p    |
 | :---:   | :---:   | :---:   | :---:   | :---:   |
-| 99.9999 | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
+| 99.3045 | 99.2423 | 99.1837 | 98.8800 | 98.6816 |
+| 96.3412 | 96.3867 | 95.9942 | 94.2298 | 93.2091 |
+| 93.1571 | 92.6899 | 92.0277 | 89.0783 | 87.0695 |
 
 </td><td>
 
 | 720p    | 600p    | 480p    | 240p    | 144p    |
 | :---:   | :---:   | :---:   | :---:   | :---:   |
-| 99.9999 | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
+| 91.4772 | 93.0603 | 94.0238 | 95.5425 | 95.6634 |
+| 93.9837 | 95.4751 | 95.8489 | 96.9700 | 97.0818 |
+| 69.7901 | 88.6245 | 93.0197 | 98.5464 | 99.1046 |
+| 57.8416 | 81.4107 | 87.4694 | 97.5083 | 98.7141 |
+| 45.3892 | 60.9832 | 71.8171 | 92.6311 | 97.0003 |
 
 | 720p    | 600p    | 480p    | 240p    | 144p    |
 | :---:   | :---:   | :---:   | :---:   | :---:   |
-| 99.9999 | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
+| 77.7908 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
+| 81.3120 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
+| 79.4772 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
+| 76.9844 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
+| 71.7148 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
 
 | 720p    | 600p    | 480p    | 240p    | 144p    |
 | :---:   | :---:   | :---:   | :---:   | :---:   |
-| 99.9999 | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
-| xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz | xxyzzzz |
+| 96.2826 | 96.8027 | 96.9291 | 97.4206 | 97.4756 |
+| 82.5461 | 91.0914 | 92.1528 | 93.0679 | 92.5463 |
+| 79.2964 | 88.2771 | 88.9593 | 88.8981 | 87.8721 |
   
 </td>
 </tr>
