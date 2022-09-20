@@ -20,9 +20,9 @@
 
 `cd ffmpeg`
 
-`./configure --enable-libvmaf`
+`./configure --enable-gpl --enable-libx264 --enable-libx265 --enable-nonfree --enable-libvmaf --enable-version3 --enable-libaom`
 
-`sudo make -j4`
+`sudo make`
 
 `sudo make install`
 
