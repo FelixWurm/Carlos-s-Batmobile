@@ -7,13 +7,11 @@ import subprocess
 import sys
 import time
 from dataclasses import dataclass
-from pickletools import long4
 from time import sleep as sl
-import evdev
-
 
 import RPi.GPIO as GPIO
 import dict
+import evdev
 
 # Debug
 DEBUG = True
@@ -21,7 +19,7 @@ DEBUG = True
 
 # Objects to store the position values
 @dataclass
-class point:
+class Point:
     x: float = 0
     y: float = 0
 
@@ -47,7 +45,7 @@ right_bwd = 19
 udp_port = 25565
 udp_addr = "169.254.2.1"
 
-# Setup the GPIO stuff
+# Set up the GPIO stuff
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(left_fwd, GPIO.OUT)
@@ -70,17 +68,17 @@ pi_pwm_r_bwd.start(0)
 
 
 # Drive...
-class drive:
+class Drive:
     def __init__(self):
         self.end_time = 0
 
     def drive(self, speed_l, speed_r, dv_time):
         # check for correct input
-        if ((0 < speed_l < 40) or (-40 < speed_l < 0)):
+        if (0 < speed_l < 40) or (-40 < speed_l < 0):
             print("incorrect Input speed_l, must be between -100 to -40 or 40 to 100")
             return
 
-        if ((0 < speed_r < 40) or (-40 < speed_r < 0)):
+        if (0 < speed_r < 40) or (-40 < speed_r < 0):
             print("incorrect Input speed_r, must be between -100 to -40 or 40 to 100")
             return
 
@@ -100,7 +98,7 @@ def set_motor_speed(speed_l: int, speed_r: int):
         pi_pwm_l.ChangeDutyCycle(0)
         pi_pwm_l_bwd.ChangeDutyCycle(0)
     else:
-        if (speed_l > 0):
+        if speed_l > 0:
             pi_pwm_l.ChangeDutyCycle(speed_l)
             pi_pwm_l_bwd.ChangeDutyCycle(0)
         else:
@@ -111,7 +109,7 @@ def set_motor_speed(speed_l: int, speed_r: int):
         pi_pwm_r.ChangeDutyCycle(0)
         pi_pwm_r_bwd.ChangeDutyCycle(0)
     else:
-        if (speed_r > 0):
+        if speed_r > 0:
             pi_pwm_r.ChangeDutyCycle(speed_r)
             pi_pwm_r_bwd.ChangeDutyCycle(0)
         else:
@@ -120,7 +118,7 @@ def set_motor_speed(speed_l: int, speed_r: int):
 
 
 def value_check(value):
-    if (value > 100):
+    if value > 100:
         print("value was to big! (", value, ")")
         value = 100
     elif value < -100:
@@ -129,8 +127,8 @@ def value_check(value):
     return value
 
 
-def drive_(speed, time):
-    drive(speed, speed, time)
+def drive_(speed, duration):
+    drive(speed, speed, duration)
 
 
 # speed in M at a given speed, from 100 to 40 in increments of 10
@@ -140,24 +138,24 @@ speed_distance = [0.23, 0.1975, 0.18, 0.16, 0.1375, 0.12, 0.09]
 # distance in M, speed in percent (0-100)
 def drive_dst(speed, distance):
     cash = speed % 10
-    if (cash >= 5):
+    if cash >= 5:
         speed_ = ((speed - cash) + 10) / 10
     else:
         speed_ = (speed - cash) / 10
-    time = distance / speed_distance[int(10 - speed_)]
-    drive_(speed, time)
+    duration = distance / speed_distance[int(10 - speed_)]
+    drive_(speed, duration)
 
 
-def rotate(speed, time):
-    if speed < 40 and speed > -40:
+def rotate(speed, duration):
+    if 40 > speed > -40:
         return
-    drive(speed, speed * (-1), time)
+    drive(speed, speed * (-1), duration)
 
 
 # Function to get your local ip address
 def get_local_ip():
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # Use DNS server to determine own IP
         sock.connect(('8.8.4.4', 80))
         return sock.getsockname()[0]
@@ -174,13 +172,13 @@ def udp_discovery_setup():
     return socket.socket(socket.SOCK_DGRAM, socket.AF_INET)
 
 
-def udp_discovery(discovery_port, discovery_addres, udp_soc, msg):
-    udp_soc.sendto(struct.pack("!B", msg), (discovery_addres, discovery_port))
+def udp_discovery(discovery_port, discovery_address, udp_soc, msg):
+    udp_soc.sendto(struct.pack("!B", msg), (discovery_address, discovery_port))
 
 
-class mv_observer:
+class MvObserver:
     def __init__(self) -> None:
-        # mode (strate, rotate since the last change)
+        # mode (straight, rotate since the last change)
         self.last_mode = dict.msg_dict["NO_MODE"]
         self.last_speed = 0
         self.last_mode_beginning = 0
@@ -194,7 +192,7 @@ class mv_observer:
         if not (mode == self.last_mode and speed == self.last_speed):
             # Filter out just start moving
             if self.last_mode == dict.msg_dict["NO_MODE"]:
-                # com from no move to some movement
+                # comes from no move to some movement
                 self.last_mode = mode
                 self.last_speed = speed
                 self.last_mode_beginning = time.time_ns()
@@ -218,18 +216,21 @@ class mv_observer:
                 self.last_speed = speed
                 self.last_mode_beginning = time.time_ns()
 
-    def cal_end_position(self, move=Move):
-        if move.move_mode == dict.msg_dict["NO_MODE"]: return
+    @staticmethod
+    def cal_end_position(move=Move):
+        if move.move_mode == dict.msg_dict["NO_MODE"]:
+            return
 
-        if move.move_mode == dict.msg_dict["DV_STRATE"]:
+        if move.move_mode == dict.msg_dict["DV_STRAIGHT"]:
             pass
-            # Calculate passed time, than use that to calculate the Distance (influenced by the speed), then calculate a new point
+            # Calculate passed time, then use that to calculate the Distance (influenced by the speed),
+            # then calculate a new point
         if move.move_mode == dict.msg_dict["DV_ROTATE"]:
             pass
 
 
 # UDP
-def UDP_setup():
+def udp_setup():
     soc = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     # Bind Server to localhost
@@ -238,7 +239,7 @@ def UDP_setup():
     return soc
 
 
-def udp_connect(soc=socket.socket):
+def udp_connect(soc: socket):
     counter = 0
     while True:
         data, addr = soc.recvfrom(1024)
@@ -248,43 +249,45 @@ def udp_connect(soc=socket.socket):
             return addr
         else:
             counter = counter + 1
-            print("connection attempt with invalid init sequence, open for retrys : ", counter)
+            print("connection attempt with invalid init sequence, open for retries : ", counter)
             soc.sendto(struct.pack("!B", dict.msg_dict["ERROR_CONN"]), addr)
 
 
 # converts a number from -100 to 100 toto -100-40, 40-100
-def convert_to_motor(input):
-    input = input * 0.6
-    if (input < 0):
-        input = input - 40
+def convert_to_motor(speed_input):
+    speed_input = speed_input * 0.6
+    if speed_input < 0:
+        speed_input = speed_input - 40
     else:
-        input = input + 40
+        speed_input = speed_input + 40
 
-    return input
+    return speed_input
 
 
-def calculate_position(mode, time, speed, last_position):
+def calculate_position(mode, duration, speed, last_position):
     if mode == "R":
         pass
     if mode == "D":
         pass
 
+
 def find_mouse():
-    DEVICE = None
-    DEVICES = [evdev.InputDevice(fn) for fn in evdev.list_devices()]
-    for d in DEVICES:
+    device = None
+    devices = [evdev.InputDevice(fn) for fn in evdev.list_devices()]
+    for d in devices:
         if 'Mouse' in d.name:
-            DEVICE = d
+            device = d
             print('Found %s at %s...' % (d.name, d.fn))
-            return DEVICE
+    return device
+
 
 def main():
-    # setup the TCP server
-    soc = UDP_setup()
+    # set up the TCP server
+    soc = udp_setup()
 
     print("IP:", get_local_ip())
 
-    # send discovery signal once, should by send every minuit, nonblocking server requiert.
+    # send discovery signal once, should be sent every minuit, nonblocking server required.
     udp_soc = udp_discovery_setup()
     udp_discovery(udp_port, udp_addr, udp_soc, dict.msg_dict["READY_CONN"])
 
@@ -298,17 +301,16 @@ def main():
     # Idee: Nach jeder veränderung der Geschwindigkeit Die Position neu bestimmen
 
     # init drive class
-    Drive = drive()
+    drive = Drive()
 
-    #position (Mouse sending)
+    # position (Mouse sending)
     pos_x = 0
     pos_y = 0
 
     mouse = find_mouse()
 
-
     while True:
-        Drive.run()
+        drive.run()
 
         # stop the motor in case of bad connection
         # 1ns = 1E-9s
@@ -321,70 +323,67 @@ def main():
             if DEBUG:
                 print("Connection timeout!")
             break
-        
 
-        #read in mouse data
+        # read in mouse data
 
         ready = select([mouse], [], [])
 
         if ready:
-            for event in DEVICE.read():
+            for event in mouse.read():
                 if event.type == evdev.ecodes.EV_REL:
                     if event.code == evdev.ecodes.REL_X:
-                        X += event.value
+                        pos_x += event.value
                     if event.code == evdev.ecodes.REL_Y:
-                        Y += event.value
-
+                        pos_y += event.value
 
         ready = select.select([soc], [], [], 0)
         if ready[0]:
-            #send as a reply the current position:
-            msg = struct.pack("!Bqq",dict.msg_dict["POS_CURRENT_RAW"],pos_x, pos_y )
+            # send as a reply the current position:
+            msg = struct.pack("!Bqq", dict.msg_dict["POS_CURRENT_RAW"], pos_x, pos_y)
             soc.sendto(msg, ip_addr)
-
 
             data, cur_ip_addr = soc.recvfrom(1024)
             if ip_addr == cur_ip_addr and data:
                 # update the last received Counter
                 last_update = time.time_ns()
 
-                ID = data[0]
+                code = data[0]
 
-                if ID == dict.msg_dict["DV_STRAIGHT"]:
+                if code == dict.msg_dict["DV_STRAIGHT"]:
                     data2 = struct.unpack("!Bf", data)
                     cash = convert_to_motor(data2[1])
                     set_motor_speed(cash, cash)
 
-                if ID == dict.msg_dict["DV_STOP"]:
+                if code == dict.msg_dict["DV_STOP"]:
                     set_motor_speed(0, 0)
 
-                if ID == dict.msg_dict["DV_ROTATE"]:
+                if code == dict.msg_dict["DV_ROTATE"]:
                     data2 = struct.unpack("!Bf", data)
                     cash = data2[1]
                     cash2 = cash * (-1)
                     set_motor_speed(convert_to_motor(cash2), convert_to_motor(cash))
 
-                if ID == dict.msg_dict["DV_RAW_MODE"]:
+                if code == dict.msg_dict["DV_RAW_MODE"]:
                     data2 = struct.unpack("Bff", data)
                     set_motor_speed(data2[1], data2[2])
                     raw_mode = True
 
                 # modes for cal
-                if ID == dict.msg_dict["DV_CALL_STRAIGHT"]:
+                if code == dict.msg_dict["DV_CALL_STRAIGHT"]:
                     try:
                         data2 = struct.unpack("!Bff", data)
                         speed = convert_to_motor(data2[1])
                         duration = data2[2]
-                        Drive.drive(speed, speed, duration)
+                        drive.drive(speed, speed, duration)
                     except Exception as e:
                         print("ERROR 01 (", e, ")")
 
-                if ID == dict.msg_dict["DV_CALL_ROTATE"]:
+                if code == dict.msg_dict["DV_CALL_ROTATE"]:
                     try:
                         data2 = struct.unpack("!Bff", data)
                         speed = convert_to_motor(data2[1])
                         duration = data2[2]
-                        Drive.drive(speed, -speed, duration)
+                        drive.drive(speed, -speed, duration)
                     except Exception as e:
                         print("ERROR 01 (", e, ")")
 

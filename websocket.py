@@ -4,6 +4,7 @@ import json
 import socket
 import struct
 import subprocess
+from dataclasses import dataclass
 
 import websockets
 
@@ -18,6 +19,16 @@ class State(enum.Enum):
 
 STATE = State.KEEP_ALIVE
 UPDATE_EVENT = asyncio.Event()
+POSITION_EVENT = asyncio.Event()
+
+
+@dataclass
+class Position:
+    x: int
+    y: int
+
+
+POSITION = []
 
 SPEED = 100
 CHANNEL = 0
@@ -46,10 +57,6 @@ async def carlos_controller():
 
         resend_connect_request = False
 
-        request = struct.pack("!B", int(4))
-        # Todo: Wait for connection accept
-        sock.sendto(request, (get_ip(CARLOS_NAMES[CHANNEL]), port))
-
         if prev_channel != CHANNEL:
             request = struct.pack("!B", int(4))
             # Todo: Wait for connection accept
@@ -62,17 +69,23 @@ async def carlos_controller():
             prev_channel = CHANNEL
 
         try:
-            resp = sock.recvfrom(1500)
-            if resp[0] == 10:
-                resend_connect_request = True
-                print("Resend connection request")
+            while True:
+                data, address = sock.recvfrom(1500)
+                print("Got packet " + str(int(data[0])))
+                if data[0] == 11:
+                    x, y = struct.unpack("!qq", resp[1:])
+                    POSITION[CHANNEL] = Position(x, y)
+                    POSITION_EVENT.set()
+
+                if data[0] == 10:
+                    resend_connect_request = True
         except socket.error:
             pass
 
         if resend_connect_request:
             request = struct.pack("!B", int(4))
-            # Todo: Wait for connection accept
             sock.sendto(request, (get_ip(CARLOS_NAMES[CHANNEL]), port))
+            print("Sent connection request")
 
         data = []
         if type(SPEED) != float and type(SPEED) != int:
@@ -91,10 +104,23 @@ async def carlos_controller():
         sock.sendto(data, (get_ip(CARLOS_NAMES[CHANNEL]), port))
 
 
+async def position_handler(websocket):
+    try:
+        while True:
+            await asyncio.wait_for(POSITION_EVENT.wait(), timeout=None)
+            websocket.send(json.dumps(
+                {"event": "position", "channel": CHANNEL, "data": {"x": POSITON[CHANNEL].x, "y": POSITION[CHANNEL].y}}))
+            POSITION_EVENT.clear()
+    except Exception as e:
+        print(e)
+
+
 async def handler(websocket):
     global STATE
     global SPEED
     global CHANNEL
+
+    asyncio.create_task(position_handler(websocket))
 
     async for message in websocket:
         event = json.loads(message)
@@ -142,6 +168,9 @@ if __name__ == "__main__":
         print(webrtc_port)
         subprocess.Popen(
             ["./webrtc-server/webrtc_server", "--rtsp-server-ip=" + host + ":8554", "--port=" + str(webrtc_port)])
+
+    for i in range(len(CARLOS_NAMES)):
+        POSITION.append(Position(x=0, y=0))
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
