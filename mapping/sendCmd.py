@@ -4,11 +4,19 @@ import numpy as np
 import ssh_tools
 from ssh_tools import send
 
+#
 
-# cmd = "sudo config wlan0 txpower 30"
-# cmd = "sudo batctl hp 20"
-cmd = "bluetoothctl discoverable on"
+cmd = [
+    "sudo config wlan0 txpower 30",
+    "sudo batctl hp",
+    "bluetoothctl discoverable on",
+    "sudo batctl gwl",
+    "hostname -I",
+]
+
+
 if __name__ == '__main__':
+    cmd = cmd[4]
     print(cmd)
     forks = 6
     hosts = []
@@ -17,7 +25,7 @@ if __name__ == '__main__':
     all_hosts = np.array_split(all_hosts, forks)
     for i in range(forks):
         if not os.fork():
-            forks = i
+            forks = i + 1
             hosts = all_hosts[i]
             break
     else:
@@ -30,7 +38,7 @@ if __name__ == '__main__':
     for host in hosts:
         try:
             out = send(host, cmd)
-            print(host, "- OK -", out.strip())
+            print(host.ljust(15), "-", out.strip())
         except KeyboardInterrupt:
             exit(0)
         except:
