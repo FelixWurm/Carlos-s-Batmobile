@@ -308,6 +308,7 @@ def main():
     pos_y = 0
 
     mouse = find_mouse()
+    assert mouse is not None
 
     while True:
         drive.run()
@@ -326,7 +327,7 @@ def main():
 
         # read in mouse data
 
-        ready = select([mouse], [], [])
+        ready = select.select([mouse], [], [])
 
         if ready:
             for event in mouse.read():
