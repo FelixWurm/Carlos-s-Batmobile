@@ -184,7 +184,7 @@ def help(typeof_help):
 #returns True if it contains a number
 def number(number_):
 
-    if ((number_ == "1") or (number_ == "2") or (number_ == "3") or (number_ == "4") or (number_ == "5") or (number_ == "6") or (number_ == "7") or (number_ == "8") or (number_ == "9") or (number_ == "0")):
+    if ((number_ == "1") or (number_ == "2") or (number_ == "3") or (number_ == "4") or (number_ == "5") or (number_ == "6") or (number_ == "7") or (number_ == "8") or (number_ == "9") or (number_ == "0") or (number_ == "-")):
         return True
     else:
         if(number_ == "."):
@@ -508,7 +508,7 @@ def main():
                             print("Invalid Input (", e, ")")
 
                         cash = struct.pack("!Bff", dict.msg_dict["DV_CALL_ROTATE"], speed, time_)
-                        devices[console_select_device].send(cash)
+                        devices[console_select_device].send_data(cash)
 
 
                 #Drive in reverse
