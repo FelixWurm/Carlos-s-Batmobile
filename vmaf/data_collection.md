@@ -144,7 +144,7 @@ Since mjpeg doesnt have a bitrate option, quality can be changed with `-q:v`
 | h264        |
 | :---:       |
 | -crf 23     |
-| zerolatency |
+| latency     |
 | 500kbits    |
 | 250kbits    |
 | 100kbits    |
@@ -152,7 +152,7 @@ Since mjpeg doesnt have a bitrate option, quality can be changed with `-q:v`
 | h265        |
 | :---:       |
 | -crf 23     |
-| zerolatency |
+| latency     |
 | 500kbits    |
 | 250kbits    |
 | 100kbits    |
@@ -165,7 +165,7 @@ Since mjpeg doesnt have a bitrate option, quality can be changed with `-q:v`
 
 </td><td>
 
-| 720p    | 600p    | 480p    | 240p    | 144p    |
+|&nbsp; 720p &nbsp;&nbsp;|&nbsp; 600p &nbsp;&nbsp;|&nbsp; 480p &nbsp;&nbsp;|&nbsp; 240p &nbsp;&nbsp;|&nbsp; 144p &nbsp;&nbsp;|
 | :---:   | :---:   | :---:   | :---:   | :---:   |
 | 96.9826 | 97.9301 | 98.0103 | 97.1149 | 96.8449 |
 | 98.6467 | 98.7742 | 98.6823 | 98.1251 | 97.8179 |
@@ -173,7 +173,7 @@ Since mjpeg doesnt have a bitrate option, quality can be changed with `-q:v`
 | 66.8929 | 83.1435 | 90.2666 | 98.7915 | 99.2679 |
 | 40.4617 | 49.8921 | 63.3883 | 92.9990 | 97.9435 |
 
-| 720p    | 600p    | 480p    | 240p    | 144p    |
+|&nbsp; 720p &nbsp;&nbsp;|&nbsp; 600p &nbsp;&nbsp;|&nbsp; 480p &nbsp;&nbsp;|&nbsp; 240p &nbsp;&nbsp;|&nbsp; 144p &nbsp;&nbsp;|
 | :---:   | :---:   | :---:   | :---:   | :---:   |
 | 93.9466 | 94.5633 | 94.4431 | 92.7328 | 91.6086 |
 | 97.0788 | 97.5523 | 97.3682 | 96.4584 | 95.8907 |
@@ -181,7 +181,7 @@ Since mjpeg doesnt have a bitrate option, quality can be changed with `-q:v`
 | 92.8056 | 95.7647 | 96.7827 | 98.4841 | 98.8526 |
 | 82.7695 | 88.8063 | 91.8605 | 96.2599 | 97.4556 |
 
-| 720p    | 600p    | 480p    | 240p    | 144p    |
+|&nbsp; 720p &nbsp;&nbsp;|&nbsp; 600p &nbsp;&nbsp;|&nbsp; 480p &nbsp;&nbsp;|&nbsp; 240p &nbsp;&nbsp;|&nbsp; 144p &nbsp;&nbsp;|
 | :---:   | :---:   | :---:   | :---:   | :---:   |
 | 99.3045 | 99.2423 | 99.1837 | 98.8800 | 98.6816 |
 | 96.3412 | 96.3867 | 95.9942 | 94.2298 | 93.2091 |
@@ -189,7 +189,7 @@ Since mjpeg doesnt have a bitrate option, quality can be changed with `-q:v`
 
 </td><td>
 
-| 720p    | 600p    | 480p    | 240p    | 144p    |
+|&nbsp; 720p &nbsp;&nbsp;|&nbsp; 600p &nbsp;&nbsp;|&nbsp; 480p &nbsp;&nbsp;|&nbsp; 240p &nbsp;&nbsp;|&nbsp; 144p &nbsp;&nbsp;|
 | :---:   | :---:   | :---:   | :---:   | :---:   |
 | 91.4772 | 93.0603 | 94.0238 | 95.5425 | 95.6634 |
 | 93.9837 | 95.4751 | 95.8489 | 96.9700 | 97.0818 |
@@ -197,7 +197,7 @@ Since mjpeg doesnt have a bitrate option, quality can be changed with `-q:v`
 | 57.8416 | 81.4107 | 87.4694 | 97.5083 | 98.7141 |
 | 45.3892 | 60.9832 | 71.8171 | 92.6311 | 97.0003 |
 
-| 720p    | 600p    | 480p    | 240p    | 144p    |
+|&nbsp; 720p &nbsp;&nbsp;|&nbsp; 600p &nbsp;&nbsp;|&nbsp; 480p &nbsp;&nbsp;|&nbsp; 240p &nbsp;&nbsp;|&nbsp; 144p &nbsp;&nbsp;|
 | :---:   | :---:   | :---:   | :---:   | :---:   |
 | 77.7908 | 87.6920 | 88.9879 | 90.3929 | 90.2325 |
 | 81.3120 | 91.4298 | 92.4915 | 94.4442 | 94.7432 |
@@ -205,7 +205,89 @@ Since mjpeg doesnt have a bitrate option, quality can be changed with `-q:v`
 | 76.9844 | 89.5868 | 92.1102 | 96.8463 | 97.8919 |
 | 71.7148 | 85.2299 | 88.5674 | 94.5355 | 96.3337 |
 
-| 720p    | 600p    | 480p    | 240p    | 144p    |
+|&nbsp; 720p &nbsp;&nbsp;|&nbsp; 600p &nbsp;&nbsp;|&nbsp; 480p &nbsp;&nbsp;|&nbsp; 240p &nbsp;&nbsp;|&nbsp; 144p &nbsp;&nbsp;|
+| :---:   | :---:   | :---:   | :---:   | :---:   |
+| 96.2826 | 96.8027 | 96.9291 | 97.4206 | 97.4756 |
+| 82.5461 | 91.0914 | 92.1528 | 93.0679 | 92.5463 |
+| 79.2964 | 88.2771 | 88.9593 | 88.8981 | 87.8721 |
+  
+</td>
+</tr>
+</table>
+
+
+
+
+## Bitrate / VMAF scores: better comparison with each other
+<table>
+<tr><th>Encoder</th><th>Bright Environment 30fps</th><th>Dark Environment 30fps</th>
+<tr><td>
+
+| h264        |
+| :---:       |
+| -crf 23     |
+| latency     |
+| 500kbits    |
+| 250kbits    |
+| 100kbits    |
+
+| h265        |
+| :---:       |
+| -crf 23     |
+| latency     |
+| 500kbits    |
+| 250kbits    |
+| 100kbits    |
+
+| mjpeg       |
+| :---:       |
+| -q:v 2      |
+| -q:v 15     |
+| -q:v 30     |
+
+</td><td>
+
+|&nbsp; 720p &nbsp;&nbsp;|&nbsp; 600p &nbsp;&nbsp;|&nbsp; 480p &nbsp;&nbsp;|&nbsp; 240p &nbsp;&nbsp;|&nbsp; 144p &nbsp;&nbsp;|
+| :---:   | :---:   | :---:   | :---:   | :---:   |
+| 17.6114 |  8.7205 |  5.5708 |  1.5343 |  0.8467 |
+| 29.8236 | 14.6699 |  9.7586 |  2.6701 |  1.3699 |
+|  5.6170 |  5.0987 |  4.9591 |  4.7213 |  4.7828 |
+|  3.6476 |  2.8505 |  2.6366 |  2.4091 |  2.4177 |
+|  2.3726 |  1.8841 |  1.5145 |  1.0215 |  1.0006 |
+
+|&nbsp; 720p &nbsp;&nbsp;|&nbsp; 600p &nbsp;&nbsp;|&nbsp; 480p &nbsp;&nbsp;|&nbsp; 240p &nbsp;&nbsp;|&nbsp; 144p &nbsp;&nbsp;|
+| :---:   | :---:   | :---:   | :---:   | :---:   |
+|  3.5446 |  2.1996 |  1.5671 |  0.6470 |  0.4257 |
+|  8.6116 |  4.8282 |  3.2557 |  1.0989 |  0.6674 |
+|  5.9075 |  5.6936 |  5.5938 |  5.6163 |  5.3954 |
+|  3.1571 |  2.8612 |  2.8621 |  2.8939 |  2.8022 |
+|  1.5222 |  1.3513 |  1.2628 |  1.2155 |  1.1800 |
+
+|&nbsp; 720p &nbsp;&nbsp;|&nbsp; 600p &nbsp;&nbsp;|&nbsp; 480p &nbsp;&nbsp;|&nbsp; 240p &nbsp;&nbsp;|&nbsp; 144p &nbsp;&nbsp;|
+| :---:   | :---:   | :---:   | :---:   | :---:   |
+| 69.3423 | 38.0987 | 27.7969 | 11.1650 |  6.8807 |
+| 30.7345 | 18.8096 | 13.2300 |  4.9666 |  3.0791 |
+| 29.5630 | 17.8337 | 12.3767 |  4.4904 |  2.7679 |
+
+</td><td>
+
+|&nbsp; 720p &nbsp;&nbsp;|&nbsp; 600p &nbsp;&nbsp;|&nbsp; 480p &nbsp;&nbsp;|&nbsp; 240p &nbsp;&nbsp;|&nbsp; 144p &nbsp;&nbsp;|
+| :---:   | :---:   | :---:   | :---:   | :---:   |
+| 91.4772 | 93.0603 | 94.0238 | 95.5425 | 95.6634 |
+| 93.9837 | 95.4751 | 95.8489 | 96.9700 | 97.0818 |
+| 69.7901 | 88.6245 | 93.0197 | 98.5464 | 99.1046 |
+| 57.8416 | 81.4107 | 87.4694 | 97.5083 | 98.7141 |
+| 45.3892 | 60.9832 | 71.8171 | 92.6311 | 97.0003 |
+
+|&nbsp; 720p &nbsp;&nbsp;|&nbsp; 600p &nbsp;&nbsp;|&nbsp; 480p &nbsp;&nbsp;|&nbsp; 240p &nbsp;&nbsp;|&nbsp; 144p &nbsp;&nbsp;|
+| :---:   | :---:   | :---:   | :---:   | :---:   |
+| 77.7908 | 87.6920 | 88.9879 | 90.3929 | 90.2325 |
+| 81.3120 | 91.4298 | 92.4915 | 94.4442 | 94.7432 |
+| 79.4772 | 91.9383 | 94.2330 | 97.9836 | 98.6177 |
+| 76.9844 | 89.5868 | 92.1102 | 96.8463 | 97.8919 |
+| 71.7148 | 85.2299 | 88.5674 | 94.5355 | 96.3337 |
+
+|&nbsp; 720p &nbsp;&nbsp;|&nbsp; 600p &nbsp;&nbsp;|&nbsp; 480p &nbsp;&nbsp;|&nbsp; 240p &nbsp;&nbsp;|&nbsp; 144p &nbsp;&nbsp;|
 | :---:   | :---:   | :---:   | :---:   | :---:   |
 | 96.2826 | 96.8027 | 96.9291 | 97.4206 | 97.4756 |
 | 82.5461 | 91.0914 | 92.1528 | 93.0679 | 92.5463 |
