@@ -215,6 +215,8 @@ Since mjpeg doesnt have a bitrate option, quality can be changed with `-q:v`
 </tr>
 </table>
 
+Note: 100 is the best possible value and 20 the worst possible value
+
 
 
 
@@ -273,26 +275,34 @@ Since mjpeg doesnt have a bitrate option, quality can be changed with `-q:v`
 
 |&nbsp; 720p &nbsp;&nbsp;|&nbsp; 600p &nbsp;&nbsp;|&nbsp; 480p &nbsp;&nbsp;|&nbsp; 240p &nbsp;&nbsp;|&nbsp; 144p &nbsp;&nbsp;|
 | :---:   | :---:   | :---:   | :---:   | :---:   |
-| 91.4772 | 93.0603 | 94.0238 | 95.5425 | 95.6634 |
-| 93.9837 | 95.4751 | 95.8489 | 96.9700 | 97.0818 |
-| 69.7901 | 88.6245 | 93.0197 | 98.5464 | 99.1046 |
-| 57.8416 | 81.4107 | 87.4694 | 97.5083 | 98.7141 |
-| 45.3892 | 60.9832 | 71.8171 | 92.6311 | 97.0003 |
+| 65.0217 | 10.9714 |  6.3388 |  1.5176 |  0.8154 |
+| 90.8987 | 17.5962 | 10.6730 |  2.7019 |  1.4009 |
+|  3.8114 |  5.1792 |  5.2785 |  4.7998 |  4.6315 |
+|  2.3685 |  2.4935 |  2.6409 |  2.4408 |  2.4313 |
+|  1.5863 |  1.2626 |  1.1975 |  1.0364 |  1.0103 |
 
 |&nbsp; 720p &nbsp;&nbsp;|&nbsp; 600p &nbsp;&nbsp;|&nbsp; 480p &nbsp;&nbsp;|&nbsp; 240p &nbsp;&nbsp;|&nbsp; 144p &nbsp;&nbsp;|
 | :---:   | :---:   | :---:   | :---:   | :---:   |
-| 77.7908 | 87.6920 | 88.9879 | 90.3929 | 90.2325 |
-| 81.3120 | 91.4298 | 92.4915 | 94.4442 | 94.7432 |
-| 79.4772 | 91.9383 | 94.2330 | 97.9836 | 98.6177 |
-| 76.9844 | 89.5868 | 92.1102 | 96.8463 | 97.8919 |
-| 71.7148 | 85.2299 | 88.5674 | 94.5355 | 96.3337 |
+|  4.4864 |  2.0298 |  1.3710 |  0.5421 |  0.3546 |
+|  9.7772 |  4.5281 |  2.8651 |  0.9847 |  0.6016 |
+|  7.3229 |  6.2216 |  6.0913 |  5.7663 |  6.0740 |
+|  4.1178 |  3.3264 |  3.1810 |  3.0254 |  3.0442 |
+|  2.0777 |  1.5370 |  1.4339 |  1.2799 |  1.2664 |
 
 |&nbsp; 720p &nbsp;&nbsp;|&nbsp; 600p &nbsp;&nbsp;|&nbsp; 480p &nbsp;&nbsp;|&nbsp; 240p &nbsp;&nbsp;|&nbsp; 144p &nbsp;&nbsp;|
 | :---:   | :---:   | :---:   | :---:   | :---:   |
-| 96.2826 | 96.8027 | 96.9291 | 97.4206 | 97.4756 |
-| 82.5461 | 91.0914 | 92.1528 | 93.0679 | 92.5463 |
-| 79.2964 | 88.2771 | 88.9593 | 88.8981 | 87.8721 |
+| 172.409 | 41.9943 | 25.7020 |  8.5403 |  5.1090 |
+| 33.9326 | 17.5867 | 11.8282 |  4.0938 |  2.5177 |
+| 33.3180 | 16.9353 | 11.2861 |  3.7909 |  2.3216 |
   
 </td>
 </tr>
 </table>
+
+Note: If the value is lower, the better the vmaf-bitrate score is
+
+It's hard to compare the values of different resolutions tho, since they need lower bitrate for the same vmaf score
+
+Additionally the bitrate of `zerolatency` is a lot higher, since they send a lot more i-frames, so their score is fairly low
+
+Since mjpeg encodes each frame in itself, the bitrate is very high here too, which leads to a low score
