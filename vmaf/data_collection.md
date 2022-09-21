@@ -175,11 +175,11 @@ Since mjpeg doesnt have a bitrate option, quality can be changed with `-q:v`
 
 | 720p    | 600p    | 480p    | 240p    | 144p    |
 | :---:   | :---:   | :---:   | :---:   | :---:   |
-| 93.9466 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
-| 97.0788 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
-| 95.6419 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
-| 92.8056 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
-| 82.7695 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
+| 93.9466 | 94.5633 | 94.4431 | 92.7328 | 91.6086 |
+| 97.0788 | 97.5523 | 97.3682 | 96.4584 | 95.8907 |
+| 95.6419 | 97.6536 | 98.3223 | 99.1758 | 99.3437 |
+| 92.8056 | 95.7647 | 96.7827 | 98.4841 | 98.8526 |
+| 82.7695 | 88.8063 | 91.8605 | 96.2599 | 97.4556 |
 
 | 720p    | 600p    | 480p    | 240p    | 144p    |
 | :---:   | :---:   | :---:   | :---:   | :---:   |
@@ -199,11 +199,11 @@ Since mjpeg doesnt have a bitrate option, quality can be changed with `-q:v`
 
 | 720p    | 600p    | 480p    | 240p    | 144p    |
 | :---:   | :---:   | :---:   | :---:   | :---:   |
-| 77.7908 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
-| 81.3120 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
-| 79.4772 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
-| 76.9844 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
-| 71.7148 | xx.xxxx | xx.xxxx | xx.xxxx | xx.xxxx |
+| 77.7908 | 87.6920 | 88.9879 | 90.3929 | 90.2325 |
+| 81.3120 | 91.4298 | 92.4915 | 94.4442 | 94.7432 |
+| 79.4772 | 91.9383 | 94.2330 | 97.9836 | 98.6177 |
+| 76.9844 | 89.5868 | 92.1102 | 96.8463 | 97.8919 |
+| 71.7148 | 85.2299 | 88.5674 | 94.5355 | 96.3337 |
 
 | 720p    | 600p    | 480p    | 240p    | 144p    |
 | :---:   | :---:   | :---:   | :---:   | :---:   |
