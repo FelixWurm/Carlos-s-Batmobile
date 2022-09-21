@@ -386,7 +386,7 @@ def main():
                             drive.drive(speed, -speed, duration)
                         except Exception as e:
                             print("ERROR 01 (", e, ")")
-                    if code == dict.msg["POS_RESET"]:
+                    if code == dict.msg_dict["POS_RESET"]:
                         pos_x = 0
                         pos_y = 0
 
