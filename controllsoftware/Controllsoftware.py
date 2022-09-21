@@ -471,7 +471,8 @@ def main():
 
                 #Rotate
                 if cash[0] == "R":
-                    pass
+                    cash = struct.pack("!B", dict.msg_dict("POS_RESET"))
+                    devices[console_select_device].send(cash)                   
 
 
                 if(cash[0] == "D"):
