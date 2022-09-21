@@ -12,8 +12,8 @@ import bt_names
 from bt_proximity import BluetoothRSSI
 
 FILENAME = "directivity.csv"
-ADDRESS = ""
-
+ADDRESS = "B8:27:EB:4C:9A:27"
+MAX_VAL_COUNT = 1000
 
 def write_to_file(content):
     with open(FILENAME, "a") as f:
@@ -32,8 +32,7 @@ def bluetooth_listen(addr):
     b = BluetoothRSSI(addr=addr)
     rssi = b.request_rssi()
     if rssi:
-        rssi = rssi[0]
-        # self.update_value(addr, rssi_to_meter(rssi))
+        rssi = - rssi[0]
         return rssi
     return 0
 
@@ -50,11 +49,16 @@ def main():
 
 
     try:
-        while 1:
+        while val_count < MAX_VAL_COUNT:
             time.sleep(.1)
             if rssi := bluetooth_listen(ADDRESS):
                 add_value(rssi)
                 val_count += 1
                 print(str(val_count).ljust(10), rssi)
     except:
-        write_to_file(os.linesep)
+        pass
+    write_to_file(os.linesep)
+
+
+if __name__ == '__main__':
+    main()

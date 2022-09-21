@@ -2,6 +2,7 @@ import csv
 import json
 import socket
 import time
+from typing import Dict
 
 import bt_names
 import ssh_tools
@@ -46,8 +47,12 @@ def filter_data_with_count(data):
     return out
 
 
+def filter_data_carlos_I(data: Dict):
+    return data.get("B8:27:EB:5B:2A:E1", "")
+
+
 def filter_data_carlos_III(data):
-    return data["B8:27:EB:D4:2A:88"]
+    return data.get("B8:27:EB:D4:2A:88", "")
 
 
 def dict_to_csv(data):
@@ -60,8 +65,8 @@ def dict_to_csv(data):
 
 def main():
     while 1:
-        time.sleep(2)
         print("-" * 20)
+        time.sleep(5)
         data = []
         hosts = ssh_tools.get_host_list()
         hosts = ["192.168.199.103"]
@@ -72,7 +77,7 @@ def main():
                 continue
             if not values:
                 continue
-            data.append(filter_data_carlos_III(values))
+            data.append(filter_data_carlos_I(values))
 
         print(json.dumps(data, indent=2))
 

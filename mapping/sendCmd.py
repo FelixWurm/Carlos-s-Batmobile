@@ -45,12 +45,7 @@ cmd = [
     "hostname -I",                              # 6
 ]
 
-
-def main():
+if __name__ == '__main__':
     spread(cmd[3])
     spread(cmd[2])
     spread(cmd[4])
-
-
-if __name__ == '__main__':
-    main()
