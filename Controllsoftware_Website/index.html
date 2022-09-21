@@ -92,11 +92,11 @@
 
     <script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     <script type="text/javascript">
-        var html5VideoElement;
-        var websocketConnection;
-        var webrtcPeerConnection;
-        var webrtcConfiguration;
-        var reportError;
+        let html5VideoElement;
+        let websocketConnection;
+        let webrtcPeerConnection;
+        let webrtcConfiguration;
+        let reportError;
 
 
         function onLocalDescription(desc) {
@@ -115,7 +115,7 @@
 
 
         function onIncomingICE(ice) {
-            var candidate = new RTCIceCandidate(ice);
+            let candidate = new RTCIceCandidate(ice);
             console.log("Incoming ICE: " + JSON.stringify(ice));
             webrtcPeerConnection.addIceCandidate(candidate).catch(reportError);
         }
@@ -136,7 +136,7 @@
 
 
         function onServerMessage(event) {
-            var msg;
+            let msg;
 
             try {
                 msg = JSON.parse(event.data);
@@ -164,13 +164,13 @@
 
 
         function playStream(videoElement, hostname, port, path, configuration, reportErrorCB) {
-            var l = window.location;
-            var wsHost = (hostname !== undefined) ? hostname : l.hostname;
-            var wsPort = (port !== undefined) ? port : l.port;
-            var wsPath = (path !== undefined) ? path : "ws";
+            let l = window.location;
+            let wsHost = (hostname !== undefined) ? hostname : l.hostname;
+            let wsPort = (port !== undefined) ? port : l.port;
+            let wsPath = (path !== undefined) ? path : "ws";
             if (wsPort)
                 wsPort = ":" + wsPort;
-            var wsUrl = "ws://" + wsHost + wsPort + "/" + wsPath;
+            let wsUrl = "ws://" + wsHost + wsPort + "/" + wsPath;
 
             html5VideoElement = videoElement;
             webrtcConfiguration = configuration;
