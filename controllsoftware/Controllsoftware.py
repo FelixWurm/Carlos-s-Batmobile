@@ -471,7 +471,7 @@ def main():
 
                 #Reset
                 if cash[0] == "R":
-                    cash = struct.pack("!B", dict.msg_dict("POS_RESET"))
+                    cash = struct.pack("!B", dict.msg_dict["POS_RESET"])
                     devices[console_select_device].send_data(cash)                   
 
 
