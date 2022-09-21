@@ -442,8 +442,12 @@ def main():
                 if msg:
                     if msg[0] == dict.msg_dict["STAY_ALIVE"]:
                         device.set_keepalive(time.time())
+
+                    if masg[0] == dict.msg_dict["POS_CURRENT_RAW"]:
+                        pos = struct.unpack("!Bqq", msg)
+                        print("Position = ",pos[1],":",pos[2])
                         
-        #send out keep alive signal eery two minutes
+        #send out keep alive signal every two minutes
         
         
         #check if the all connected nods are still present
