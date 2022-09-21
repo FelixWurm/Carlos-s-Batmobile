@@ -302,6 +302,20 @@ def main():
     # init drive class
     drive = Drive()
 
+    #read laser data
+    way = 0
+    mean = 0
+    allDist = 0
+    height = False
+    count_loop = 0
+    # Create a VL53L0X object
+    laser = VL53L0X.VL53L0X(i2c_bus=1,i2c_address=0x29)
+    # I2C Address can change before laser.open()
+    # laser.change_address(0x32)
+    laser.open()
+    # Start ranging
+    laser.start_ranging(VL53L0X.Vl53l0xAccuracyMode.BETTER)
+
     # position (Mouse sending)
     pos_x = 0
     pos_y = 0
@@ -324,6 +338,21 @@ def main():
                 print("Connection timeout!")
             break
 
+        #laser
+        count_loop = count_loop+1
+        distance = laser.get_distance()
+        allDist += distance
+        if distance > 0:
+            mean = allDist/count_loop #<- count for each loop
+            if distance < (mean-(mean*0.1)):
+                if(height == False):
+                    height = True
+                    way += 31.73
+            if distance > mean: # might want the 10%, but mean is smaller due to dip in wheel
+                height = False
+        #time.sleep(timing/1000000.00)
+
+
         # read in mouse data
 
         read_ready, _, _ = select.select([mouse, soc], [], [])
@@ -340,6 +369,9 @@ def main():
             if read_fds == soc:
                 # send as a reply the current position:
                 msg = struct.pack("!Bqq", dict.msg_dict["POS_CURRENT_RAW"], pos_x, pos_y)
+                soc.sendto(msg, ip_addr)
+                # send laser data:
+                msg = struct.pack("!Bqq", dict.msg_dict["POS_CURR_LEFT"], way, (way/10)) # do we want his here for simplicity or do we do it in Controllsoftware.py?
                 soc.sendto(msg, ip_addr)
 
                 data, cur_ip_addr = soc.recvfrom(1024)
