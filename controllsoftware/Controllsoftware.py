@@ -502,7 +502,7 @@ def main():
                     if cash[1] == "R":
                         try:
                             position = 2
-                            speed , position= (cash, position)
+                            speed , position= find_number(cash, position)
                             time_ , position= find_number(cash, position)
                         except Exception as e:
                             print("Invalid Input (", e, ")")
