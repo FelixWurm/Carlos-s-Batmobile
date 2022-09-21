@@ -7,6 +7,7 @@ msg_dict = {
     "CONN_ACCEPT"       : int(5),       #Accept a connection, NO additional value
     "DV_STOP"           : int(6),       #no additional value
     "ACK"               : int(7),       #signal that something was receive
+    "POS_CURR_LEFT"     : int(8),       #distance driven by left front wheel <- laser
     "READY_CONN"        : int(9),       #ready for connection(UDP auto discovery)
     "ERROR_CONN"        : int(10),      #send this signal ig there is in invalid Connection attempt
     "NO_MODE"           : int(11),      #only for internal 
