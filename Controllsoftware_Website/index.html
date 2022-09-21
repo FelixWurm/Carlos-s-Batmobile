@@ -48,7 +48,7 @@
                    max="100">
         </div>
 
-        <div class = "item">
+        <div class="item">
             <label for="channel">Select channel:</label>
             <input type="number" id="channel" step="1" onchange="channelUpdate(this.value)" name="channel" value="0"
                    min="0"
@@ -56,118 +56,162 @@
         </div>
     </div>
 
-     <script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
-     <script type="text/javascript">
-       var html5VideoElement;
-       var websocketConnection;
-       var webrtcPeerConnection;
-       var webrtcConfiguration;
-       var reportError;
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"
+            integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <canvas width="400px" height="400px" id="positionMap"></canvas>
+
+    <script>
+        let positions = [{x: 0, y: 0}, {x: 0, y: 0}, {x: 0, y: 0}, {x: 0, y: 0}, {x: 0, y: 0}, {x: 0, y: 0}];
+        let chart = new Chart('positionMap', {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Carlos Position',
+                    data: positions,
+                    borderColor: 'red'
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        ticks: {
+                            count: 100,
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            count: 100,
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+    <script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <script type="text/javascript">
+        var html5VideoElement;
+        var websocketConnection;
+        var webrtcPeerConnection;
+        var webrtcConfiguration;
+        var reportError;
 
 
-       function onLocalDescription(desc) {
-         console.log("Local description: " + JSON.stringify(desc));
-         webrtcPeerConnection.setLocalDescription(desc).then(function() {
-           websocketConnection.send(JSON.stringify({ type: "sdp", "data": webrtcPeerConnection.localDescription }));
-         }).catch(reportError);
-       }
+        function onLocalDescription(desc) {
+            console.log("Local description: " + JSON.stringify(desc));
+            webrtcPeerConnection.setLocalDescription(desc).then(function () {
+                websocketConnection.send(JSON.stringify({type: "sdp", "data": webrtcPeerConnection.localDescription}));
+            }).catch(reportError);
+        }
 
 
-       function onIncomingSDP(sdp) {
-         console.log("Incoming SDP: " + JSON.stringify(sdp));
-         webrtcPeerConnection.setRemoteDescription(sdp).catch(reportError);
-         webrtcPeerConnection.createAnswer().then(onLocalDescription).catch(reportError);
-       }
+        function onIncomingSDP(sdp) {
+            console.log("Incoming SDP: " + JSON.stringify(sdp));
+            webrtcPeerConnection.setRemoteDescription(sdp).catch(reportError);
+            webrtcPeerConnection.createAnswer().then(onLocalDescription).catch(reportError);
+        }
 
 
-       function onIncomingICE(ice) {
-         var candidate = new RTCIceCandidate(ice);
-         console.log("Incoming ICE: " + JSON.stringify(ice));
-         webrtcPeerConnection.addIceCandidate(candidate).catch(reportError);
-       }
+        function onIncomingICE(ice) {
+            var candidate = new RTCIceCandidate(ice);
+            console.log("Incoming ICE: " + JSON.stringify(ice));
+            webrtcPeerConnection.addIceCandidate(candidate).catch(reportError);
+        }
 
 
-       function onAddRemoteStream(event) {
-         html5VideoElement.srcObject = event.streams[0];
-       }
+        function onAddRemoteStream(event) {
+            html5VideoElement.srcObject = event.streams[0];
+        }
 
 
-       function onIceCandidate(event) {
-         if (event.candidate == null)
-           return;
+        function onIceCandidate(event) {
+            if (event.candidate == null)
+                return;
 
-         console.log("Sending ICE candidate out: " + JSON.stringify(event.candidate));
-         websocketConnection.send(JSON.stringify({ "type": "ice", "data": event.candidate }));
-       }
-
-
-       function onServerMessage(event) {
-         var msg;
-
-         try {
-           msg = JSON.parse(event.data);
-         } catch (e) {
-           return;
-         }
-
-         if (!webrtcPeerConnection) {
-           webrtcPeerConnection = new RTCPeerConnection(webrtcConfiguration);
-           webrtcPeerConnection.ontrack = onAddRemoteStream;
-           webrtcPeerConnection.onicecandidate = onIceCandidate;
-         }
-
-         switch (msg.type) {
-           case "sdp": onIncomingSDP(msg.data); break;
-           case "ice": onIncomingICE(msg.data); break;
-           default: break;
-         }
-       }
+            console.log("Sending ICE candidate out: " + JSON.stringify(event.candidate));
+            websocketConnection.send(JSON.stringify({"type": "ice", "data": event.candidate}));
+        }
 
 
-       function playStream(videoElement, hostname, port, path, configuration, reportErrorCB) {
-         var l = window.location;
-         var wsHost = (hostname !== undefined) ? hostname : l.hostname;
-         var wsPort = (port !== undefined) ? port : l.port;
-         var wsPath = (path !== undefined) ? path : "ws";
-         if (wsPort)
-          wsPort = ":" + wsPort;
-        var wsUrl = "ws://" + wsHost + wsPort + "/" + wsPath;
+        function onServerMessage(event) {
+            var msg;
 
-         html5VideoElement = videoElement;
-         webrtcConfiguration = configuration;
-         reportError = (reportErrorCB !== undefined) ? reportErrorCB : function(text) {};
+            try {
+                msg = JSON.parse(event.data);
+            } catch (e) {
+                return;
+            }
 
-         websocketConnection = new WebSocket(wsUrl);
-         websocketConnection.addEventListener("message", onServerMessage);
-       }
+            if (!webrtcPeerConnection) {
+                webrtcPeerConnection = new RTCPeerConnection(webrtcConfiguration);
+                webrtcPeerConnection.ontrack = onAddRemoteStream;
+                webrtcPeerConnection.onicecandidate = onIceCandidate;
+            }
 
-       window.onload = function() {
-         let vidstream = document.getElementById("stream");
-         let config = { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }] };
-        playStream(vidstream, "localhost", 57770, 'ws', config, function (errmsg) { console.error(errmsg); });
-       };
+            switch (msg.type) {
+                case "sdp":
+                    onIncomingSDP(msg.data);
+                    break;
+                case "ice":
+                    onIncomingICE(msg.data);
+                    break;
+                default:
+                    break;
+            }
+        }
 
 
-       function setChannel(channel) {
-           const maxChannel = 10;
-           let next_channel = parseInt(document.getElementById("video-channel").innerText) + channel;
-           next_channel = Math.min(maxChannel, next_channel);
-           next_channel = Math.max(0, next_channel);
+        function playStream(videoElement, hostname, port, path, configuration, reportErrorCB) {
+            var l = window.location;
+            var wsHost = (hostname !== undefined) ? hostname : l.hostname;
+            var wsPort = (port !== undefined) ? port : l.port;
+            var wsPath = (path !== undefined) ? path : "ws";
+            if (wsPort)
+                wsPort = ":" + wsPort;
+            var wsUrl = "ws://" + wsHost + wsPort + "/" + wsPath;
 
-           document.getElementById("video-channel").innerText = next_channel.toString();
+            html5VideoElement = videoElement;
+            webrtcConfiguration = configuration;
+            reportError = (reportErrorCB !== undefined) ? reportErrorCB : function (text) {
+            };
 
-           html5VideoElement.srcObject.getTracks().forEach(track => track.stop());
-           webrtcPeerConnection.close();
-           webrtcPeerConnection = undefined;
-           websocketConnection.close();
-           websocketConnection = undefined;
-           let port = 57770 + next_channel;
+            websocketConnection = new WebSocket(wsUrl);
+            websocketConnection.addEventListener("message", onServerMessage);
+        }
 
-           let vidstream = document.getElementById("stream");
-           let config = { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }] };
-           playStream(vidstream, "localhost", port, 'ws', config, function (errmsg) { console.error(errmsg); });
-       }
-     </script>
+        window.onload = function () {
+            let vidstream = document.getElementById("stream");
+            let config = {'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]};
+            playStream(vidstream, "localhost", 57770, 'ws', config, function (errmsg) {
+                console.error(errmsg);
+            });
+        };
+
+
+        function setChannel(channel) {
+            const maxChannel = 10;
+            let next_channel = parseInt(document.getElementById("video-channel").innerText) + channel;
+            next_channel = Math.min(maxChannel, next_channel);
+            next_channel = Math.max(0, next_channel);
+
+            document.getElementById("video-channel").innerText = next_channel.toString();
+
+            html5VideoElement.srcObject.getTracks().forEach(track => track.stop());
+            webrtcPeerConnection.close();
+            webrtcPeerConnection = undefined;
+            websocketConnection.close();
+            websocketConnection = undefined;
+            let port = 57770 + next_channel;
+
+            let vidstream = document.getElementById("stream");
+            let config = {'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]};
+            playStream(vidstream, "localhost", port, 'ws', config, function (errmsg) {
+                console.error(errmsg);
+            });
+        }
+    </script>
 
     <script>
         let websocket;
@@ -193,8 +237,8 @@
 
             websocket.onmessage = function (event) {
                 let event_data = JSON.parse(event.data);
-                if(event_data.type === "position") {
-                   mapUpdate(event_data);
+                if (event_data.type === "position") {
+                    mapUpdate(event_data);
                 }
             };
 
@@ -225,8 +269,16 @@
 
         }
 
+        let currentPositions = new Map();
+
         function mapUpdate(event) {
             console.log("Position: " + event.data.x + " " + event.data.y + ", channel: " + event.channel);
+            currentPositions.set(event.channel, {x: event.data.x / 1000, y: event.data.y / 1000});
+
+            for (let [key, value] of currentPositions) {
+                positions[key] = value;
+            }
+            chart.update();
         }
 
         function speedUpdate(speed) {
