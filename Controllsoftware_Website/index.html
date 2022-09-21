@@ -63,15 +63,16 @@
     <canvas width="400px" height="400px" id="positionMap"></canvas>
 
     <script>
-        let positions = [{x: 0, y: 0}, {x: 0, y: 0}, {x: 0, y: 0}, {x: 0, y: 0}, {x: 0, y: 0}, {x: 0, y: 0}];
+        let origin = [{x: 0, y: 0}];
+        let chartDataset = [{
+            label: 'Origin',
+            data: origin,
+            borderColor: 'blue'
+        }];
         let chart = new Chart('positionMap', {
             type: 'scatter',
             data: {
-                datasets: [{
-                    label: 'Carlos Position',
-                    data: positions,
-                    borderColor: 'red'
-                }]
+                datasets: chartDataset
             },
             options: {
                 scales: {
@@ -269,15 +270,21 @@
 
         }
 
-        let currentPositions = new Map();
+        const borderColors = ["red", "blue", "green", "orange", "red", "blue", "green", "purple", "yellow"];
 
         function mapUpdate(event) {
             console.log("Position: " + event.data.x + " " + event.data.y + ", channel: " + event.channel);
-            currentPositions.set(event.channel, {x: event.data.x / 1000, y: event.data.y / 1000});
-
-            for (let [key, value] of currentPositions) {
-                positions[key] = value;
+            let channelData = chartDataset.find(e => e.label === "Carlos " + event.channel);
+            if (channelData) {
+                channelData.data = [{x: event.data.x / 1000, y: event.data.y / 1000}];
+            } else {
+                chartDataset.push({
+                    label: 'Carlos ' + event.channel,
+                    data: [{x: event.data.x / 1000, y: event.data.y / 1000}],
+                    borderColor: borderColors[event.channel]
+                })
             }
+
             chart.update();
         }
 
