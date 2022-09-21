@@ -443,7 +443,7 @@ def main():
                     if msg[0] == dict.msg_dict["STAY_ALIVE"]:
                         device.set_keepalive(time.time())
 
-                    if masg[0] == dict.msg_dict["POS_CURRENT_RAW"]:
+                    if msg[0] == dict.msg_dict["POS_CURRENT_RAW"]:
                         pos = struct.unpack("!Bqq", msg)
                         print("Position = ",pos[1],":",pos[2])
                         
