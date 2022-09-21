@@ -466,13 +466,13 @@ def main():
                     except:
                         print("Invalid Input")
                     cash = struct.pack("!Bf", dict.DV_STRAIGHT, speed)
-                    devices[console_select_device].send(cash)
+                    devices[console_select_device].send_data(cash)
                     
 
-                #Rotate
+                #Reset
                 if cash[0] == "R":
                     cash = struct.pack("!B", dict.msg_dict("POS_RESET"))
-                    devices[console_select_device].send(cash)                   
+                    devices[console_select_device].send_data(cash)                   
 
 
                 if(cash[0] == "D"):
@@ -482,7 +482,7 @@ def main():
                     except:
                         print("Invalid Input")
                     cash = struct.pack("!Bf", int(1), speed)
-                    devices[console_select_device].send(cash)
+                    devices[console_select_device].send_data(cash)
 
 
                 #cal Mode
