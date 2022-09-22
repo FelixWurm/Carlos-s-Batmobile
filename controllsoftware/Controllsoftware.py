@@ -404,11 +404,11 @@ def main():
                         device.set_keepalive(time.time())
 
                     if msg[0] == dict.msg_dict["POS_CURRENT_RAW"]:
-                        pos = struct.unpack("!Bqq", msg)
+                        pos = struct.unpack("!Bdd", msg)
                         print("Position = ",pos[1] * 1," cm :",pos[2] * 1, " cm")
 
                     if msg[0] == dict.msg_dict["POS_CURR_LEFT"]:
-                        pos = struct.unpack("!Bqq", msg)
+                        pos = struct.unpack("!Bff", msg)
                         print("Position = ",pos[1] ," mm :",pos[2] , " cm")
                         
         #send out keep alive signal every two minutes

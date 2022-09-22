@@ -369,13 +369,19 @@ def main():
                 for event in mouse.read():
                     if event.type == evdev.ecodes.EV_REL:
                         if event.code == evdev.ecodes.REL_X:
-                            pos_x += event.value
+                            #pos_x += event.value / (-284.195)
+                            cash = event.value
+                            if cash < 0:
+                                pos_x += cash  / (-284.195)
+                            else:
+                                pass
+                        
                         if event.code == evdev.ecodes.REL_Y:
-                            pos_y += event.value
+                            pos_y += event.value / (-284.195)
 
             if read_fds == soc:
                 # send as a reply the current position:
-                msg = struct.pack("!Bqq", dict.msg_dict["POS_CURRENT_RAW"], pos_x, pos_y)
+                msg = struct.pack("!Bdd", dict.msg_dict["POS_CURRENT_RAW"], pos_x, pos_y)
                 soc.sendto(msg, ip_addr)
                 # send laser data:
                 if laser is not None:
