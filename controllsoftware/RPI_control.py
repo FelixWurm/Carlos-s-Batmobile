@@ -312,16 +312,20 @@ def main():
     laser = VL53L0X.VL53L0X(i2c_bus=1,i2c_address=0x29)
     # I2C Address can change before laser.open()
     # laser.change_address(0x32)
-    laser.open()
-    # Start ranging
-    laser.start_ranging(VL53L0X.Vl53l0xAccuracyMode.BETTER)
+    try:
+        laser.open()
+        # Start ranging
+        laser.start_ranging(VL53L0X.Vl53l0xAccuracyMode.BETTER)
+    except:
+        pass
+
 
     # position (Mouse sending)
     pos_x = 0
     pos_y = 0
 
     mouse = find_mouse()
-    assert mouse is not None
+    #assert mouse is not None
 
     while True:
         drive.run()
@@ -339,23 +343,26 @@ def main():
             break
 
         #laser
-        count_loop = count_loop+1
-        distance = laser.get_distance()
-        allDist += distance
-        if distance > 0:
-            mean = allDist/count_loop #<- count for each loop
-            if distance < (mean-(mean*0.1)):
-                if(height == False):
-                    height = True
-                    way += 31.73
-            if distance > mean: # might want the 10%, but mean is smaller due to dip in wheel
-                height = False
-        #time.sleep(timing/1000000.00)
+        if laser is not None:
+            count_loop = count_loop+1
+            distance = laser.get_distance()
+            allDist += distance
+            if distance > 0:
+                mean = allDist/count_loop #<- count for each loop
+                if distance < (mean-(mean*0.1)):
+                    if(height == False):
+                        height = True
+                        way += 31.73
+                if distance > mean: # might want the 10%, but mean is smaller due to dip in wheel
+                    height = False
+            #time.sleep(timing/1000000.00)
 
+        sockets = [soc]
+        if mouse is not None:#
+            sockets.append(mouse)
 
         # read in mouse data
-
-        read_ready, _, _ = select.select([mouse, soc], [], [])
+        read_ready, _, _ = select.select(sockets, [], [])
 
         for read_fds in read_ready:
             if read_fds == mouse:
