@@ -372,16 +372,16 @@ def main():
                             #pos_x += event.value / (-284.195)
                             cash = event.value
                             if cash < 0:
-                                pos_x += cash  / (-276)
+                                pos_x += cash 
                             else:
-                                pos_y += cash  / (-276)
+                                pos_y += cash 
                         
                         if event.code == evdev.ecodes.REL_Y:
                             cash = event.value
                             if cash < 0:
-                                pos_y += cash  / (-276)
+                                pos_y += cash 
                             else:
-                                pos_y += cash  / (-276)
+                                pos_y += cash 
             if read_fds == soc:
                 # send as a reply the current position:
                 msg = struct.pack("!Bdd", dict.msg_dict["POS_CURRENT_RAW"], pos_x, pos_y)
