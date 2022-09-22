@@ -309,15 +309,15 @@ def main():
     height = False
     count_loop = 0
     # Create a VL53L0X object
-    laser = VL53L0X.VL53L0X(i2c_bus=1,i2c_address=0x29)
-    # I2C Address can change before laser.open()
-    # laser.change_address(0x32)
     try:
+        laser = VL53L0X.VL53L0X(i2c_bus=1,i2c_address=0x29)
+        # I2C Address can change before laser.open()
+        # laser.change_address(0x32)
         laser.open()
         # Start ranging
         laser.start_ranging(VL53L0X.Vl53l0xAccuracyMode.BETTER)
     except:
-        pass
+        laser = None
 
 
     # position (Mouse sending)
