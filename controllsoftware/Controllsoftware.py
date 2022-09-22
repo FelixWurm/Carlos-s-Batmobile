@@ -444,7 +444,7 @@ def main():
 
                     if msg[0] == dict.msg_dict["POS_CURRENT_RAW"]:
                         pos = struct.unpack("!Bqq", msg)
-                        print("Position = ",pos[1] * 0.002668," cm :",pos[2] * 0.002668, " cm")
+                        print("Position = ",pos[1] * 1," cm :",pos[2] * 1, " cm")
 
                     if msg[0] == dict.msg_dict["POS_CURR_LEFT"]:
                         pos = struct.unpack("!Bqq", msg)
