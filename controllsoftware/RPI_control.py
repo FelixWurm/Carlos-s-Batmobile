@@ -440,6 +440,7 @@ def main():
                     if code == dict.msg_dict["POS_RESET"]:
                         pos_x = 0
                         pos_y = 0
+                        way = 0
 
 
 if __name__ == "__main__":
