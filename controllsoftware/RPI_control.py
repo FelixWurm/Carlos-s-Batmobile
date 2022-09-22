@@ -13,6 +13,8 @@ import RPi.GPIO as GPIO
 import dict
 import evdev
 
+import VL53L0X
+
 # Debug
 DEBUG = True
 
