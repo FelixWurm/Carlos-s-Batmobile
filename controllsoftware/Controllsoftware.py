@@ -347,66 +347,27 @@ def main():
 
         
             #if there is new data from the Joystick
-            if(new_set[0] and new_set[1]):
-                speed_a = serial_y
-                speed_b = serial_y
-                if( serial_x == 0 and serial_y == 0):
-                    speed_a = 0
-                    speed_b = 0
-
-                elif serial_x == 0:
-                    serial_x = serial_x * 0.6
-                   
-                    speed_a = serial_x
-                    if(speed_a < 0):
-                        speed_a  = speed_a-40
-                    else:
-                        speed_a  = speed_a+40
-                        
-                    speed_b = serial_x
-                    if(speed_b < 40):
-                        speed_b  = speed_b- 40
-                    else:
-                        speed_b  = speed_b +40
-
-
-                elif(serial_y == 0):
-                    speed_a = serial_x * 0.6
-                    speed_b = serial_x * 0.6 
-                    
-                    if(speed_a < 0):
-                        speed_a  = speed_a-40
-                    else:
-                        speed_a  = speed_a+40
-                        
-                    if(speed_b < 40):
-                        speed_b  = speed_b- 40
-                    else:
-                        speed_b  = speed_b +40 
-
-                    speed_b = speed_b *(-1) 
-                    
-                    
-                else:
-                    serial_x = serial_x * 0.6
-                   
-                    speed_a = serial_x
-                    if(speed_a < 0):
-                        speed_a  = speed_a-40
-                    else:
-                        speed_a  = speed_a+40
-                        
-                    speed_b = serial_x
-                    if(speed_b < 40):
-                        speed_b  = speed_b- 40
-                    else:
-                        speed_b  = speed_b +40
-                    if(serial_x < 0):
-
-                        speed_b = speed_b - (serial_x * ((serial_y - 40) / 100))
-                    else:
-                        speed_a = speed_a - (serial_x * ((serial_y - 40) / 100))
+            if new_set[0] and new_set[1]:
+                if serial_x == 0:
+                    speed_a = serial_y
+                    speed_b = serial_y
                 
+                elif serial_y == 0:
+                    speed_a = serial_x * 0.6
+                    if speed_a < 0:
+                        speed_a = speed_a -40
+                    else:
+                        speed_a = speed_a + 40
+
+                    speed_b = (serial_x * 0.6) * (-1)
+                    if speed_b < 0:
+                        speed_b = speed_b -40
+                    else:
+                        speed_b = speed_b + 40  
+
+                else:
+                    #in case somebody wants to repair the Joystick, you need to add code here.
+                    pass                  
             
                 new_set = [False, False]
                 msg = struct.pack("Bff", dict.msg_dict["DV_RAW_MODE"],speed_a,speed_b)
