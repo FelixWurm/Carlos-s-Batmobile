@@ -378,8 +378,9 @@ def main():
                 msg = struct.pack("!Bqq", dict.msg_dict["POS_CURRENT_RAW"], pos_x, pos_y)
                 soc.sendto(msg, ip_addr)
                 # send laser data:
-                msg = struct.pack("!Bqq", dict.msg_dict["POS_CURR_LEFT"], way, (way/10)) # do we want his here for simplicity or do we do it in Controllsoftware.py?
-                soc.sendto(msg, ip_addr)
+                if laser is not None:
+                    msg = struct.pack("!Bff", dict.msg_dict["POS_CURR_LEFT"], way, (way/10)) # do we want his here for simplicity or do we do it in Controllsoftware.py?
+                    soc.sendto(msg, ip_addr)
 
                 data, cur_ip_addr = soc.recvfrom(1024)
                 if ip_addr == cur_ip_addr and data:
