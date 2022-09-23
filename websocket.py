@@ -72,7 +72,7 @@ async def carlos_controller():
                 data, address = sock.recvfrom(1500)
 
                 if data[0] == 14:
-                    x, y = struct.unpack("!qq", data[1:])
+                    x, y = struct.unpack("!dd", data[1:])
                     if POSITION[CHANNEL].x != x or POSITION[CHANNEL].y != y:
                         POSITION[CHANNEL] = Position(x, y)
                         POSITION_EVENT.set()
