@@ -317,7 +317,7 @@ def main():
         # laser.change_address(0x32)
         laser.open()
         # Start ranging
-        laser.start_ranging(VL53L0X.Vl53l0xAccuracyMode.BETTER)
+        laser.start_ranging(VL53L0X.Vl53l0xAccuracyMode.HIGH_SPEED)
     except:
         laser = None
 
