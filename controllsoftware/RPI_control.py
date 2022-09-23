@@ -225,6 +225,7 @@ class MvObserver:
             #calculate the position based on passed Time
             #self.position.add_position()
             pass
+
         if self.move_mode == dict.msg_dict["DV_ROTATE"]:
             #calculate the position based on passed Time
             #self.position.add_rotation()
@@ -240,6 +241,12 @@ class MvObserver:
                 return True
             else:
                 return False
+    def get_position(self):
+        return self.position.get_position()
+    
+    def get_angle(self):
+        return self.position.get_rotation()
+
 
 
 # UDP
