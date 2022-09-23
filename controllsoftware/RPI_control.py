@@ -223,18 +223,21 @@ class MvObserver:
 
         if self.move_mode == dict.msg_dict["DV_STRAIGHT"]:
             #calculate the position based on passed Time
-            self.position.add_position()
+            #self.position.add_position()
         if self.move_mode == dict.msg_dict["DV_ROTATE"]:
             #calculate the position based on passed Time
-            self.position.add_rotation()
+            #self.position.add_rotation()
     
-    def run(self):
-        #check the laser
-        pass
 
     def get_forward(self):
-        if self.last_mode ==dict.msg_dict["DV_STRAIGHT"]:
-            pass
+        if self.last_mode ==dict.msg_dict["DV_ROTATE"]:
+            return None
+
+        elif self.move_mode == dict.msg_dict["DV_STRAIGHT"]:
+            if self.last_speed > 0:
+                return True
+            else:
+                return False
 
 
 # UDP
