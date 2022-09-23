@@ -15,6 +15,7 @@ import evdev
 
 import VL53L0X
 
+import 
 # Debug
 DEBUG = True
 
@@ -137,21 +138,8 @@ def drive_(speed, duration):
 speed_distance = [0.23, 0.1975, 0.18, 0.16, 0.1375, 0.12, 0.09]
 
 
-# distance in M, speed in percent (0-100)
-def drive_dst(speed, distance):
-    cash = speed % 10
-    if cash >= 5:
-        speed_ = ((speed - cash) + 10) / 10
-    else:
-        speed_ = (speed - cash) / 10
-    duration = distance / speed_distance[int(10 - speed_)]
-    drive_(speed, duration)
 
 
-def rotate(speed, duration):
-    if 40 > speed > -40:
-        return
-    drive(speed, speed * (-1), duration)
 
 
 # Function to get your local ip address
@@ -203,15 +191,15 @@ class MvObserver:
                 # there was some change, so there needs to by an event appended
 
                 # save the current data
-                cash_move = Move
-                cash_move.move_speed = self.last_speed
-                cash_move.move_type = self.last_mode
-                cash_move.move_start = self.last_mode_beginning
-                cash_move.start_position = self.last_start_position
+                cache_move = Move
+                cache_move.move_speed = self.last_speed
+                cache_move.move_type = self.last_mode
+                cache_move.move_start = self.last_mode_beginning
+                cache_move.start_position = self.last_start_position
 
-                cash_move.move_end = time.time_ns()
+                cache_move.move_end = time.time_ns()
 
-                self.list_of_moves.append(cash_move)
+                self.list_of_moves.append(cache_move)
 
                 # save the new last set data
                 self.last_mode = mode
@@ -372,18 +360,18 @@ def main():
                     if event.type == evdev.ecodes.EV_REL:
                         if event.code == evdev.ecodes.REL_X:
                             #pos_x += event.value / (-284.195)
-                            cash = event.value
-                            if cash < 0:
-                                pos_x += cash 
+                            cache = event.value
+                            if cache < 0:
+                                pos_x += cache 
                             else:
-                                pos_y += cash 
+                                pos_x += cache 
                         
                         if event.code == evdev.ecodes.REL_Y:
-                            cash = event.value
-                            if cash < 0:
-                                pos_y += cash 
+                            cache = event.value
+                            if cache < 0:
+                                pos_y += cache 
                             else:
-                                pos_y += cash 
+                                pos_y += cache 
             if read_fds == soc:
                 # send as a reply the current position:
                 msg = struct.pack("!Bdd", dict.msg_dict["POS_CURRENT_RAW"], pos_x, pos_y)
@@ -402,17 +390,17 @@ def main():
 
                     if code == dict.msg_dict["DV_STRAIGHT"]:
                         data2 = struct.unpack("!Bf", data)
-                        cash = convert_to_motor(data2[1])
-                        set_motor_speed(cash, cash)
+                        cache = convert_to_motor(data2[1])
+                        set_motor_speed(cache, cache)
 
                     if code == dict.msg_dict["DV_STOP"]:
                         set_motor_speed(0, 0)
 
                     if code == dict.msg_dict["DV_ROTATE"]:
                         data2 = struct.unpack("!Bf", data)
-                        cash = data2[1]
-                        cash2 = cash * (-1)
-                        set_motor_speed(convert_to_motor(cash2), convert_to_motor(cash))
+                        cache = data2[1]
+                        cache2 = cache * (-1)
+                        set_motor_speed(convert_to_motor(cache2), convert_to_motor(cache))
 
                     if code == dict.msg_dict["DV_RAW_MODE"]:
                         data2 = struct.unpack("Bff", data)

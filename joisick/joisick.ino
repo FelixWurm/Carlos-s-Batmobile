@@ -31,31 +31,31 @@ void loop() {
   }
   
   //Serial.print("X");
-  int cash_x = (analogRead(X_accis_pin) - 512) / 5.12;
-  if(cash_x <= 4 && cash_x >= (-4)){
-    cash_x = 0;
+  int cache_x = (analogRead(X_accis_pin) - 512) / 5.12;
+  if(cache_x <= 4 && cache_x >= (-4)){
+    cache_x = 0;
   }
   Serial.print("X");
-  Serial.println(cash_x );
+  Serial.println(cache_x );
   Serial.print("Y");
-  int cash_y = analogRead(Y_accis_pin) - 512;
-  cash_y = cash_y / 8;
+  int cache_y = analogRead(Y_accis_pin) - 512;
+  cache_y = cache_y / 8;
 
-  if(cash_y <= 4 && cash_y >= (-4)){
-    cash_y = 0;
+  if(cache_y <= 4 && cache_y >= (-4)){
+    cache_y = 0;
   }
   
-  else if(cash_y < (-4)){
-    cash_y = cash_y - 36;
+  else if(cache_y < (-4)){
+    cache_y = cache_y - 36;
   }
   
-  else if(cash_y > 4){
-    cash_y = cash_y +36;
+  else if(cache_y > 4){
+    cache_y = cache_y +36;
   }
 
 
   
-  Serial.println(cash_y);
+  Serial.println(cache_y);
   delay(100);
   
 }

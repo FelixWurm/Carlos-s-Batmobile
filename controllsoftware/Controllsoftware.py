@@ -127,23 +127,23 @@ def serial_read(current_device, devices,ser):
     global serial_y
     global serial_Button
     try:
-        cash = ser.readline()
+        cache = ser.readline()
     except:
         print("Error trying to reed from device")
         return False
         
-    if cash:
-        cash = cash.decode()
-        end = len(cash)-1
+    if cache:
+        cache = cache.decode()
+        end = len(cache)-1
         #speed
-        if cash[0] == 'Y':
-            serial_y = decode_number(cash)
+        if cache[0] == 'Y':
+            serial_y = decode_number(cache)
             new_set[0] = True
         #direction
-        if cash[0] == 'X':
-            serial_x = decode_number(cash)
+        if cache[0] == 'X':
+            serial_x = decode_number(cache)
             new_set[1] = True
-        if cash[0] == 'T':
+        if cache[0] == 'T':
             serial_Button = True
     return True
             
@@ -386,12 +386,12 @@ def main():
         
         #auto discovery
         if AUTO_DISCOVERY:
-            cash =  auto_discovery(udp_soc)
+            cache =  auto_discovery(udp_soc)
         
-            if cash:
-                print("Found new Device!  IP:", cash)
+            if cache:
+                print("Found new Device!  IP:", cache)
                 print("To add IP to list off connect devices type C without any arguments")
-                last_ip = cash
+                last_ip = cache
             
         
         #UDP connection handling
@@ -420,77 +420,77 @@ def main():
         #read out the Keyboard
         ready = select.select([sys.stdin],[],[],0)
         if ready[0]:
-            cash = sys.stdin.readline().rstrip()
-            if cash:
+            cache = sys.stdin.readline().rstrip()
+            if cache:
                 #Drive forwards
-                if(cash[0] == "D"):
+                if(cache[0] == "D"):
                     position = 1
                     try:
-                        speed = find_number(cash, position)
+                        speed = find_number(cache, position)
                     except:
                         print("Invalid Input")
-                    cash = struct.pack("!Bf", dict.DV_STRAIGHT, speed)
-                    devices[console_select_device].send_data(cash)
+                    cache = struct.pack("!Bf", dict.DV_STRAIGHT, speed)
+                    devices[console_select_device].send_data(cache)
                     
 
                 #Reset
-                if cash[0] == "R":
-                    cash = struct.pack("!B", dict.msg_dict["POS_RESET"])
-                    devices[console_select_device].send_data(cash)                   
+                if cache[0] == "R":
+                    cache = struct.pack("!B", dict.msg_dict["POS_RESET"])
+                    devices[console_select_device].send_data(cache)                   
 
 
-                if(cash[0] == "D"):
+                if(cache[0] == "D"):
                     position = 1
                     try:
-                        speed = find_number(cash, position)
+                        speed = find_number(cache, position)
                     except:
                         print("Invalid Input")
-                    cash = struct.pack("!Bf", int(1), speed)
-                    devices[console_select_device].send_data(cash)
+                    cache = struct.pack("!Bf", int(1), speed)
+                    devices[console_select_device].send_data(cache)
 
 
                 #cal Mode
-                if cash[0] == "T":
-                    if cash[1] == "S" or cash[1] == "D":
+                if cache[0] == "T":
+                    if cache[1] == "S" or cache[1] == "D":
                         try:
                             position = 2
-                            speed , position= find_number(cash, position)
-                            time_  , position= find_number(cash, position)
+                            speed , position= find_number(cache, position)
+                            time_  , position= find_number(cache, position)
 
                         except Exception as e:
                             print("Invalid Input (", e, ")")
 
-                        cash = struct.pack("!Bff", dict.msg_dict["DV_CALL_STRAIGHT"], speed,time_)
-                        devices[console_select_device].send_data(cash)
+                        cache = struct.pack("!Bff", dict.msg_dict["DV_CALL_STRAIGHT"], speed,time_)
+                        devices[console_select_device].send_data(cache)
                  
 
-                    if cash[1] == "R":
+                    if cache[1] == "R":
                         try:
                             position = 2
-                            speed , position= find_number(cash, position)
-                            time_ , position= find_number(cash, position)
+                            speed , position= find_number(cache, position)
+                            time_ , position= find_number(cache, position)
                         except Exception as e:
                             print("Invalid Input (", e, ")")
 
-                        cash = struct.pack("!Bff", dict.msg_dict["DV_CALL_ROTATE"], speed, time_)
-                        devices[console_select_device].send_data(cash)
+                        cache = struct.pack("!Bff", dict.msg_dict["DV_CALL_ROTATE"], speed, time_)
+                        devices[console_select_device].send_data(cache)
 
 
                 #Drive in reverse
-                if cash[0] == "R": 
+                if cache[0] == "R": 
                     pass
 
                 #print out a small Help promt:
-                if(cash[0] == "H"):
+                if(cache[0] == "H"):
                     help("general")
                 
-                if(cash[0] == "C"):
-                    cash_ = connect_new_client(last_ip)
-                    if cash_:
-                        devices.append(cash_)
+                if(cache[0] == "C"):
+                    cache_ = connect_new_client(last_ip)
+                    if cache_:
+                        devices.append(cache_)
                     last_ip = ".0.0.0.0"
                 
-                if(cash[0] == "Y"):
+                if(cache[0] == "Y"):
                     print("connect a new Joystick to the USB port! Then enter the location of the port")
                     print("input S for default port")
                     while True:
