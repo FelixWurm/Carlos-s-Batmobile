@@ -9,4 +9,6 @@ echo;echo Carlos-IV;
 sudo batctl tr b8:27:eb:aa:3c:be;
 echo;echo Carlos-V;
 sudo batctl tr b8:27:eb:a4:d5:1e;
+echo;echo Carlos-VI;
+sudo batctl tr b8:27:eb:e2:18:22;
 "
