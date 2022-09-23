@@ -351,7 +351,7 @@ def main():
             allDist += distance
             if distance > 0:
                 mean = allDist/count_loop #<- count for each loop
-                if distance < 56:
+                if distance < (mean-10):
                     if(height == False):
                         height = True
                         way += 31.73
