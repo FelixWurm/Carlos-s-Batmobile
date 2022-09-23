@@ -10,12 +10,14 @@ from dataclasses import dataclass
 from time import sleep as sl
 
 import RPi.GPIO as GPIO
+from controllsoftware.positioner import Positioner
 import dict
 import evdev
 
 import VL53L0X
 
-import 
+import positioner
+
 # Debug
 DEBUG = True
 
@@ -95,8 +97,15 @@ class Drive:
 
 
 def set_motor_speed(speed_l: int, speed_r: int):
+    global observer
     speed_l = value_check(speed_l)
     speed_r = value_check(speed_r)
+
+    if speed_l == speed_r:
+        observer.move(dict.msg_dict["DV_STRAIGHT"],speed_r)
+    else:
+        observer.move(dict.msg_dict["DV_ROTATE"],speed_r)
+    
     if speed_l == 0:
         pi_pwm_l.ChangeDutyCycle(0)
         pi_pwm_l_bwd.ChangeDutyCycle(0)
@@ -176,8 +185,10 @@ class MvObserver:
         self.last_direction = 0
 
         self.list_of_moves = []
+        self.position = Positioner()
 
     def move(self, mode, speed):
+
         # lok if the mode has changed significantly, if so save the old move, and calculate start and end position.
         if not (mode == self.last_mode and speed == self.last_speed):
             # Filter out just start moving
@@ -186,6 +197,7 @@ class MvObserver:
                 self.last_mode = mode
                 self.last_speed = speed
                 self.last_mode_beginning = time.time_ns()
+
 
             else:
                 # there was some change, so there needs to by an event appended
@@ -211,10 +223,18 @@ class MvObserver:
             return
 
         if self.move_mode == dict.msg_dict["DV_STRAIGHT"]:
-            pass
-            # Calculate passed time, then use that to calculate the Distance (influenced by the speed),
-            # then calculate a new point
+            #calculate the position based on passed Time
+            self.position.add_position()
         if self.move_mode == dict.msg_dict["DV_ROTATE"]:
+            #calculate the position based on passed Time
+            self.position.add_rotation()
+    
+    def run(self):
+        #check the laser
+        pass
+
+    def get_forward(self):
+        if self.last_mode ==dict.msg_dict["DV_STRAIGHT"]:
             pass
 
 
@@ -269,8 +289,11 @@ def find_mouse():
             print('Found %s at %s...' % (d.name, d.fn))
     return device
 
+observer = MvObserver()
+
 
 def main():
+    global observer
     # set up the TCP server
     soc = udp_setup()
 
