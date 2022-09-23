@@ -184,7 +184,7 @@ class MvObserver:
         self.last_direction = 0
 
         self.list_of_moves = []
-        self.position = positioner()
+        self.position = positioner
 
     def move(self, mode, speed):
 
