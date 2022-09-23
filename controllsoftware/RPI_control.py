@@ -10,7 +10,6 @@ from dataclasses import dataclass
 from time import sleep as sl
 
 import RPi.GPIO as GPIO
-from controllsoftware.positioner import Positioner
 import dict
 import evdev
 
@@ -185,7 +184,7 @@ class MvObserver:
         self.last_direction = 0
 
         self.list_of_moves = []
-        self.position = Positioner()
+        self.position = positioner()
 
     def move(self, mode, speed):
 
