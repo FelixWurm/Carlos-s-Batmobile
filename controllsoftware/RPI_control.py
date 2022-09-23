@@ -224,9 +224,11 @@ class MvObserver:
         if self.move_mode == dict.msg_dict["DV_STRAIGHT"]:
             #calculate the position based on passed Time
             #self.position.add_position()
+            pass
         if self.move_mode == dict.msg_dict["DV_ROTATE"]:
             #calculate the position based on passed Time
             #self.position.add_rotation()
+            pass
     
 
     def get_forward(self):
