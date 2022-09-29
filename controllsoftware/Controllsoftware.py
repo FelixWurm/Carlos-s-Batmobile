@@ -467,7 +467,13 @@ def main():
                     #Reset
                     if cache[0] == "R":
                         cache = struct.pack("!B", dict.msg_dict["POS_RESET"])
-                        devices[console_select_device].send_data(cache)                   
+                        devices[console_select_device].send_data(cache)
+                        file_.flush()
+                        file_.close()
+                        file_number += 1
+                        file_ = open((file_ + file_number_converter(file_number) + ".csv"))
+                        file_.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,MOUSE_X, MOUSE_Y,LASER\n")
+                        print("New File!", file_number)                   
 
 
                     if cache[0] == "D":
@@ -542,13 +548,7 @@ def main():
                                 print("connected!")
                             except Exception as e:
                                 print("Could not connect Joystick (",e,")")
-                    if cache[0] == "T":
-                        file_.flush()
-                        file_.close()
-                        file_number += 1
-                        file_ = open((file_ + file_number_converter(file_number) + ".csv"))
-                        file_.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,MOUSE_X, MOUSE_Y,LASER\n")
-                        print("New File!", file_number)
+
 
     finally:
         file_.flush()
