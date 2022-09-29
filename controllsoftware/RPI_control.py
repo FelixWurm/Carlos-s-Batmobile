@@ -327,8 +327,8 @@ def compile_data(gyro , mouse_x, mouse_y ,wheel_rotation ):
         ay = gyro.read_acl("y")
         az = gyro.read_acl("z")
 
-        rot_x = gyro.get_x_rotation()
-        rot_y = gyro.get_y_rotation()
+        rot_x = gyro.get_x_rotation(gx,gy,gz)
+        rot_y = gyro.get_y_rotation(gx,gy,gz)
 
     else:
         gx = 0
