@@ -22,7 +22,8 @@ def spread(cmd):
             os.wait()
             forks -= 1
         return
-
+    if not len(hosts):
+        exit(0)
     print("fork", forks, "- START - with", len(hosts), "hosts")
     for host in hosts:
         try:
@@ -43,9 +44,11 @@ cmd = [
     "bluetoothctl list",                        # 4
     "sudo batctl gwl",                          # 5
     "hostname -I",                              # 6
+    "sudo shutdown -r",                         # 7
+    'sudo sed -i "s/wireless-channel 3/wireless-channel 36/" /etc/network/interfaces.d/wlan0',  # 8
+    "sudo apt install -y iperf3"                # 9
 ]
 
 if __name__ == '__main__':
-    spread(cmd[3])
-    spread(cmd[2])
-    spread(cmd[4])
+    spread(cmd[8])
+    spread(cmd[7])
