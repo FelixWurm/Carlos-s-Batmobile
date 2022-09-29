@@ -1,7 +1,6 @@
 #Control-software to control one ore mor Calros robot
 
 #for connection to outside
-from dataclasses import dataclass
 import socket
 
 #Timing
@@ -27,6 +26,8 @@ import dict
 
 #Debug enable:
 DEBUG = True
+
+
 
 #Auto Discovery
 AUTO_DISCOVERY = True
@@ -298,14 +299,8 @@ def next_device(current_device, devices):
 
 #list off Sockets to all the connected devices
 devices = []
+            
 
-def file_number_converter(file_number):
-    if file_number < 10:
-        return ("00" + str(file_number))     
-    if file_number < 100:
-        return ("0" + str(file_number))    
-    if file_number < 1000:
-        return (str(file_number))    
 
 def main():
     
@@ -344,10 +339,7 @@ def main():
     else:
         file_ = None
     
-    file_number = 0
     
-
-
     #Main Loop
     try:
         while(True):
@@ -512,16 +504,16 @@ def main():
                         pass
 
                     #print out a small Help promt:
-                    if cache[0] == "H":
+                    if(cache[0] == "H"):
                         help("general")
                     
-                    if cache[0] == "C":
+                    if(cache[0] == "C"):
                         cache_ = connect_new_client(last_ip)
                         if cache_:
                             devices.append(cache_)
                         last_ip = ".0.0.0.0"
                     
-                    if cache[0] == "Y":
+                    if(cache[0] == "Y"):
                         print("connect a new Joystick to the USB port! Then enter the location of the port")
                         print("input S for default port")
                         while True:
@@ -542,15 +534,7 @@ def main():
                                 print("connected!")
                             except Exception as e:
                                 print("Could not connect Joystick (",e,")")
-
-                    if cache[0] == "T":
-                        file_.flush()
-                        file_.close()
-                        file_ = open((file_ + file_number_converter(file_number)))
-                        print("New File!", file_number)
-
     finally:
-        file_.flush()
         file_.close()
                         
 
