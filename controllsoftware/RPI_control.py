@@ -13,7 +13,11 @@ import RPi.GPIO as GPIO
 import dict
 import evdev
 
-import VL53L0X
+try:
+    import VL53L0X
+except:
+    print("Laser lib not found!")
+
 
 import positioner
 
