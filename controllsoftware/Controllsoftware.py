@@ -471,7 +471,7 @@ def main():
                         file_.flush()
                         file_.close()
                         file_number += 1
-                        file_ = open((file_ + file_number_converter(file_number) + ".csv"), "a")
+                        file_ = open((filename_ + file_number_converter(file_number) + ".csv"), "a")
                         file_.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,MOUSE_X, MOUSE_Y,LASER\n")
                         print("New File!", file_number)                   
 
