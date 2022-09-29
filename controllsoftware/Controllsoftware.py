@@ -341,7 +341,7 @@ def main():
 
     filename_ = input("Enter a Filnemae to store some Data")
     if filename_ != "":
-        file_ = open((filename_ + file_number_converter(file_number)), "a")
+        file_ = open((filename_ + file_number_converter(file_number) + ".csv"), "a")
         file_.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,MOUSE_X, MOUSE_Y,LASER\n")
     else:
         file_ = None
@@ -545,9 +545,11 @@ def main():
                     if cache[0] == "T":
                         file_.flush()
                         file_.close()
-                        file_ = open((file_ + file_number_converter(file_number)))
+                        file_number += 1
+                        file_ = open((file_ + file_number_converter(file_number) + ".csv"))
+                        file_.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,MOUSE_X, MOUSE_Y,LASER\n")
                         print("New File!", file_number)
-                        
+
     finally:
         file_.flush()
         file_.close()
