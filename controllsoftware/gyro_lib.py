@@ -49,35 +49,35 @@ class gyro:
         return math.sqrt((a*a)+(b*b))
     
     def get_y_rotation(self, x,y,z):
-        self.radians = math.atan2(x, dist(y,z))
-        return -math.degrees(radians)
+        self.radians = math.atan2(x, self.dist(y,z))
+        return -math.degrees(self.radians)
     
     def get_x_rotation(self, x,y,z):
-        self.radians = math.atan2(y, dist(x,z))
-        return math.degrees(radians)
+        self.radians = math.atan2(y, self.dist(x,z))
+        return math.degrees(self.radians)
 
 
-    def read_acl(axis):
+    def read_acl(self , axis):
         try:
             if(axis == "x"):
-                return  read_word_2c(0x43) / 131
+                return  self.read_word_2c(0x43) / 131
             if(axis == "y"):
-                return  (read_word_2c(0x45) / 131)
+                return  (self.read_word_2c(0x45) / 131)
             if(axis == "z"):
-                return  read_word_2c(0x47) / 131
+                return  self.read_word_2c(0x47) / 131
         except:
             print ("Accelerometer Fail")
             read_fail = True
             return 0
 
-    def read_gyro(axis):
+    def read_gyro(self, axis):
         try:
             if(axis == "x"):
-                return read_word_2c(0x3b)/ (16384) 
+                return self.read_word_2c(0x3b)/ (16384) 
             if(axis == "y"):
-                return (read_word_2c(0x3d)/ (16384))
+                return (self.read_word_2c(0x3d)/ (16384))
             if(axis == "z"):
-                return read_word_2c(0x3f)/ (16384)
+                return self.read_word_2c(0x3f)/ (16384)
         except:
             print ("Gyro Fail")
             read_fail = True
