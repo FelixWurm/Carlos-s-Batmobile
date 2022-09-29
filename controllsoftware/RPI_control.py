@@ -363,8 +363,6 @@ def main():
 
     last_update = time.time_ns()
 
-    # Idee: Nach jeder veränderung der Geschwindigkeit Die Position neu bestimmen
-
     # init drive class
     drive = Drive()
 
@@ -425,7 +423,7 @@ def main():
             allDist += distance
             if distance > 0:
                 mean = allDist/count_loop #<- count for each loop
-                if distance < 56:
+                if distance < (mean-5):
                     if(height == False):
                         height = True
                         #way += 31.73
