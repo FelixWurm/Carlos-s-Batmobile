@@ -472,7 +472,14 @@ def main():
                         file_number += 1
                         file_ = open((filename_ + file_number_converter(file_number) + ".csv"), "a")
                         file_.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,MOUSE_X, MOUSE_Y,LASER,Speed L, Speed R\n")
-                        print("New File!", file_number)                   
+                        print("New File!", file_number)  
+
+                    if cache[0] == "X":
+                        if cache[1] == "E":
+                            devices[console_select_device].send_data(struct.pack("!B", dict.msg_dict["DATA_PACKET_ENABLE"]))
+
+                        if cache[1] == "D":
+                            devices[console_select_device].send_data(struct.pack("!B", dict.msg_dict["DATA_PACKET_DISABLE"]))
 
 
                     if cache[0] == "D":
@@ -511,10 +518,6 @@ def main():
                             cache = struct.pack("!Bff", dict.msg_dict["DV_CALL_ROTATE"], speed, time_)
                             devices[console_select_device].send_data(cache)
 
-
-                    #Drive in reverse
-                    if cache[0] == "R": 
-                        pass
 
                     #print out a small Help promt:
                     if cache[0] == "H":

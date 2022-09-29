@@ -292,6 +292,9 @@ def main():
     mouse = find_mouse()
     #assert mouse is not None
 
+
+    #variable to dertermin if to send data:
+    send_all_data = False
     while True:
         drive.run()
 
@@ -361,7 +364,8 @@ def main():
                 #    soc.sendto(msg, ip_addr)
 
                 #send all Data
-                soc.sendto(compile_data(gyro,pos_x,pos_y,way ),ip_addr)
+                if send_all_data == True:
+                    soc.sendto(compile_data(gyro,pos_x,pos_y,way ),ip_addr)
 
 
                 data, cur_ip_addr = soc.recvfrom(1024)
@@ -412,6 +416,12 @@ def main():
                         pos_x = 0
                         pos_y = 0
                         way = 0
+
+                    if code == dict.msg_dict["DATA_PACKET_DISABLE"]:
+                        send_all_data = False
+
+                    if code == dict.msg_dict["DATA_PACKET_ENABLE"]:
+                        send_all_data = True
 
 
 if __name__ == "__main__":
