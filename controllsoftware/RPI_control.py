@@ -7,7 +7,7 @@ import subprocess
 import sys
 import time
 from dataclasses import dataclass
-from time import sleep as sl
+import gyro_lib
 
 import RPi.GPIO as GPIO
 import dict
@@ -302,6 +302,32 @@ def find_mouse():
 
 observer = MvObserver()
 
+def compile_data(gyro , mouse_x, mouse_y ,wheel_rotation ):
+    if gyro is not None:
+        gx = gyro.read_gyro("x")
+        gy = gyro.read_gyro("y")
+        gz = gyro.read_gyro("z")
+
+        ax = gyro.read_acl("x")
+        ay = gyro.read_acl("y")
+        az = gyro.read_acl("z")
+
+        rot_x = gyro.get_x_rotation()
+        rot_y = gyro.get_y_rotation()
+
+    else:
+        gx = 0
+        gy = 0
+        gz = 0
+
+        ax = 0
+        ay = 0
+        az = 0
+
+        rot_x = 0
+        rot_y = 0
+
+    return struct.pack("!Bfffffffff",gx,gy,gz,ax,ay,az,rot_x,rot_y, mouse_x,mouse_y,wheel_rotation)
 
 def main():
     global observer
@@ -332,6 +358,7 @@ def main():
     allDist = 0
     height = False
     count_loop = 0
+
     # Create a VL53L0X object
     try:
         laser = VL53L0X.VL53L0X(i2c_bus=1,i2c_address=0x29)
@@ -342,6 +369,15 @@ def main():
         laser.start_ranging(VL53L0X.Vl53l0xAccuracyMode.BETTER)
     except:
         laser = None
+
+
+    #Create a Gyro object
+    try:
+        gyro = gyro_lib.gyro()
+        print("Gyro Connected!")
+    except Exception as e:
+        gyro = None
+        print("No Gyro Connected! (", e, ")")
 
 
     # position (Mouse sending)
@@ -408,12 +444,16 @@ def main():
                                 pos_y += cache 
             if read_fds == soc:
                 # send as a reply the current position:
-                msg = struct.pack("!Bdd", dict.msg_dict["POS_CURRENT_RAW"], pos_x, pos_y)
-                soc.sendto(msg, ip_addr)
+                #msg = struct.pack("!Bdd", dict.msg_dict["POS_CURRENT_RAW"], pos_x, pos_y)
+                #soc.sendto(msg, ip_addr)
                 # send laser data:
-                if laser is not None:
-                    msg = struct.pack("!Bff", dict.msg_dict["POS_CURR_LEFT"], way, (way/10)) # do we want his here for simplicity or do we do it in Controllsoftware.py?
-                    soc.sendto(msg, ip_addr)
+                #if laser is not None:
+                #    msg = struct.pack("!Bff", dict.msg_dict["POS_CURR_LEFT"], way, (way/10)) # do we want his here for simplicity or do we do it in Controllsoftware.py?
+                #    soc.sendto(msg, ip_addr)
+
+                #send all Data
+
+
 
                 data, cur_ip_addr = soc.recvfrom(1024)
                 if ip_addr == cur_ip_addr and data:
