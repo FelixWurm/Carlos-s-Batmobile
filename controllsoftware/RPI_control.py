@@ -71,6 +71,12 @@ pi_pwm_r_bwd = GPIO.PWM(right_bwd, 1000)
 pi_pwm_r_bwd.start(0)
 
 
+
+#if 0 no movement, if 1 forwards, -1 = backwards
+drive_direction = 0
+
+
+
 # Drive...
 class Drive:
     def __init__(self):
@@ -96,14 +102,19 @@ class Drive:
 
 
 def set_motor_speed(speed_l: int, speed_r: int):
-    global observer
+    global drive_direction
     speed_l = value_check(speed_l)
     speed_r = value_check(speed_r)
 
     if speed_l == speed_r:
-        observer.move(dict.msg_dict["DV_STRAIGHT"],speed_r)
+        if speed_l == 0:
+            drive_direction = 0
+        elif speed_r > 0:
+            drive_direction = 1
+        else:
+            drive_direction = -1
     else:
-        observer.move(dict.msg_dict["DV_ROTATE"],speed_r)
+       drive_direction = 0
     
     if speed_l == 0:
         pi_pwm_l.ChangeDutyCycle(0)
@@ -327,10 +338,11 @@ def compile_data(gyro , mouse_x, mouse_y ,wheel_rotation ):
         rot_x = 0
         rot_y = 0
 
-    return struct.pack("!Bfffffffff",gx,gy,gz,ax,ay,az,rot_x,rot_y, mouse_x,mouse_y,wheel_rotation)
+    return struct.pack("!Bdfffffffff",time.time(),gx,gy,gz,ax,ay,az,rot_x,rot_y, mouse_x,mouse_y,wheel_rotation)
 
 def main():
     global observer
+    global drive_direction
     # set up the TCP server
     soc = udp_setup()
 
@@ -412,7 +424,11 @@ def main():
                 if distance < (mean-10):
                     if(height == False):
                         height = True
-                        way += 31.73
+                        #way += 31.73
+                        if drive_direction == 1:
+                            way += 1
+                        elif drive_direction == -1:
+                            way += -1
                 if distance > mean: # might want the 10%, but mean is smaller due to dip in wheel
                     height = False
             #time.sleep(timing/1000000.00)
@@ -452,7 +468,7 @@ def main():
                 #    soc.sendto(msg, ip_addr)
 
                 #send all Data
-
+                soc.sendto(compile_data(gyro,pos_x,pos_y,way ),ip_addr)
 
 
                 data, cur_ip_addr = soc.recvfrom(1024)

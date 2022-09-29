@@ -328,190 +328,213 @@ def main():
     current_serial_device = 0
 
     serial_failed_counter = 0
-    filename_ = File.open()
+
+    #file to save stuff
+
+    filename_ = input("Enter a Filnemae to store some Data")
+    if filename_ != "":
+        file_ = open(filename_, "a")
+        file_.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,MOUSE_X, MOUSE_Y,LASER\n")
+    else:
+        file_ = None
+    
+    
     #Main Loop
-    while(True):
-        #Serial controller stuff
-        if serial_enable:
-            if not serial_read(current_serial_device, devices,serial_port):
-                serial_failed_counter = serial_failed_counter+1
-            else:
-                serial_failed_counter = 0
-
-            if serial_failed_counter >20:
-                serial_enable = False
-            
-            if serial_Button:    
-                next_device(serial_selected_device,devices)
-                serial_Button == False
-                
-
-        
-            #if there is new data from the Joystick
-            if new_set[0] and new_set[1]:
-                if serial_x == 0:
-                    speed_a = serial_y
-                    speed_b = serial_y
-                
-                elif serial_y == 0:
-                    speed_a = serial_x * 0.6
-                    if speed_a < 0:
-                        speed_a = speed_a -40
-                    else:
-                        speed_a = speed_a + 40
-
-                    speed_b = (serial_x * 0.6) * (-1)
-                    if speed_b < 0:
-                        speed_b = speed_b -40
-                    else:
-                        speed_b = speed_b + 40  
-
+    try:
+        while(True):
+            #Serial controller stuff
+            if serial_enable:
+                if not serial_read(current_serial_device, devices,serial_port):
+                    serial_failed_counter = serial_failed_counter+1
                 else:
-                    #in case somebody wants to repair the Joystick, you need to add code here.
-                    pass                  
-            
-                new_set = [False, False]
-                msg = struct.pack("Bff", dict.msg_dict["DV_RAW_MODE"],speed_a,speed_b)
+                    serial_failed_counter = 0
+
+                if serial_failed_counter >20:
+                    serial_enable = False
                 
-                
-                devices[current_serial_device].send_data(msg)
-
-        #end Serial Stuff
-         
-         
-        #keep alive 
-        for device in devices:
-            if not device == None:
-                device.send_keepalive()
-        
-        
-        #auto discovery
-        if AUTO_DISCOVERY:
-            cache =  auto_discovery(udp_soc)
-        
-            if cache:
-                print("Found new Device!  IP:", cache)
-                print("To add IP to list off connect devices type C without any arguments")
-                last_ip = cache
-            
-        
-        #UDP connection handling
-        for device in devices:
-            ready = select.select([device.sock],[],[],0)
-            if ready[0]:
-                msg = device.sock.recv(1024)
-                if msg:
-                    if msg[0] == dict.msg_dict["STAY_ALIVE"]:
-                        device.set_keepalive(time.time())
-
-                    if msg[0] == dict.msg_dict["POS_CURRENT_RAW"]:
-                        pos = struct.unpack("!Bdd", msg)
-                        print("Position = ",pos[1] * 1," cm :",pos[2] * 1, " cm")
-
-                    if msg[0] == dict.msg_dict["POS_CURR_LEFT"]:
-                        pos = struct.unpack("!Bff", msg)
-                        print("Position = ",pos[1] ," mm :",pos[2] , " cm")
-                        
-        #send out keep alive signal every two minutes
-        
-        
-        #check if the all connected nods are still present
-        
-            
-        #read out the Keyboard
-        ready = select.select([sys.stdin],[],[],0)
-        if ready[0]:
-            cache = sys.stdin.readline().rstrip()
-            if cache:
-                #Drive forwards
-                if(cache[0] == "D"):
-                    position = 1
-                    try:
-                        speed = find_number(cache, position)
-                    except:
-                        print("Invalid Input")
-                    cache = struct.pack("!Bf", dict.DV_STRAIGHT, speed)
-                    devices[console_select_device].send_data(cache)
+                if serial_Button:    
+                    next_device(serial_selected_device,devices)
+                    serial_Button == False
                     
 
-                #Reset
-                if cache[0] == "R":
-                    cache = struct.pack("!B", dict.msg_dict["POS_RESET"])
-                    devices[console_select_device].send_data(cache)                   
+            
+                #if there is new data from the Joystick
+                if new_set[0] and new_set[1]:
+                    if serial_x == 0:
+                        speed_a = serial_y
+                        speed_b = serial_y
+                    
+                    elif serial_y == 0:
+                        speed_a = serial_x * 0.6
+                        if speed_a < 0:
+                            speed_a = speed_a -40
+                        else:
+                            speed_a = speed_a + 40
 
+                        speed_b = (serial_x * 0.6) * (-1)
+                        if speed_b < 0:
+                            speed_b = speed_b -40
+                        else:
+                            speed_b = speed_b + 40  
 
-                if(cache[0] == "D"):
-                    position = 1
-                    try:
-                        speed = find_number(cache, position)
-                    except:
-                        print("Invalid Input")
-                    cache = struct.pack("!Bf", int(1), speed)
-                    devices[console_select_device].send_data(cache)
-
-
-                #cal Mode
-                if cache[0] == "T":
-                    if cache[1] == "S" or cache[1] == "D":
-                        try:
-                            position = 2
-                            speed , position= find_number(cache, position)
-                            time_  , position= find_number(cache, position)
-
-                        except Exception as e:
-                            print("Invalid Input (", e, ")")
-
-                        cache = struct.pack("!Bff", dict.msg_dict["DV_CALL_STRAIGHT"], speed,time_)
-                        devices[console_select_device].send_data(cache)
-                 
-
-                    if cache[1] == "R":
-                        try:
-                            position = 2
-                            speed , position= find_number(cache, position)
-                            time_ , position= find_number(cache, position)
-                        except Exception as e:
-                            print("Invalid Input (", e, ")")
-
-                        cache = struct.pack("!Bff", dict.msg_dict["DV_CALL_ROTATE"], speed, time_)
-                        devices[console_select_device].send_data(cache)
-
-
-                #Drive in reverse
-                if cache[0] == "R": 
-                    pass
-
-                #print out a small Help promt:
-                if(cache[0] == "H"):
-                    help("general")
-                
-                if(cache[0] == "C"):
-                    cache_ = connect_new_client(last_ip)
-                    if cache_:
-                        devices.append(cache_)
-                    last_ip = ".0.0.0.0"
-                
-                if(cache[0] == "Y"):
-                    print("connect a new Joystick to the USB port! Then enter the location of the port")
-                    print("input S for default port")
-                    while True:
-                        port = input()
-                        if port:
-                            break
-                    if port == "S":
-                        try:
-                            serial_enable = True
-                            serial_port = serial_connect("/dev/ttyACM0")
-                            print("connected!")
-                        except:
-                            print("Could not connect to default port. check connection!")
                     else:
+                        #in case somebody wants to repair the Joystick, you need to add code here.
+                        pass                  
+                
+                    new_set = [False, False]
+                    msg = struct.pack("Bff", dict.msg_dict["DV_RAW_MODE"],speed_a,speed_b)
+                    
+                    
+                    devices[current_serial_device].send_data(msg)
+
+            #end Serial Stuff
+            
+            
+            #keep alive 
+            for device in devices:
+                if not device == None:
+                    device.send_keepalive()
+            
+            
+            #auto discovery
+            if AUTO_DISCOVERY:
+                cache =  auto_discovery(udp_soc)
+            
+                if cache:
+                    print("Found new Device!  IP:", cache)
+                    print("To add IP to list off connect devices type C without any arguments")
+                    last_ip = cache
+                
+            
+            #UDP connection handling
+            for device in devices:
+                ready = select.select([device.sock],[],[],0)
+                if ready[0]:
+                    msg = device.sock.recv(1024)
+                    if msg:
+                        if msg[0] == dict.msg_dict["STAY_ALIVE"]:
+                            device.set_keepalive(time.time())
+
+                        if msg[0] == dict.msg_dict["POS_CURRENT_RAW"]:
+                            pos = struct.unpack("!Bdd", msg)
+                            print("Position = ",pos[1] * 1," cm :",pos[2] * 1, " cm")
+
+                        if msg[0] == dict.msg_dict["POS_CURR_LEFT"]:
+                            pos = struct.unpack("!Bff", msg)
+                            print("Position = ",pos[1] ," mm :",pos[2] , " cm")
+                        if msg[0] == dict.msg_dict["DATA_PACKET"] and file_ != None:
+                            data_3 = struct.unpack("!Bdfffffffff",msg)
+                            data_3 = data_3[1:]
+                            string_cash = ""
+                            for value in data_3:
+                                string_cash+= str(value)
+                                string_cash += ","
+                            string_cash+= "\n"
+                            
+                            file_.write(string_cash)
+                            
+            #send out keep alive signal every two minutes
+            
+            
+            #check if the all connected nods are still present
+            
+                
+            #read out the Keyboard
+            ready = select.select([sys.stdin],[],[],0)
+            if ready[0]:
+                cache = sys.stdin.readline().rstrip()
+                if cache:
+                    #Drive forwards
+                    if(cache[0] == "D"):
+                        position = 1
                         try:
-                            serial_port = serial_connect(port)
-                            serial_enable = True
-                            print("connected!")
-                        except Exception as e:
-                            print("Could not connect Joystick (",e,")")
+                            speed = find_number(cache, position)
+                        except:
+                            print("Invalid Input")
+                        cache = struct.pack("!Bf", dict.DV_STRAIGHT, speed)
+                        devices[console_select_device].send_data(cache)
+                        
+
+                    #Reset
+                    if cache[0] == "R":
+                        cache = struct.pack("!B", dict.msg_dict["POS_RESET"])
+                        devices[console_select_device].send_data(cache)                   
+
+
+                    if(cache[0] == "D"):
+                        position = 1
+                        try:
+                            speed = find_number(cache, position)
+                        except:
+                            print("Invalid Input")
+                        cache = struct.pack("!Bf", int(1), speed)
+                        devices[console_select_device].send_data(cache)
+
+
+                    #cal Mode
+                    if cache[0] == "T":
+                        if cache[1] == "S" or cache[1] == "D":
+                            try:
+                                position = 2
+                                speed , position= find_number(cache, position)
+                                time_  , position= find_number(cache, position)
+
+                            except Exception as e:
+                                print("Invalid Input (", e, ")")
+
+                            cache = struct.pack("!Bff", dict.msg_dict["DV_CALL_STRAIGHT"], speed,time_)
+                            devices[console_select_device].send_data(cache)
+                    
+
+                        if cache[1] == "R":
+                            try:
+                                position = 2
+                                speed , position= find_number(cache, position)
+                                time_ , position= find_number(cache, position)
+                            except Exception as e:
+                                print("Invalid Input (", e, ")")
+
+                            cache = struct.pack("!Bff", dict.msg_dict["DV_CALL_ROTATE"], speed, time_)
+                            devices[console_select_device].send_data(cache)
+
+
+                    #Drive in reverse
+                    if cache[0] == "R": 
+                        pass
+
+                    #print out a small Help promt:
+                    if(cache[0] == "H"):
+                        help("general")
+                    
+                    if(cache[0] == "C"):
+                        cache_ = connect_new_client(last_ip)
+                        if cache_:
+                            devices.append(cache_)
+                        last_ip = ".0.0.0.0"
+                    
+                    if(cache[0] == "Y"):
+                        print("connect a new Joystick to the USB port! Then enter the location of the port")
+                        print("input S for default port")
+                        while True:
+                            port = input()
+                            if port:
+                                break
+                        if port == "S":
+                            try:
+                                serial_enable = True
+                                serial_port = serial_connect("/dev/ttyACM0")
+                                print("connected!")
+                            except:
+                                print("Could not connect to default port. check connection!")
+                        else:
+                            try:
+                                serial_port = serial_connect(port)
+                                serial_enable = True
+                                print("connected!")
+                            except Exception as e:
+                                print("Could not connect Joystick (",e,")")
+    finally:
+        file_.close()
                         
 
                     
