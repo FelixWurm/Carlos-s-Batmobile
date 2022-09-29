@@ -423,7 +423,7 @@ def main():
                             pos = struct.unpack("!Bff", msg)
                             print("Position = ",pos[1] ," mm :",pos[2] , " cm")
                         if msg[0] == dict.msg_dict["DATA_PACKET"] and file_ != None:
-                            data_3 = struct.unpack("!Bdfffffffff",msg)
+                            data_3 = struct.unpack("!Bdfffffffffff",msg)
                             data_3 = data_3[1:]
                             string_cash = ""
                             for value in data_3:

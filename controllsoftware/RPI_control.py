@@ -342,7 +342,7 @@ def compile_data(gyro , mouse_x, mouse_y ,wheel_rotation ):
         rot_x = 0
         rot_y = 0
 
-    return struct.pack("!Bdfffffffff",time.time(),gx,gy,gz,ax,ay,az,rot_x,rot_y, mouse_x,mouse_y,wheel_rotation)
+    return struct.pack("!Bdfffffffffff",time.time(),gx,gy,gz,ax,ay,az,rot_x,rot_y, mouse_x,mouse_y,wheel_rotation)
 
 def main():
     global observer
