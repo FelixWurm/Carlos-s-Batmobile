@@ -328,6 +328,7 @@ def main():
     current_serial_device = 0
 
     serial_failed_counter = 0
+    filename_ = File.open()
     #Main Loop
     while(True):
         #Serial controller stuff
