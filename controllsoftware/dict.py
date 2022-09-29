@@ -15,7 +15,7 @@ msg_dict = {
     "DV_CALL_ROTATE"    : int(13),      #only for testing, first float speed , second time
     "POS_CURRENT_RAW"   : int(14),      #long x, long y
     "POS_RESET"         : int(15),      #reset the Position to 0
-    "DATA_PACKET"       : int(16),      #all data, float[GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z,MOUSE_X, MOUSE_Y,LASER]
+    "DATA_PACKET"       : int(16),      #all data, float[time_ns, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,MOUSE_X, MOUSE_Y,LASER]
 
 }
 

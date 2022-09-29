@@ -363,8 +363,6 @@ def main():
 
     last_update = time.time_ns()
 
-    # Idee: Nach jeder veränderung der Geschwindigkeit Die Position neu bestimmen
-
     # init drive class
     drive = Drive()
 
@@ -401,7 +399,9 @@ def main():
     pos_y = 0
 
     mouse = find_mouse()
-    #assert mouse is not None
+
+    #only send new sensor data if need by:
+    old_data_struct = None
 
     while True:
         drive.run()
@@ -472,7 +472,13 @@ def main():
                 #    soc.sendto(msg, ip_addr)
 
                 #send all Data
-                soc.sendto(compile_data(gyro,pos_x,pos_y,way ),ip_addr)
+                new_data_struct = compile_data(gyro,pos_x,pos_y,way )
+                if old_data_struct != None:
+                    if not old_data_struct == new_data_struct:
+                        soc.sendto(new_data_struct,ip_addr)
+                        old_data_struct =  new_data_struct
+                else:
+                    soc.sendto(new_data_struct,ip_addr)
 
 
                 data, cur_ip_addr = soc.recvfrom(1024)
@@ -531,5 +537,4 @@ if __name__ == "__main__":
             main()
             print("Something went wrong, connection terminated and ready for new connection")
         except KeyboardInterrupt:
-            # videostream.close()
             exit()
