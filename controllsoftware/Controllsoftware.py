@@ -300,10 +300,15 @@ def next_device(current_device, devices):
 #list off Sockets to all the connected devices
 devices = []
             
+def file_number_converter(file_number):
+    if file_number < 10:
+        return ("00" + str(file_number))     
+    if file_number < 100:
+        return ("0" + str(file_number))    
+    if file_number < 1000:
+        return (str(file_number)) 
 
-
-def main():
-    
+def main():    
     #Values for serial Stuff
     global serial_x
     global serial_y
@@ -331,11 +336,12 @@ def main():
     serial_failed_counter = 0
 
     #file to save stuff
+    file_number = 0
 
     filename_ = input("Enter a Filnemae to store some Data")
     if filename_ != "":
-        file_ = open(filename_, "a")
-        file_.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,MOUSE_X, MOUSE_Y,LASER\n")
+        file_ = open((filename_ + file_number_converter(file_number) + ".csv"), "a")
+        file_.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,MOUSE_X, MOUSE_Y,LASER,Speed L, Speed R\n")
     else:
         file_ = None
     
@@ -424,7 +430,7 @@ def main():
                             pos = struct.unpack("!Bff", msg)
                             print("Position = ",pos[1] ," mm :",pos[2] , " cm")
                         if msg[0] == dict.msg_dict["DATA_PACKET"] and file_ != None:
-                            data_3 = struct.unpack("!Bdfffffffffff",msg)
+                            data_3 = struct.unpack("!Bdfffffffffffii",msg)
                             data_3 = data_3[1:]
                             string_cash = ""
                             for value in data_3:
@@ -446,7 +452,8 @@ def main():
                 cache = sys.stdin.readline().rstrip()
                 if cache:
                     #Drive forwards
-                    if(cache[0] == "D"):
+
+                    if cache[0] == "D":
                         position = 1
                         try:
                             speed = find_number(cache, position)
@@ -459,10 +466,23 @@ def main():
                     #Reset
                     if cache[0] == "R":
                         cache = struct.pack("!B", dict.msg_dict["POS_RESET"])
-                        devices[console_select_device].send_data(cache)                   
+                        devices[console_select_device].send_data(cache)
+                        file_.flush()
+                        file_.close()
+                        file_number += 1
+                        file_ = open((filename_ + file_number_converter(file_number) + ".csv"), "a")
+                        file_.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,MOUSE_X, MOUSE_Y,LASER,Speed L, Speed R\n")
+                        print("New File!", file_number)  
+
+                    if cache[0] == "X":
+                        if cache[1] == "E":
+                            devices[console_select_device].send_data(struct.pack("!B", dict.msg_dict["DATA_PACKET_ENABLE"]))
+
+                        if cache[1] == "D":
+                            devices[console_select_device].send_data(struct.pack("!B", dict.msg_dict["DATA_PACKET_DISABLE"]))
 
 
-                    if(cache[0] == "D"):
+                    if cache[0] == "D":
                         position = 1
                         try:
                             speed = find_number(cache, position)
@@ -499,21 +519,17 @@ def main():
                             devices[console_select_device].send_data(cache)
 
 
-                    #Drive in reverse
-                    if cache[0] == "R": 
-                        pass
-
                     #print out a small Help promt:
-                    if(cache[0] == "H"):
+                    if cache[0] == "H":
                         help("general")
                     
-                    if(cache[0] == "C"):
+                    if cache[0] == "C":
                         cache_ = connect_new_client(last_ip)
                         if cache_:
                             devices.append(cache_)
                         last_ip = ".0.0.0.0"
                     
-                    if(cache[0] == "Y"):
+                    if cache[0] == "Y":
                         print("connect a new Joystick to the USB port! Then enter the location of the port")
                         print("input S for default port")
                         while True:
@@ -534,7 +550,10 @@ def main():
                                 print("connected!")
                             except Exception as e:
                                 print("Could not connect Joystick (",e,")")
+
+
     finally:
+        file_.flush()
         file_.close()
                         
 

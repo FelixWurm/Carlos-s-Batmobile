@@ -1,18 +1,16 @@
 # Script that runs on the RPi in order to control the movement and the Sensor data
-import os
+from doctest import run_docstring_examples
 import select
 import socket
 import struct
-import subprocess
 import sys
 import time
 from dataclasses import dataclass
 import gyro_lib
 
-import RPi.GPIO as GPIO
 import dict
 import evdev
-
+import motorcontroll
 try:
     import VL53L0X
 except:
@@ -24,6 +22,18 @@ import positioner
 # Debug
 DEBUG = True
 
+@dataclass
+class send_value:
+    ax          :int = 0
+    ay          :int = 0
+    az          :int = 0
+
+    gx          :int = 0
+    gy          :int = 0
+    gz          :int = 0
+
+    rot_x       :int = 0
+    rot_y       :int = 0
 
 # Objects to store the position values
 @dataclass
@@ -44,125 +54,13 @@ class Move:
     move_end: int = 0
 
 
-# Motor control Pin
-left_fwd = 12
-left_bwd = 26
-right_fwd = 13
-right_bwd = 19
-
 udp_port = 25565
 udp_addr = "169.254.2.1"
 
-# Set up the GPIO stuff
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(left_fwd, GPIO.OUT)
-GPIO.setup(right_fwd, GPIO.OUT)
-GPIO.setup(left_bwd, GPIO.OUT)
-GPIO.setup(right_bwd, GPIO.OUT)
-
-# Setup some PWM stuff
-pi_pwm_l = GPIO.PWM(left_fwd, 1000)
-pi_pwm_l.start(0)
-
-pi_pwm_r = GPIO.PWM(right_fwd, 1000)
-pi_pwm_r.start(0)
-
-pi_pwm_l_bwd = GPIO.PWM(left_bwd, 1000)
-pi_pwm_l_bwd.start(0)
-
-pi_pwm_r_bwd = GPIO.PWM(right_bwd, 1000)
-pi_pwm_r_bwd.start(0)
-
-
-
-#if 0 no movement, if 1 forwards, -1 = backwards
-drive_direction = 0
-
-
-
-# Drive...
-class Drive:
-    def __init__(self):
-        self.end_time = 0
-
-    def drive(self, speed_l, speed_r, dv_time):
-        # check for correct input
-        if (0 < speed_l < 40) or (-40 < speed_l < 0):
-            print("incorrect Input speed_l, must be between -100 to -40 or 40 to 100")
-            return
-
-        if (0 < speed_r < 40) or (-40 < speed_r < 0):
-            print("incorrect Input speed_r, must be between -100 to -40 or 40 to 100")
-            return
-
-        set_motor_speed(speed_l, speed_r)
-        self.end_time = time.time_ns() + (dv_time * 1000000000)
-
-    def run(self):
-        if self.end_time < time.time_ns() and self.end_time != 0:
-            set_motor_speed(0, 0)
-            self.end_time = 0
-
-
-def set_motor_speed(speed_l: int, speed_r: int):
-    global drive_direction
-    speed_l = value_check(speed_l)
-    speed_r = value_check(speed_r)
-
-    if speed_l == speed_r:
-        if speed_l == 0:
-            drive_direction = 0
-        elif speed_r > 0:
-            drive_direction = 1
-        else:
-            drive_direction = -1
-    else:
-       drive_direction = 0
-    
-    if speed_l == 0:
-        pi_pwm_l.ChangeDutyCycle(0)
-        pi_pwm_l_bwd.ChangeDutyCycle(0)
-    else:
-        if speed_l > 0:
-            pi_pwm_l.ChangeDutyCycle(speed_l)
-            pi_pwm_l_bwd.ChangeDutyCycle(0)
-        else:
-            pi_pwm_l.ChangeDutyCycle(0)
-            pi_pwm_l_bwd.ChangeDutyCycle(speed_l * (-1))
-
-    if speed_r == 0:
-        pi_pwm_r.ChangeDutyCycle(0)
-        pi_pwm_r_bwd.ChangeDutyCycle(0)
-    else:
-        if speed_r > 0:
-            pi_pwm_r.ChangeDutyCycle(speed_r)
-            pi_pwm_r_bwd.ChangeDutyCycle(0)
-        else:
-            pi_pwm_r.ChangeDutyCycle(0)
-            pi_pwm_r_bwd.ChangeDutyCycle(speed_r * (-1))
-
-
-def value_check(value):
-    if value > 100:
-        print("value was to big! (", value, ")")
-        value = 100
-    elif value < -100:
-        print("Value was to small! (", value, ")")
-
-    return value
-
-
-def drive_(speed, duration):
-    drive(speed, speed, duration)
 
 
 # speed in M at a given speed, from 100 to 40 in increments of 10
 speed_distance = [0.23, 0.1975, 0.18, 0.16, 0.1375, 0.12, 0.09]
-
-
-
-
 
 
 # Function to get your local ip address
@@ -299,12 +197,6 @@ def convert_to_motor(speed_input):
     return speed_input
 
 
-def calculate_position(mode, duration, speed, last_position):
-    if mode == "R":
-        pass
-    if mode == "D":
-        pass
-
 
 def find_mouse():
     device = None
@@ -317,7 +209,7 @@ def find_mouse():
 
 observer = MvObserver()
 
-def compile_data(gyro , mouse_x, mouse_y ,wheel_rotation ):
+def compile_data(gyro , mouse_x, mouse_y ,wheel_rotation,drive ):
     if gyro is not None:
         gx = gyro.read_gyro("x")
         gy = gyro.read_gyro("y")
@@ -342,11 +234,10 @@ def compile_data(gyro , mouse_x, mouse_y ,wheel_rotation ):
         rot_x = 0
         rot_y = 0
 
-    return struct.pack("!Bdfffffffffff",dict.msg_dict["DATA_PACKET"],time.time(),gx,gy,gz,ax,ay,az,rot_x,rot_y, mouse_x,mouse_y,wheel_rotation)
+    return struct.pack("!Bdfffffffffffii",dict.msg_dict["DATA_PACKET"],time.time(),gx,gy,gz,ax,ay,az,rot_x,rot_y, mouse_x,mouse_y,wheel_rotation, drive.get_speed[0],drive.get_speed[1])
 
 def main():
     global observer
-    global drive_direction
     # set up the TCP server
     soc = udp_setup()
 
@@ -363,10 +254,8 @@ def main():
 
     last_update = time.time_ns()
 
-    # Idee: Nach jeder veränderung der Geschwindigkeit Die Position neu bestimmen
-
     # init drive class
-    drive = Drive()
+    drive = motorcontroll.Drive()
 
     #read laser data
     way = 0
@@ -403,6 +292,9 @@ def main():
     mouse = find_mouse()
     #assert mouse is not None
 
+
+    #variable to dertermin if to send data:
+    send_all_data = False
     while True:
         drive.run()
 
@@ -425,13 +317,13 @@ def main():
             allDist += distance
             if distance > 0:
                 mean = allDist/count_loop #<- count for each loop
-                if distance < 56:
+                if distance < (mean-5):
                     if(height == False):
                         height = True
                         #way += 31.73
-                        if drive_direction == 1:
+                        if drive.get_direction() == 1:
                             way += 1
-                        elif drive_direction == -1:
+                        elif drive.get_direction() == -1:
                             way += -1
                 if distance > mean: # might want the 10%, but mean is smaller due to dip in wheel
                     height = False
@@ -472,7 +364,8 @@ def main():
                 #    soc.sendto(msg, ip_addr)
 
                 #send all Data
-                soc.sendto(compile_data(gyro,pos_x,pos_y,way ),ip_addr)
+                if send_all_data == True:
+                    soc.sendto(compile_data(gyro,pos_x,pos_y,way ),ip_addr)
 
 
                 data, cur_ip_addr = soc.recvfrom(1024)
@@ -485,20 +378,20 @@ def main():
                     if code == dict.msg_dict["DV_STRAIGHT"]:
                         data2 = struct.unpack("!Bf", data)
                         cache = convert_to_motor(data2[1])
-                        set_motor_speed(cache, cache)
+                        drive.set_motor_speed(cache, cache)
 
                     if code == dict.msg_dict["DV_STOP"]:
-                        set_motor_speed(0, 0)
+                        drive.set_motor_speed(0, 0)
 
                     if code == dict.msg_dict["DV_ROTATE"]:
                         data2 = struct.unpack("!Bf", data)
                         cache = data2[1]
                         cache2 = cache * (-1)
-                        set_motor_speed(convert_to_motor(cache2), convert_to_motor(cache))
+                        drive.set_motor_speed(convert_to_motor(cache2), convert_to_motor(cache))
 
                     if code == dict.msg_dict["DV_RAW_MODE"]:
                         data2 = struct.unpack("Bff", data)
-                        set_motor_speed(data2[1], data2[2])
+                        drive.set_motor_speed(data2[1], data2[2])
                         raw_mode = True
 
                     # modes for cal
@@ -523,6 +416,12 @@ def main():
                         pos_x = 0
                         pos_y = 0
                         way = 0
+
+                    if code == dict.msg_dict["DATA_PACKET_DISABLE"]:
+                        send_all_data = False
+
+                    if code == dict.msg_dict["DATA_PACKET_ENABLE"]:
+                        send_all_data = True
 
 
 if __name__ == "__main__":
