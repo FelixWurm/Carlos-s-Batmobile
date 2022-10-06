@@ -470,9 +470,10 @@ def main():
                         laserdata.flush()
                         laserdata.close()
                         datanumber = datanumber + 1
+                        #local save
                         laserdata = open(("LaserData" + str(datanumber) + ".csv"), "a")
                         laserdata.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X, ACCEL_Y, ACCEL_Z, GYRO_ROT_X, GYRO_ROT_Y, MOUSE_X, MOUSE_Y, Laser_Distance\n")
-
+                        soc.sendto(struct.pack("!Bi",dict.msg_dict["NEW_DATA_FILE_NR"],datanumber),ip_addr)
                     if code == dict.msg_dict["DATA_PACKET_DISABLE"]:
                         send_all_data = False
 

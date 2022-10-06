@@ -220,9 +220,13 @@ def find_number(input, position):
 
 
 
-def connect_new_client(last_ip):
+def connect_new_client(last_ip, input):
     if(last_ip == "0.0.0.0"):
         print("Please enter a IP address you wish to connect to, or C1 to C5 for default Calos rover")
+        if input:
+            pass
+
+
         ip_addr = input()
         if ip_addr[0] == "C":
             if ip_addr[1] == "1":
@@ -440,6 +444,9 @@ def main():
                             string_cash+= "\n"
                             
                             file_.write(string_cash)
+                        if msg[0] == dict.msg_dict["NEW_DATA_FILE_NR"]:
+                            number__ = struct.unpack("!Bi",msg)[1]
+                            print("New File with Number:", number__)
                             
             #send out keep alive signal every two minutes
             
@@ -526,7 +533,7 @@ def main():
                         help("general")
                     
                     if cache[0] == "C":
-                        cache_ = connect_new_client(last_ip)
+                        cache_ = connect_new_client(last_ip, cache)
                         if cache_:
                             devices.append(cache_)
                         last_ip = ".0.0.0.0"
