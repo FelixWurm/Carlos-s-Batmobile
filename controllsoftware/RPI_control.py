@@ -367,7 +367,7 @@ def main():
             distance = laser.get_distance()
             allDist += distance
             if distance > 0:
-                laserdata.write(write_data(gyro,distance,drive))
+                laserdata.write(write_data(gyro,pos_x, pos_y, distance,drive))
                 mean = allDist/count_loop #<- count for each loop
                 if distance < (mean-5):
                     if(height == False):
