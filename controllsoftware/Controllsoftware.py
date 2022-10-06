@@ -104,7 +104,7 @@ class device_manager:
     #sends if necessary a keepalive signal. if the last communication is les then two seconds ago, do nothing
     def send_keepalive(self):
         #if(self.last_comm -time.time_ns() < -2000000000):
-        if(self.last_comm -time.time_ns() < -10000000):
+        if(self.last_comm -time.time_ns() < -50000000):
             self.send_data(struct.pack("!B", dict.msg_dict["STAY_ALIVE"]))
             self.last_comm = time.time_ns()
     
