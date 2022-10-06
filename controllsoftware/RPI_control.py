@@ -238,7 +238,7 @@ def compile_data(gyro , mouse_x, mouse_y ,wheel_rotation,distance,drive):
 
     return struct.pack("!Bdffffffffffffii",dict.msg_dict["DATA_PACKET"],time.time(),gx,gy,gz,ax,ay,az,rot_x,rot_y, mouse_x,mouse_y,wheel_rotation, distance,speed[0],speed[1])
 
-def write_data(gyro, distance, drive):
+def write_data(gyro, mouse_x, mouse_y, distance, drive):
     if gyro is not None:
         gx = gyro.read_gyro("x")
         gy = gyro.read_gyro("y")
@@ -264,7 +264,7 @@ def write_data(gyro, distance, drive):
         rot_y = 0
         
     speed = drive.get_speed()
-    carlData = str(time.time())+","+ str(gx)+","+ str(gy)+","+str(gz)+","+str(ax)+","+str(ay)+","+str(az)+","+str(rot_x)+","+str(rot_y)+","+ str(distance) +","+str(speed[0])+","+str(speed[1])+"\n"
+    carlData = str(time.time())+","+ str(gx)+","+ str(gy)+","+str(gz)+","+str(ax)+","+str(ay)+","+str(az)+","+str(rot_x)+","+str(rot_y)+","+ str(mouse_x) +","+ str(mouse_y)+","+ str(distance) +","+str(speed[0])+","+str(speed[1])+"\n"
     return carlData
 
 
@@ -307,7 +307,7 @@ def main():
             break
         except:
             datanumber += 1
-    laserdata.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X, ACCEL_Y, ACCEL_Z, GYRO_ROT_X, GYRO_ROT_Y, Laser_Distance\n")
+    laserdata.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X, ACCEL_Y, ACCEL_Z, GYRO_ROT_X, GYRO_ROT_Y, MOUSE_X, MOUSE_Y, Laser_Distance\n")
 
     # Create a VL53L0X object
     try:
@@ -472,7 +472,7 @@ def main():
                         laserdata.close()
                         datanumber = datanumber + 1
                         laserdata = open(("LaserData" + str(datanumber) + ".csv"), "a")
-                        laserdata.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X, ACCEL_Y, ACCEL_Z, GYRO_ROT_X, GYRO_ROT_Y, Laser_Distance\n")
+                        laserdata.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X, ACCEL_Y, ACCEL_Z, GYRO_ROT_X, GYRO_ROT_Y, MOUSE_X, MOUSE_Y, Laser_Distance\n")
 
                     if code == dict.msg_dict["DATA_PACKET_DISABLE"]:
                         send_all_data = False
