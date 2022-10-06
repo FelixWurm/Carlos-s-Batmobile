@@ -294,7 +294,8 @@ def main():
     height = False
     count_loop = 0
     #file for laser data
-    laserdata = open((LaserData + ".csv"), "a")
+    datanumber = 0
+    laserdata = open((LaserData + datanumber + ".csv"), "a")
     laserdata.write("time,GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y, Laser_Distance\n")
 
     # Create a VL53L0X object
@@ -451,6 +452,10 @@ def main():
                         pos_x = 0
                         pos_y = 0
                         way = 0
+                        laserdata.close()
+                        datanumber = datanumber + 1
+                        laserdata = open((LaserData + datanumber + ".csv"), "a")
+                        laserdata.write("time,GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y, Laser_Distance\n")
 
                     if code == dict.msg_dict["DATA_PACKET_DISABLE"]:
                         send_all_data = False
