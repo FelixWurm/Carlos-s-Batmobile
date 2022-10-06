@@ -16,10 +16,10 @@ msg_dict = {
     "POS_CURRENT_RAW"   : int(14),      #long x, long y
     "POS_RESET"         : int(15),      #reset the Position to 0
     "DATA_PACKET"       : int(16),      #all data, float[GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z,MOUSE_X, MOUSE_Y,LASER,speed_l, speed_r]
-    "DATA_PACKET_ENABLE": int(17),
-    "DATA_PACKET_DISABLE":int(18)
+    "DATA_PACKET_ENABLE": int(17),      #enable Transfere of as many data as possible
+    "DATA_PACKET_DISABLE":int(18)       #disable this transmission of data
 }
 
-    
+
 
 #in order to connect to the server send a CONN_REQUEST and wait for a CONN_ACCEPT.

@@ -209,7 +209,7 @@ def find_mouse():
 
 observer = MvObserver()
 
-def compile_data(gyro , mouse_x, mouse_y ,wheel_rotation,drive,distance ):
+def compile_data(gyro , mouse_x, mouse_y ,wheel_rotation,distance,drive):
     if gyro is not None:
         gx = gyro.read_gyro("x")
         gy = gyro.read_gyro("y")
@@ -366,7 +366,7 @@ def main():
 
                 #send all Data
                 if send_all_data == True:
-                    soc.sendto(compile_data(gyro,pos_x,pos_y,way,distance ),ip_addr)
+                    soc.sendto(compile_data(gyro,pos_x,pos_y,way,distance,drive ),ip_addr)
 
 
                 data, cur_ip_addr = soc.recvfrom(1024)
