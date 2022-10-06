@@ -96,7 +96,7 @@ class Drive:
                 self.pi_pwm_r.ChangeDutyCycle(0)
                 self.pi_pwm_r_bwd.ChangeDutyCycle(speed_r * (-1))
 
-    def value_check(value):
+    def value_check(self, value):
         if value > 100:
             print("value was to big! (", value, ")")
             value = 100

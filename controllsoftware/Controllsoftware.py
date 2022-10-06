@@ -104,7 +104,7 @@ class device_manager:
     #sends if necessary a keepalive signal. if the last communication is les then two seconds ago, do nothing
     def send_keepalive(self):
         #if(self.last_comm -time.time_ns() < -2000000000):
-        if(self.last_comm -time.time_ns() < -100000000):
+        if(self.last_comm -time.time_ns() < -10000000):
             self.send_data(struct.pack("!B", dict.msg_dict["STAY_ALIVE"]))
             self.last_comm = time.time_ns()
     
@@ -341,7 +341,7 @@ def main():
     filename_ = input("Enter a Filnemae to store some Data")
     if filename_ != "":
         file_ = open((filename_ + file_number_converter(file_number) + ".csv"), "a")
-        file_.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,MOUSE_X, MOUSE_Y,LASER,Speed L, Speed R\n")
+        file_.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,MOUSE_X, MOUSE_Y,LASER_wheel, Laser_Distance ,Speed L, Speed R\n")
     else:
         file_ = None
     
@@ -430,7 +430,7 @@ def main():
                             pos = struct.unpack("!Bff", msg)
                             print("Position = ",pos[1] ," mm :",pos[2] , " cm")
                         if msg[0] == dict.msg_dict["DATA_PACKET"] and file_ != None:
-                            data_3 = struct.unpack("!Bdfffffffffffii",msg)
+                            data_3 = struct.unpack("!Bdffffffffffffii",msg)
                             data_3 = data_3[1:]
                             string_cash = ""
                             for value in data_3:
@@ -471,7 +471,7 @@ def main():
                         file_.close()
                         file_number += 1
                         file_ = open((filename_ + file_number_converter(file_number) + ".csv"), "a")
-                        file_.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,MOUSE_X, MOUSE_Y,LASER,Speed L, Speed R\n")
+                        file_.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,MOUSE_X, MOUSE_Y,LASER_wheel, Laser_Distance ,Speed L, Speed R\n")
                         print("New File!", file_number)  
 
                     if cache[0] == "X":

@@ -209,7 +209,7 @@ def find_mouse():
 
 observer = MvObserver()
 
-def compile_data(gyro , mouse_x, mouse_y ,wheel_rotation,drive ):
+def compile_data(gyro , mouse_x, mouse_y ,wheel_rotation,drive,distance ):
     if gyro is not None:
         gx = gyro.read_gyro("x")
         gy = gyro.read_gyro("y")
@@ -234,7 +234,7 @@ def compile_data(gyro , mouse_x, mouse_y ,wheel_rotation,drive ):
         rot_x = 0
         rot_y = 0
 
-    return struct.pack("!Bdfffffffffffii",dict.msg_dict["DATA_PACKET"],time.time(),gx,gy,gz,ax,ay,az,rot_x,rot_y, mouse_x,mouse_y,wheel_rotation, drive.get_speed[0],drive.get_speed[1])
+    return struct.pack("!Bdffffffffffffii",dict.msg_dict["DATA_PACKET"],time.time(),gx,gy,gz,ax,ay,az,rot_x,rot_y, mouse_x,mouse_y,wheel_rotation, distance,drive.get_speed[0],drive.get_speed[1])
 
 def main():
     global observer
@@ -292,6 +292,7 @@ def main():
     mouse = find_mouse()
     #assert mouse is not None
 
+    distance = 0
 
     #variable to dertermin if to send data:
     send_all_data = False
@@ -365,7 +366,7 @@ def main():
 
                 #send all Data
                 if send_all_data == True:
-                    soc.sendto(compile_data(gyro,pos_x,pos_y,way ),ip_addr)
+                    soc.sendto(compile_data(gyro,pos_x,pos_y,way,distance ),ip_addr)
 
 
                 data, cur_ip_addr = soc.recvfrom(1024)
@@ -411,7 +412,7 @@ def main():
                             duration = data2[2]
                             drive.drive(speed, -speed, duration)
                         except Exception as e:
-                            print("ERROR 01 (", e, ")")
+                            print("ERROR 02 (", e, ")")
                     if code == dict.msg_dict["POS_RESET"]:
                         pos_x = 0
                         pos_y = 0
