@@ -264,7 +264,7 @@ def write_data(gyro, distance, drive):
         rot_y = 0
         
     speed = drive.get_speed()
-    carlData = time.time()+","+ str(gx)+","+ str(gy)+","+str(gz)+","+str(ax)+","+str(ay)+","+str(az)+","+str(rot_x)+","+str(rot_y)+","+ str(distance) +","+str(speed[0])+","+str(speed[1])+"\n"
+    carlData = str(time.time())+","+ str(gx)+","+ str(gy)+","+str(gz)+","+str(ax)+","+str(ay)+","+str(az)+","+str(rot_x)+","+str(rot_y)+","+ str(distance) +","+str(speed[0])+","+str(speed[1])+"\n"
     return carlData
 
 
