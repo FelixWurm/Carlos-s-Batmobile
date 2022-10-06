@@ -343,7 +343,7 @@ def main():
     send_all_data = False
     while True:
         if(last_save_ - time.time_ns() < -1000000):
-            laserdata.write(write_data(gyro,distance,drive))
+            laserdata.write(write_data(gyro,pos_x, pos_y, distance,drive))
             last_save_ = time.time_ns()
 
 
@@ -367,7 +367,6 @@ def main():
             distance = laser.get_distance()
             allDist += distance
             if distance > 0:
-                laserdata.write(write_data(gyro,pos_x, pos_y, distance,drive))
                 mean = allDist/count_loop #<- count for each loop
                 if distance < (mean-5):
                     if(height == False):
