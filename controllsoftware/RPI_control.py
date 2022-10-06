@@ -266,6 +266,8 @@ def write_data(gyro, distance, drive):
     speed = drive.get_speed()
     carlData = time.time()+","+ str(gx)+","+ str(gy)+","+str(gz)+","+str(ax)+","+str(ay)+","+str(az)+","+str(rot_x)+","+str(rot_y)+","+ str(distance) +","+str(speed[0])+","+str(speed[1])+"\n"
     return carlData
+
+
 def main():
     global observer
     # set up the TCP server
@@ -304,7 +306,7 @@ def main():
             break
         except:
             datanumber += 1
-    #laserdata.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X, ACCEL_Y, ACCEL_Z, GYRO_ROT_X, GYRO_ROT_Y, Laser_Distance\n")
+    laserdata.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X, ACCEL_Y, ACCEL_Z, GYRO_ROT_X, GYRO_ROT_Y, Laser_Distance\n")
 
     # Create a VL53L0X object
     try:
@@ -335,10 +337,15 @@ def main():
     #assert mouse is not None
 
     distance = 0
-
+    last_save = 0
     #variable to dertermin if to send data:
     send_all_data = False
     while True:
+        if(last_save -time.time_ns() < -10000000):
+            laserdata.write(write_data(gyro,distance,drive))
+            last_save = time.time_ns
+
+
         drive.run()
 
         # stop the motor in case of bad connection
@@ -460,6 +467,7 @@ def main():
                         pos_x = 0
                         pos_y = 0
                         way = 0
+                        laserdata.flush
                         laserdata.close()
                         datanumber = datanumber + 1
                         laserdata = open(("LaserData" + str(datanumber) + ".csv"), "a")
@@ -470,6 +478,8 @@ def main():
 
                     if code == dict.msg_dict["DATA_PACKET_ENABLE"]:
                         send_all_data = True
+    laserdata.flush
+    laserdata.close()
 
 
 if __name__ == "__main__":
