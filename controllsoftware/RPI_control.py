@@ -238,6 +238,34 @@ def compile_data(gyro , mouse_x, mouse_y ,wheel_rotation,distance,drive):
 
     return struct.pack("!Bdffffffffffffii",dict.msg_dict["DATA_PACKET"],time.time(),gx,gy,gz,ax,ay,az,rot_x,rot_y, mouse_x,mouse_y,wheel_rotation, distance,speed[0],speed[1])
 
+def write_data(gyro, distance, drive):
+    if gyro is not None:
+        gx = gyro.read_gyro("x")
+        gy = gyro.read_gyro("y")
+        gz = gyro.read_gyro("z")
+
+        ax = gyro.read_acl("x")
+        ay = gyro.read_acl("y")
+        az = gyro.read_acl("z")
+
+        rot_x = gyro.get_x_rotation(gx,gy,gz)
+        rot_y = gyro.get_y_rotation(gx,gy,gz)
+
+    else:
+        gx = 0
+        gy = 0
+        gz = 0
+
+        ax = 0
+        ay = 0
+        az = 0
+
+        rot_x = 0
+        rot_y = 0
+        
+    speed = drive.get_speed()
+    carlData = time.time()+","+gx+","+gy+","+gz+","+ax+","+ay+","+az+","+rot_x+","+rot_y+","+ distance +","+speed[0]+","+speed[1]+"\n"
+    return carlData
 def main():
     global observer
     # set up the TCP server
@@ -322,10 +350,7 @@ def main():
             distance = laser.get_distance()
             allDist += distance
             if distance > 0:
-                if gyro is not None:
-                    laserdata.write(time.time() +"," + gyro.read_gyro("x")+"," + gyro.read_gyro("y")+"," + gyro.read_gyro("z")+"," + gyro.read_acl("x")+"," +gyro.read_acl("y")+"," + gyro.read_acl("z")+"," + gyro.get_x_rotation(gx,gy,gz)+"," + gyro.get_y_rotation(gx,gy,gz)+"," + distance + "\n")
-                else:
-                    laserdata.write(time.time() +"," + 0 +"," + 0+"," + 0+"," + 0+"," +0+"," + 0+"," + 0+"," + 0 +"," + distance + "\n")
+                laserdata.write(write_data(gyro,distance,drive))
                 mean = allDist/count_loop #<- count for each loop
                 if distance < (mean-5):
                     if(height == False):
