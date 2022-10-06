@@ -233,8 +233,10 @@ def compile_data(gyro , mouse_x, mouse_y ,wheel_rotation,distance,drive):
 
         rot_x = 0
         rot_y = 0
+        
+        speed = drive.get_speed()
 
-    return struct.pack("!Bdffffffffffffii",dict.msg_dict["DATA_PACKET"],time.time(),gx,gy,gz,ax,ay,az,rot_x,rot_y, mouse_x,mouse_y,wheel_rotation, distance,drive.get_speed[0],drive.get_speed[1])
+    return struct.pack("!Bdffffffffffffii",dict.msg_dict["DATA_PACKET"],time.time(),gx,gy,gz,ax,ay,az,rot_x,rot_y, mouse_x,mouse_y,wheel_rotation, distance,speed[0],speed[1])
 
 def main():
     global observer
