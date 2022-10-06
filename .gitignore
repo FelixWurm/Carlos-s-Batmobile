@@ -1,6 +1,5 @@
 /venv/
 /.idea/
-*.csv
 .vscode/settings.json
 /me/
 /cs2/
