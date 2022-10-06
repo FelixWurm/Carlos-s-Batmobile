@@ -264,7 +264,7 @@ def write_data(gyro, distance, drive):
         rot_y = 0
         
     speed = drive.get_speed()
-    carlData = time.time()+","+gx+","+gy+","+gz+","+ax+","+ay+","+az+","+rot_x+","+rot_y+","+ distance +","+speed[0]+","+speed[1]+"\n"
+    carlData = time.time()+","+ str(gx)+","+ str(gy)+","+str(gz)+","+str(ax)+","+str(ay)+","+str(az)+","+str(rot_x)+","+str(rot_y)+","+ str(distance) +","+str(speed[0])+","+str(speed[1])+"\n"
     return carlData
 def main():
     global observer
@@ -295,7 +295,7 @@ def main():
     count_loop = 0
     #file for laser data
     datanumber = 0
-    laserdata = open(("LaserData" + datanumber + ".csv"), "a")
+    laserdata = open(("LaserData" + str(datanumber) + ".csv"), "a")
     laserdata.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X, ACCEL_Y, ACCEL_Z, GYRO_ROT_X, GYRO_ROT_Y, Laser_Distance\n")
 
     # Create a VL53L0X object
@@ -454,7 +454,7 @@ def main():
                         way = 0
                         laserdata.close()
                         datanumber = datanumber + 1
-                        laserdata = open(("LaserData" + datanumber + ".csv"), "a")
+                        laserdata = open(("LaserData" + str(datanumber) + ".csv"), "a")
                         laserdata.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X, ACCEL_Y, ACCEL_Z, GYRO_ROT_X, GYRO_ROT_Y, Laser_Distance\n")
 
                     if code == dict.msg_dict["DATA_PACKET_DISABLE"]:
