@@ -220,7 +220,7 @@ def find_number(input, position):
 
 
 
-def connect_new_client(last_ip, input):
+def connect_new_client(last_ip, raw_input):
     if(last_ip == "0.0.0.0"):
         print("Please enter a IP address you wish to connect to, or C1 to C5 for default Calos rover")
         ip_addr = input()
