@@ -467,7 +467,7 @@ def main():
                         pos_x = 0
                         pos_y = 0
                         way = 0
-                        laserdata.flush
+                        laserdata.flush()
                         laserdata.close()
                         datanumber = datanumber + 1
                         laserdata = open(("LaserData" + str(datanumber) + ".csv"), "a")
