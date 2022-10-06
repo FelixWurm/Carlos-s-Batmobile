@@ -303,6 +303,7 @@ def main():
             laserdata = open(("LaserData" + str(datanumber) + ".csv"), "x")
             laserdata.close()
             laserdata = open(("LaserData" + str(datanumber) + ".csv"), "a")
+            print("New File!, File NR: ",laserdata)
             break
         except:
             datanumber += 1
@@ -341,7 +342,7 @@ def main():
     #variable to dertermin if to send data:
     send_all_data = False
     while True:
-        if(last_save_ - time.time_ns() < -10000000):
+        if(last_save_ - time.time_ns() < -1000000):
             laserdata.write(write_data(gyro,distance,drive))
             last_save_ = time.time_ns()
 
