@@ -344,6 +344,7 @@ def main():
         file_.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,MOUSE_X, MOUSE_Y,LASER_wheel, Laser_Distance ,Speed L, Speed R\n")
     else:
         file_ = None
+        print("No data will by saved!")
     
     
     #Main Loop
@@ -465,14 +466,15 @@ def main():
 
                     #Reset
                     if cache[0] == "R":
-                        cache = struct.pack("!B", dict.msg_dict["POS_RESET"])
-                        devices[console_select_device].send_data(cache)
-                        file_.flush()
-                        file_.close()
-                        file_number += 1
-                        file_ = open((filename_ + file_number_converter(file_number) + ".csv"), "a")
-                        file_.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,MOUSE_X, MOUSE_Y,LASER_wheel, Laser_Distance ,Speed L, Speed R\n")
-                        print("New File!", file_number)  
+                        if not file_ == None:
+                            cache = struct.pack("!B", dict.msg_dict["POS_RESET"])
+                            devices[console_select_device].send_data(cache)
+                            file_.flush()
+                            file_.close()
+                            file_number += 1
+                            file_ = open((filename_ + file_number_converter(file_number) + ".csv"), "a")
+                            file_.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,MOUSE_X, MOUSE_Y,LASER_wheel, Laser_Distance ,Speed L, Speed R\n")
+                            print("New File!", file_number)  
 
                     if cache[0] == "X":
                         if cache[1] == "E":
