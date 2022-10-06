@@ -265,6 +265,9 @@ def main():
     allDist = 0
     height = False
     count_loop = 0
+    #file for laser data
+    laserdata = open((LaserData + ".csv"), "a")
+    laserdata.write("time,GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y,LASER_wheel, Laser_Distance\n)
 
     # Create a VL53L0X object
     try:
@@ -319,6 +322,18 @@ def main():
             distance = laser.get_distance()
             allDist += distance
             if distance > 0:
+                if gyro is not None:
+        gx = gyro.read_gyro("x")
+        gy = gyro.read_gyro("y")
+        gz = gyro.read_gyro("z")
+
+        ax = gyro.read_acl("x")
+        ay = gyro.read_acl("y")
+        az = gyro.read_acl("z")
+
+        rot_x = gyro.get_x_rotation(gx,gy,gz)
+        rot_y = gyro.get_y_rotation(gx,gy,gz)
+                laserdata.write(time.time(),gyro.read_gyro("x"), gyro.read_gyro("y"), gyro.read_gyro("z"), gyro.read_acl("x"),gyro.read_acl("y"),gyro.read_acl("z"), gyro.get_x_rotation(gx,gy,gz), gyro.get_y_rotation(gx,gy,gz), distance + "\n")
                 mean = allDist/count_loop #<- count for each loop
                 if distance < (mean-5):
                     if(height == False):
@@ -331,7 +346,7 @@ def main():
                 if distance > mean: # might want the 10%, but mean is smaller due to dip in wheel
                     height = False
             #time.sleep(timing/1000000.00)
-
+        
         sockets = [soc]
         if mouse is not None:#
             sockets.append(mouse)
