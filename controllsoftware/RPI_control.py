@@ -299,7 +299,7 @@ def main():
     while True:
         try:
             laserdata = open(("LaserData" + str(datanumber) + ".csv"), "x")
-            laserdata.close
+            laserdata.close()
             laserdata = open(("LaserData" + str(datanumber) + ".csv"), "a")
             break
         except:
