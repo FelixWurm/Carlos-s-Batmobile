@@ -441,8 +441,8 @@ def main():
                             
                             file_.write(string_cash)
                         if msg[0] == dict.msg_dict["NEW_DATA_FILE_NR"]:
-                            number__ = struct.unpack("!Bi",msg)[1]
-                            print("New File with Number:", number__)
+                            number__ = struct.unpack("!Bi",msg)
+                            print("New File with Number:", number__[1])
                             
             #send out keep alive signal every two minutes
             
