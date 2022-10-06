@@ -337,13 +337,13 @@ def main():
     #assert mouse is not None
 
     distance = 0
-    last_save = 0
+    last_save_ = 0
     #variable to dertermin if to send data:
     send_all_data = False
     while True:
-        if(last_save -time.time_ns() < -10000000):
+        if(last_save_ - time.time_ns() < -10000000):
             laserdata.write(write_data(gyro,distance,drive))
-            last_save = time.time_ns
+            last_save_ = time.time_ns()
 
 
         drive.run()
