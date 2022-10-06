@@ -294,9 +294,17 @@ def main():
     height = False
     count_loop = 0
     #file for laser data
+
     datanumber = 0
-    laserdata = open(("LaserData" + str(datanumber) + ".csv"), "a")
-    laserdata.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X, ACCEL_Y, ACCEL_Z, GYRO_ROT_X, GYRO_ROT_Y, Laser_Distance\n")
+    while True:
+        try:
+            laserdata = open(("LaserData" + str(datanumber) + ".csv"), "x")
+            laserdata.close
+            laserdata = open(("LaserData" + str(datanumber) + ".csv"), "a")
+            break
+        except:
+            datanumber += 1
+    #laserdata.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X, ACCEL_Y, ACCEL_Z, GYRO_ROT_X, GYRO_ROT_Y, Laser_Distance\n")
 
     # Create a VL53L0X object
     try:
