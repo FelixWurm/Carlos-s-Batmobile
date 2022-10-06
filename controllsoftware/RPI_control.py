@@ -296,7 +296,7 @@ def main():
     #file for laser data
     datanumber = 0
     laserdata = open(("LaserData" + datanumber + ".csv"), "a")
-    laserdata.write("time,GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y, Laser_Distance\n")
+    laserdata.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X, ACCEL_Y, ACCEL_Z, GYRO_ROT_X, GYRO_ROT_Y, Laser_Distance\n")
 
     # Create a VL53L0X object
     try:
@@ -455,7 +455,7 @@ def main():
                         laserdata.close()
                         datanumber = datanumber + 1
                         laserdata = open(("LaserData" + datanumber + ".csv"), "a")
-                        laserdata.write("time,GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X,ACCEL_Y,ACCEL_Z GYRO_ROT_X, GYRO_ROT_Y, Laser_Distance\n")
+                        laserdata.write("time, GYRO_X, GYRO_Y, GYRO_Z, ACCEL_X, ACCEL_Y, ACCEL_Z, GYRO_ROT_X, GYRO_ROT_Y, Laser_Distance\n")
 
                     if code == dict.msg_dict["DATA_PACKET_DISABLE"]:
                         send_all_data = False
