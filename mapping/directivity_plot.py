@@ -10,7 +10,7 @@ fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
 
 
 def modify_x(val, times):
-    r_range = 20
+    r_range = 12
     val = int(val)
     out = []
     for i in range(times):
@@ -25,7 +25,7 @@ with open("directivity.csv", "r") as c:
     reader = csv.reader(c)
     for row in reader:
         if row[0] == str(distance):
-            ax.scatter(modify_x(row[1], len(row[2:])), row[2:], alpha=.05)
+            ax.scatter(modify_x(row[1], len(row[2:])), row[2:], alpha=.07)
 
 ax.set_rmax(2)
 ax.set_rticks([5 * i for i in range(1, 4)])
