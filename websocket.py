@@ -170,6 +170,10 @@ if __name__ == "__main__":
         subprocess.Popen(
             ["./webrtc-server/webrtc_server", "--rtsp-server-ip=" + host + ":8554", "--port=" + str(webrtc_port)])
 
+    if len(CARLOS_NAMES) < 10:
+        for i in range(10 - len(CARLOS_NAMES)):
+            CARLOS_NAMES.append(CARLOS_NAMES[0])
+
     for i in range(len(CARLOS_NAMES)):
         POSITION.append(Position(x=0, y=0))
     try:
