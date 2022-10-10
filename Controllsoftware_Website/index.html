@@ -185,7 +185,7 @@
         window.onload = function () {
             let vidstream = document.getElementById("stream");
             let config = {'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]};
-            playStream(vidstream, "localhost", 57770, 'ws', config, function (errmsg) {
+            playStream(vidstream, window.location.hostname, 57770, 'ws', config, function (errmsg) {
                 console.error(errmsg);
             });
         };
