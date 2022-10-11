@@ -1,4 +1,5 @@
 import csv
+import time
 
 from drawer import Node
 
@@ -18,7 +19,12 @@ def setEdges(nodes):
             for pingee in row:
                 if pingee == "from/to":
                     continue
-                if bool(row[pingee]):
+
+                try:
+                    entry = int(row[pingee])
+                except:
+                    entry = 0
+                if entry:
                     pingeeN = findNodeWithName(nodes, pingee)
                     if pingerN.pos in pingeeN.neighbors:
                         continue

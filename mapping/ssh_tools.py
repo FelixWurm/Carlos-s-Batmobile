@@ -16,4 +16,6 @@ def send(host, cmd):
 
 
 def get_host_list():
-    return re.findall("192\.168\.199\.[0-9]*", send("192.168.199.1", 'cat /var/lib/misc/dnsmasq.leases'))
+    hosts = re.findall("192\.168\.199\.[0-9]*", send("192.168.199.1", 'cat /var/lib/misc/dnsmasq.leases'))
+    hosts.append("192.168.199.1")
+    return hosts
