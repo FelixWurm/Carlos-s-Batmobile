@@ -10,7 +10,6 @@ def spread(cmd):
     forks = 6
     hosts = []
     all_hosts = ssh_tools.get_host_list()
-    all_hosts.append("192.168.199.1")
     all_hosts = np.array_split(all_hosts, forks)
     for i in range(forks):
         if not os.fork():
@@ -37,8 +36,8 @@ def spread(cmd):
 
 
 cmd = [
-    "sudo config wlan0 txpower 30",             # 0
-    "sudo batctl hp",                           # 1
+    "sudo iwconfig wlan0 txpower 5",           # 0
+    "sudo batctl hp 2",                        # 1
     "bluetoothctl discoverable on",             # 2
     "bluetoothctl discoverable-timeout 3600",   # 3
     "bluetoothctl list",                        # 4
@@ -50,5 +49,5 @@ cmd = [
 ]
 
 if __name__ == '__main__':
-    spread(cmd[8])
-    spread(cmd[7])
+    spread(cmd[0])
+    spread(cmd[1])
