@@ -342,9 +342,10 @@ def main():
     #variable to dertermin if to send data:
     send_all_data = False
     while True:
-        if(last_save_ - time.time_ns() < -1000000):
-            laserdata.write(write_data(gyro,pos_x, pos_y, distance,drive))
-            last_save_ = time.time_ns()
+        if send_all_data:
+            if(last_save_ - time.time_ns() < -1000000):
+                laserdata.write(write_data(gyro,pos_x, pos_y, distance,drive))
+                last_save_ = time.time_ns()
 
 
         drive.run()
