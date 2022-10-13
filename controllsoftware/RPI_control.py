@@ -342,6 +342,7 @@ def main():
     #variable to dertermin if to send data:
     send_all_data = False
     while True:
+
         if send_all_data:
             if(last_save_ - time.time_ns() < -1000000):
                 laserdata.write(write_data(gyro,pos_x, pos_y, distance,drive))
@@ -357,7 +358,7 @@ def main():
             pass
 
         # terminate the connection in case of very bad connection
-        if time.time_ns() - (last_update + 30000000000) > 0:
+        if time.time_ns() - (last_update + 3000000000) > 0:
             if DEBUG:
                 print("Connection timeout!")
             break
