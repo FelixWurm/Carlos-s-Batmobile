@@ -267,6 +267,28 @@ def write_data(gyro, mouse_x, mouse_y, distance, drive):
     carlData = str(time.time())+","+ str(gx)+","+ str(gy)+","+str(gz)+","+str(ax)+","+str(ay)+","+str(az)+","+str(rot_x)+","+str(rot_y)+","+ str(mouse_x) +","+ str(mouse_y)+","+ str(distance) +","+str(speed[0])+","+str(speed[1])+"\n"
     return carlData
 
+def addition(addList):
+    result = 0
+    for i in range (0, len(addList)):
+        result += addList[i]
+    return result
+
+def getLaserDist(epoch):
+    thresh = addition(epoch)/len(epoch)
+    counter = 0
+    counterMin = 0
+    counterMax = 0
+    for i in range (len(epoch)-1):
+        if (epoch[i] > thresh) and (epoch[i+1] < thresh):
+            counterMin = counterMin +1
+        if (epoch[i+1] > thresh) and (epoch[i] < thresh):
+            counterMax = counterMax+1
+        if (counterMin > counterMax):
+            counter = counterMin
+        if (counterMin < counterMax):
+            counter = counterMax
+    return (counter*29.11)
+
 
 def main():
     global observer
@@ -290,6 +312,7 @@ def main():
     drive = motorcontroll.Drive()
 
     #read laser data
+    distLaser = []
     way = 0
     mean = 0
     allDist = 0
@@ -370,8 +393,9 @@ def main():
             count_loop = count_loop+1
             distance = laser.get_distance()
             allDist += distance
-            if distance > 0:
-                mean = allDist/count_loop #<- count for each loop
+            if distance > 0 and drive.get_direction()!=0:
+                distLaser.append(distance)
+                """mean = allDist/count_loop #<- count for each loop
                 if distance < (mean-5):
                     if(height == False):
                         height = True
@@ -382,7 +406,7 @@ def main():
                             way += -1
                 if distance > mean: # might want the 10%, but mean is smaller due to dip in wheel
                     height = False
-            #time.sleep(timing/1000000.00)
+            #time.sleep(timing/1000000.00)"""
         
         sockets = [soc]
         if mouse is not None:#
@@ -420,7 +444,7 @@ def main():
 
                 #send all Data
                 if send_all_data == True:
-                    soc.sendto(compile_data(gyro,pos_x,pos_y,way,distance,drive ),ip_addr)
+                    soc.sendto(compile_data(gyro,pos_x,pos_y,getLaserDist(distLaser),distance,drive ),ip_addr)
 
 
                 data, cur_ip_addr = soc.recvfrom(1024)
