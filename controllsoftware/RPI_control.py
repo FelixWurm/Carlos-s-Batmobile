@@ -358,7 +358,7 @@ def main():
             pass
 
         # terminate the connection in case of very bad connection
-        if time.time_ns() - (last_update + 3000000000) > 0:
+        if time.time_ns() - (last_update + 5000000000) > 0:
             if DEBUG:
                 print("Connection timeout!")
             break
@@ -482,6 +482,10 @@ def main():
 
                     if code == dict.msg_dict["DATA_PACKET_ENABLE"]:
                         send_all_data = True
+
+                else:
+                    soc.sendto(struct.pack("!B", dict.msg_dict["ERROR_CONN"]),cur_ip_addr)
+                
     laserdata.flush
     laserdata.close()
 
