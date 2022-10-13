@@ -208,7 +208,7 @@
 
             let vidstream = document.getElementById("stream");
             let config = {'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]};
-            playStream(vidstream, "localhost", port, 'ws', config, function (errmsg) {
+            playStream(vidstream, window.location.hostname, port, 'ws', config, function (errmsg) {
                 console.error(errmsg);
             });
         }
@@ -221,7 +221,7 @@
         const pressedKeys = new Set();
 
         function connect() {
-            websocket = new WebSocket("ws://localhost:8888");
+            websocket = new WebSocket("ws://" + window.location.hostname + ":8888");
             websocket.onopen = function (event) {
                 console.log(event);
                 checkPressedKeys();
